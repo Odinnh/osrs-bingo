@@ -4,7 +4,7 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <h1>osrs bingo</h1>
+    <RouterLink :to="{ name: 'private-board', params: { id: '1' } }"><h1>osrs bingo</h1></RouterLink>
   </header>
   
   <section>
