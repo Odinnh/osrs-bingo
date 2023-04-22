@@ -1,0 +1,17 @@
+:root{
+    --color-primary:#D9D9D9;
+    --color-secondairy:#242424;
+    --color-tertiary:#1E1E1E;
+    --color-accent:#d365ff;
+    
+    --border-radius:5px;
+    --border: 1px solid var(--color-primary);
+
+    --text-color:var(--color-primary);
+    --text-alt: var(--color-accent);
+
+    --background-color:var(--color-secondairy);
+}
+*{
+    box-sizing: border-box;
+}
