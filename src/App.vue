@@ -1,12 +1,15 @@
 <script setup>
 import { RouterLink, RouterView } from 'vue-router'
+import {ref} from 'vue'
+
+const input = ref(null)
+input.value = 'here'
 </script>
 
 <template>
   <header>
-    <RouterLink :to="{ name: 'board-view', }">home</RouterLink> | 
-    <RouterLink :to="{ name: 'private-board', params: { id: '1' } }">team 1</RouterLink> | 
-    <RouterLink :to="{ name: 'private-board', params: { id: '2' } }">team 2</RouterLink>
+    Enter your bingo key: <input type="text" v-model="input" />
+    <RouterLink class="btn" :to="{ name: 'private-board', params: { id: input } }" :disabled="input !== ''">team 1</RouterLink> 
   </header>
   <section>
     <router-view :key="$route.fullPath"/>
@@ -39,4 +42,25 @@ section{
 100% {
     scale: 1;
 }}
+.btn{
+  display:inline-block;
+  padding:.5rem;
+  background-color:#343434;
+  border-bottom: 2px solid #0b0b0b;
+  border-radius: 5px;
+  color:white;
+  text-decoration: none;
+}
+.btn:active{
+  border-bottom: 0px solid #0b0b0b;
+  border-top: 2px solid #0b0b0b;
+  margin-top:-2px;
+  margin-bottom:2px;
+
+}
+.btn:disabled{
+  pointer-events: none;
+  
+  
+}
 </style>

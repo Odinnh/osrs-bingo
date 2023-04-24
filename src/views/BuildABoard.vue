@@ -13,7 +13,7 @@ onMounted(()=>{
 </script>
 
 <template>
-    <p v-if="teamId">team {{ teamId }} their board
-      <BingoBoard/></p>
-    </template>
+   <p>Build a board
+   <BingoBoard/></p>
+</template>
 
