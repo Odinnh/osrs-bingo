@@ -4,6 +4,7 @@ import BoardView from '@/views/BoardView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
+  mode:'hash',
   routes: [
     {
 

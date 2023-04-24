@@ -4,11 +4,12 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <RouterLink :to="{ name: 'private-board', params: { id: '1' } }"><h1>osrs bingo</h1></RouterLink>
+    <RouterLink :to="{ name: 'board-view', }">home</RouterLink> | 
+    <RouterLink :to="{ name: 'private-board', params: { id: '1' } }">team 1</RouterLink> | 
+    <RouterLink :to="{ name: 'private-board', params: { id: '2' } }">team 2</RouterLink>
   </header>
-  
   <section>
-    <RouterView />
+    <router-view :key="$route.fullPath"/>
   </section>
 </template>
 
