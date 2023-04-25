@@ -26,3 +26,8 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+#Secrets
+.env
+.env.*
+!.env.example
