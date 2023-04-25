@@ -1,22 +1,29 @@
 <template>
-  <div v-if="tileData" class="tile" :data-coord="tileData.id">
+  <div
+    v-if="tileData"
+    class="tile"
+    :data-coord="tileData.id"
+    :class="{ isCollected: collectedTile }"
+  >
     <img :src="tileData.img" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 const props = defineProps({
   tile: {
     type: Object,
     required: true
+  },
+  collected: {
+    type: Array,
+    default: () => {}
   }
 })
 
-const tileData = ref(null)
-onMounted(() => {
-  tileData.value = props.tile
-})
+const tileData = computed(() => props.tile)
+const collectedTile = computed(() => props.collected.includes(tileData.value.id))
 </script>
 
 <style scoped>
@@ -40,5 +47,8 @@ onMounted(() => {
   width: var(--size);
   height: var(--size);
   object-fit: contain;
+}
+.isCollected {
+  background-color: red;
 }
 </style>

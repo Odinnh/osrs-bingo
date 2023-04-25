@@ -15,6 +15,6 @@ const teamId = computed(() => route.params.id)
 <template>
   <p v-if="teamId">
     team {{ teamId }}<br />
-    <BingoBoard />
+    <BingoBoard :teamId="teamId" />
   </p>
 </template>

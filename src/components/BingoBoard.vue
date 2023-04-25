@@ -1,15 +1,20 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :collected="collected" />
   </main>
 </template>
 
 <script setup>
+const props = defineProps({
+  teamId: {
+    type: String
+  }
+})
 import BoardTile from '@/components/BoardTile.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useFirestore, useDocument } from 'vuefire'
 //external modules
-import { collection } from 'firebase/firestore'
+import { collection, doc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
@@ -17,6 +22,12 @@ const db = useFirestore(firebaseApp)
 const boardWidth = ref(7)
 const boardHeight = ref(7)
 const tiles = useDocument(collection(db, 'Tiles'))
+const { data: groupData } = useDocument(doc(db, `groups/${props.teamId}/`))
+
+const collected = computed(() => {
+  return groupData?.value?.collected || []
+})
+//
 </script>
 
 <style scoped>
