@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent="toBoard">
         Enter your bingo key: <input type="text" v-model="boardUUID" />
-        <button class="btn" :disabled="boardUUID == ''">team 1</button>
+        <button class="btn" :disabled="boardUUID == ''">Open Board</button>
     </form>
     <router-view :key="route.fullPath" />
 </template>
@@ -15,4 +15,16 @@ const toBoard = () => {
   router.push({ name: 'overview', params: { boardUUID: boardUUID.value } })
 }
 </script>
-<style></style>
+<style scoped>
+input {
+  display: inline-block;
+  padding: 0.5rem;
+  background-color: #7b7b7b;
+  border: none;
+  border-top: 2px solid #0b0b0b;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  margin-right:5px;
+}
+</style>
