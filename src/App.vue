@@ -1,20 +1,13 @@
 <script setup>
-import { RouterView, useRouter, useRoute } from 'vue-router'
-import { ref } from 'vue'
+import { RouterView, useRoute } from 'vue-router'
+
 const route = useRoute()
-const router = useRouter()
-const boardUUID = ref('')
-const toBoard = () => {
-  router.push({ name: 'private-board', params: { id: boardUUID.value } })
-}
+
 </script>
 
 <template>
   <header>
-    <form @submit.prevent="toBoard">
-      Enter your bingo key: <input type="text" v-model="boardUUID" />
-      <button class="btn" :disabled="boardUUID == ''">team 1</button>
-    </form>
+
   </header>
   <section>
     <router-view :key="route.fullPath" />

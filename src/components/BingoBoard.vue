@@ -1,33 +1,60 @@
 <template>
   <main v-if="tiles" class="bingo-board">
     <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :collected="collected" />
+    <!-- <addTile :boardUUID="props.boardUUID"/> -->
   </main>
+  <aside>
+    {{ boardSettings }}
+    <p v-if="props.teamCode">{{ props.teamCode }}</p>
+    <form v-if="!props.teamCode" @submit.prevent="goToTeam">
+      team code: <input type="text" name="teamId" v-model="teamCode">
+    </form>
+  </aside>
 </template>
 
 <script setup>
 const props = defineProps({
-  teamId: {
+  boardUUID: {
     type: String
+  },
+  teamCode: {
+    type: String,
   }
 })
 import BoardTile from '@/components/BoardTile.vue'
-import { ref, computed } from 'vue'
-import { useFirestore, useDocument } from 'vuefire'
+// import addTile from '@/components/addTile.vue'
 //external modules
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useFirestore, useDocument } from 'vuefire'
+
 import { collection, doc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
+const router = useRouter()
 
-const boardWidth = ref(7)
-const boardHeight = ref(7)
-const tiles = useDocument(collection(db, 'Tiles'))
-const { data: groupData } = useDocument(doc(db, `groups/${props.teamId}/`))
+const teamCode = ref('')
 
+const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
+const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
+const { data: groupData } = useDocument(doc(db, `Boards/${props.boardUUID}/groups/${props.teamCode}/`))
+
+const boardWidth = computed(() => {
+  return boardSettings?.value?.settings.width || 7
+})
+const boardHeight = computed(() => {
+  return boardSettings?.value?.settings.height || 7
+})
 const collected = computed(() => {
   return groupData?.value?.collected || []
 })
-//
+const goToTeam = () => {
+  if (teamCode.value !== '') {
+    router.push({ name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } })
+  }
+}
+
 </script>
 
 <style scoped>

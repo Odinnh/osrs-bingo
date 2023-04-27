@@ -9,12 +9,11 @@ import BingoBoard from '@/components/BingoBoard.vue'
 
 const route = useRoute()
 
-const teamId = computed(() => route.params.id)
+const teamCode = computed(() => route.params.teamCode)
+const boardUUID = computed(() => route.params.boardUUID)
+
 </script>
 
 <template>
-  <p v-if="teamId">
-    team {{ teamId }}<br />
-    <BingoBoard :teamId="teamId" />
-  </p>
+  <BingoBoard :boardUUID="boardUUID" :teamCode="teamCode" />
 </template>

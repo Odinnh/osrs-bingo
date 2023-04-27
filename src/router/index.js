@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import BoardView from '@/views/BoardView.vue'
 import BuildABoard from '@/views/BuildABoard.vue'
+import Home from '@/views/Home.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -8,16 +9,17 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'board-view',
-      component: BuildABoard
+      name: 'Home',
+      component: Home
     },
     {
-      path: '/team/',
+      path:'/b/:boardUUID',
       name: 'overview',
-      component: BuildABoard
+      param: true,
+      component: BoardView,
     },
     {
-      path: '/team/:id',
+      path: '/b/:boardUUID/team/:teamCode',
       name: 'private-board',
       param: true,
       component: BoardView
