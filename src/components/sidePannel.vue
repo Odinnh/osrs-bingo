@@ -16,7 +16,10 @@ const tileData = computed(() => props.tileData)
 <template>
     <div v-if="props.tileData">
         <BoardTile :tile="tileData" :collected="props.collected"/>
-        <h2>{{ tileData.id }}</h2>
+        <h2>{ {{ tileData.id.split('')[0] }} , {{ tileData.id.split('')[1]  }} }</h2>
     <h1>{{ tileData.title }}</h1>
     <p>{{ tileData.description }}</p><button class="prevent-select">Toggle Collected</button>
+    <!-- <h2>{1, 1}</h2>
+    <h1>boop-a-snoot</h1>
+    <p>boop froge nose pls &lt;3 </p><button class="prevent-select">Toggle Collected</button> -->
 </div></template>
