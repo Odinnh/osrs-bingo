@@ -1,13 +1,10 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :collected="collected" :tile="tile" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
-    <form v-if="!groupData" @submit.prevent="goToTeam">
-      team code: <input type="text" name="teamId" v-model="teamCode">
-    </form>
-    <moderatorSidePannel :tileData="tileData" :collected="collected" />
+    <moderatorSidePannel :tileData="tileData" :groups="props.groups"/>
   </aside>
 </template>
 
@@ -18,6 +15,9 @@ const props = defineProps({
   },
   teamCode: {
     type: String,
+  },
+  groups: {
+    type: Object,
   }
 })
 import BoardTile from '@/components/BoardTile.vue'
@@ -31,9 +31,6 @@ import { collection, doc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
-const router = useRouter()
-
-const teamCode = ref('')
 const tileData = ref('')
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
@@ -48,19 +45,7 @@ const boardHeight = computed(() => {
 const collected = computed(() => {
   return groupData?.value?.collected || []
 })
-const MODERATOR = computed(()=>groupData.value.name == 'moderator')
 
-//functions
-const goToTeam = () => {
-  if (teamCode.value !== '') {
-    let route ={ name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } }
-    if (MODERATOR){
-        route.name = 'moderator'
-    }
-
-    router.push(route)
-  }
-}
 const setSidePannel = (tile) => {
   tileData.value = tile
 }

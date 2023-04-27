@@ -48,16 +48,17 @@ const boardHeight = computed(() => {
 const collected = computed(() => {
   return groupData?.value?.collected || []
 })
-const MODERATOR = computed(()=>groupData.value.name == 'moderator')
 
 //functions
-const goToTeam = () => {
+const goToTeam = async () => {
   if (teamCode.value !== '') {
-    let route ={ name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } }
-    if (MODERATOR){
-        route.name = 'moderator'
-    }
 
+    let route = { name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } }
+
+    const { data: modCheck } = useDocument(doc(db, 'Boards', props.boardUUID, 'Groups', teamCode.value))
+    if (modCheck && modCheck.value.name == 'moderator') {
+      route.name = 'moderator'
+    }
     router.push(route)
   }
 }

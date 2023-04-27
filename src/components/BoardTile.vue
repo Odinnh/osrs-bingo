@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 const props = defineProps({
   tile: {
     type: Object,
@@ -18,6 +18,7 @@ const props = defineProps({
 })
 const tileData = computed(() => props.tile)
 const collectedTile = computed(() => props.collected?.includes(tileData.value.id))
+
 </script>
 
 <style scoped>
