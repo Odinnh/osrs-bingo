@@ -1,7 +1,7 @@
 <template>
   <div v-if="tileData" class="tile" :data-coord="tileData.id" :class="{ isCollected: collectedTile }">
-    <!-- <img :src="tileData.img || 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" /> -->
-    <img src="https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e" />
+    <img :src="tileData.img || 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" />
+    <!-- <img src="https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e" /> -->
   </div>
 </template>
 
