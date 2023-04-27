@@ -1,13 +1,13 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :collected="collected" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
     <form v-if="!groupData" @submit.prevent="goToTeam">
       team code: <input type="text" name="teamId" v-model="teamCode">
     </form>
-    <sidePannel :tileData="tileData" :collected="collected" />
+    <moderatorSidePannel :tileData="tileData" :collected="collected" />
   </aside>
 </template>
 
@@ -21,7 +21,7 @@ const props = defineProps({
   }
 })
 import BoardTile from '@/components/BoardTile.vue'
-import sidePannel from '@/components/sidePannel.vue'
+import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
 //external modules
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'

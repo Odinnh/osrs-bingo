@@ -6,27 +6,32 @@ const route = useRoute()
 </script>
 
 <template>
-  <header>
-
-  </header>
-  <section>
+  <div class="container">
     <router-view :key="route.fullPath" />
-  </section>
+  </div>
 </template>
 
 <style>
-#app,
-body {
-  color: white;
+body{
   background: var(--color-tertiary);
+  color: white;
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+  margin: 0;
+
+}
+#app{
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: 100vh;
-  padding: 0;
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
+  min-height: 100vh;
+  padding-block: 50px;
+}
+.container{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 section {
   display: flex;
@@ -61,5 +66,17 @@ section {
 }
 .btn:disabled {
   pointer-events: none;
+  color:black;
+}
+input[type='text']{
+  display: inline-block;
+  padding: 0.5rem;
+  background-color: #7b7b7b;
+  border: none;
+  border-top: 2px solid #0b0b0b;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  margin-right:5px;
 }
 </style>
