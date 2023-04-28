@@ -1,7 +1,7 @@
 <template>
   <main v-if="tiles" class="bingo-board">
     <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :groupsData="groupsCollected"
-      :selected="tile == tileSelected" :collected="collected" :class="{needVerify: needVerifying(props.tileData.id)}" :verify="verify" @click="setSidePannel(tile)" />
+      :selected="tile == tileSelected" :collected="collected" :verify="verify" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
