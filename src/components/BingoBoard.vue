@@ -1,13 +1,15 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :collected="collected" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :groupsData="groupsCollected"
+      :selected="tile == tileSelected" :collected="collected" :class="{needVerify: needVerifying(props.tileData.id)}" :verify="verify" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
     <form v-if="!groupData" @submit.prevent="goToTeam">
       team code: <input type="text" name="teamId" v-model="teamCode">
     </form>
-    <sidePannel :tileData="tileData" :collected="collected" />
+    <sidePannel :tileData="tileData" :collected="collected" :verify="verify" :boardUUID="props.boardUUID"
+:teamUUID="props.teamCode" />
   </aside>
 </template>
 
@@ -35,9 +37,13 @@ const router = useRouter()
 
 const teamCode = ref('')
 const tileData = ref('')
+const tileSelected = ref('')
+
+
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
 const { data: groupData } = useDocument(doc(db, `Boards/${props.boardUUID}/Groups/${props.teamCode}/`))
+const { data: groupsData } = useDocument(collection(db, 'Boards', props.boardUUID, 'Groups'))
 
 const boardWidth = computed(() => {
   return boardSettings?.value?.settings.width || 7
@@ -48,6 +54,27 @@ const boardHeight = computed(() => {
 const collected = computed(() => {
   return groupData?.value?.collected || []
 })
+const verify = computed(() => {
+  return groupData?.value?.verify || []
+})
+
+const groupsCollected = computed(() => {
+  let tempObject = {}
+  if (groupsData) {
+    groupsData?.value?.forEach((group, index) => {
+      if (group.name != 'moderator') {
+        tempObject[group.id] = {
+          collected: group.collected,
+          color: group.color,
+          name: group.name,
+          icon: group.icon
+        }
+      }
+    })
+  }
+  return tempObject || {}
+})
+
 
 //functions
 const goToTeam = async () => {
@@ -64,6 +91,7 @@ const goToTeam = async () => {
 }
 const setSidePannel = (tile) => {
   tileData.value = tile
+  tileSelected.value = tile
 }
 
 </script>
@@ -86,7 +114,6 @@ const setSidePannel = (tile) => {
 }
 
 aside {
-
   --color-primary: #D9D9D9;
   --color-secondairy: #242424;
   --border-radius: 5px;
