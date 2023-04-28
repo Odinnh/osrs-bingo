@@ -1,10 +1,10 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :collected="collected" :tile="tile" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :needVerifying="needVerifying(tile.id)" :selected="tile == tileSelected" :tile="tile" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
-    <moderatorSidePannel :tileData="tileData" :groups="props.groups"/>
+    <moderatorSidePannel :tileData="tileData" :key="tileData" :boardUUID="props.boardUUID" :groups="props.groups"/>
   </aside>
 </template>
 
@@ -27,11 +27,12 @@ import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useFirestore, useDocument } from 'vuefire'
 
-import { collection, doc } from 'firebase/firestore'
+import { collection, doc, updateDoc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
 const tileData = ref('')
+const tileSelected = ref('')
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
 const { data: groupData } = useDocument(doc(db, `Boards/${props.boardUUID}/Groups/${props.teamCode}/`))
@@ -42,12 +43,19 @@ const boardWidth = computed(() => {
 const boardHeight = computed(() => {
   return boardSettings?.value?.settings.height || 7
 })
-const collected = computed(() => {
-  return groupData?.value?.collected || []
-})
-
 const setSidePannel = (tile) => {
   tileData.value = tile
+  tileSelected.value = tile
+}
+
+const needVerifying = (tileID) => {  
+  let hasRequest = false 
+    if (props.groups){
+        props.groups.forEach(group => {
+           if (group.verify.includes(tileID)) {hasRequest =  true}
+        })
+    }
+    return hasRequest
 }
 
 </script>

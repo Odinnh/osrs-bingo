@@ -1,7 +1,35 @@
+<template>
+    <div v-if="props.tileData" :key="props.tileData.id">
+        <BoardTile :tile="tileData"/>
+        <h2>{ {{ tileData.id.split('')[0] }} , {{ tileData.id.split('')[1] }} }</h2>
+        <!-- <h1>{{ tileData.title }}</h1>
+        <p>{{ tileData.description }}</p> -->
+        <ul>
+            <li v-for="group in groups" :key="group.id + tileData.id" :class="{ checkThis:group.verify.includes(tileData.id)}">{{ group.name }} : {{
+                group.verify.includes(tileData.id) }}<br>
+                collected: <input type="checkbox" :key="group.id + tileData.id"
+                    v-bind:checked="group.collected.includes(tileData.id)"
+                    @click.prevent="updateToCompleted({ id: tileData.id, group: group })">
+            </li>
+        </ul>
+    </div>
+</template>
+
 <script setup>
 import { computed } from 'vue'
+import { useFirestore } from 'vuefire'
+import BoardTile from './BoardTile.vue';
+import { doc, updateDoc } from 'firebase/firestore'
+import { firebaseApp } from '@/firebaseSettings'
+
+const db = useFirestore(firebaseApp)
+
 const props = defineProps({
     tileData: {
+        type: Object,
+        required: true
+    },
+    boardUUID: {
         type: Object,
         required: true
     },
@@ -11,20 +39,21 @@ const props = defineProps({
     }
 })
 const tileData = computed(() => props.tileData)
-const MODERATOR = computed(() => props.MODERATOR)
-const groups = computed(() => props.groups.filter(group => group.name !== 'moderator'))
-const fn1 = (id) => { console.log(id) }
+const groups = computed(() => props.groups)
+// const groups = computed(() => props.groups.filter(group => group.name !== 'moderator'))
+const updateToCompleted = ({ id, group }) => {
+    if (!group.collected.includes(id)) {
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: [...group.collected, id] })
+        if (group.verify.includes(id)) {
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { verify: group.verify.filter((item) => item != id) })
+        }
+    } else {
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: group.collected.filter((item) => item != id) })
+    }
+}
 </script>
-<template>
-    <div v-if="props.tileData" :key="props.tileData.id">
-
-        <h2>{ {{ tileData.id.split('')[0] }} , {{ tileData.id.split('')[1] }} }</h2>
-        <h1>{{ tileData.title }}</h1>
-        <p>{{ tileData.description }}</p><button class="prevent-select">Toggle Collected</button>
-        <ul>
-            <li v-for="group in groups">{{ group.name }} : {{ group.verify.includes(tileData.id) }}<br>
-                collected: <input type="checkbox" :checked="group.verify.includes(tileData.id)" @click="fn1(tileData.id)">
-            </li>
-        </ul>
-    </div>
-</template>
+<style scoped>
+.checkThis{
+    color:green;
+    font-weight:bold;
+}</style>

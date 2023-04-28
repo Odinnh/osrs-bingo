@@ -1,6 +1,26 @@
+<template>
+    <div v-if="props.tileData">
+        <BoardTile :tile="props.tileData" :verify="props.verify" :collected="props.collected" />
+        <h2>{ {{ props.tileData.id.split('')[0] }} , {{ props.tileData.id.split('')[1] }} }</h2>
+        <h1>{{ props.tileData.title }}</h1>
+        <p>{{ props.tileData.description }}</p>
+        <button class="btn" @click.prevent="askforVerify"
+            :disabled="(props.verify.includes(props.tileData.id) || props.collected.includes(props.tileData.id))">Mark
+            Collected</button>
+    </div>
+</template>
+
+
 <script setup>
-import { computed } from 'vue'
 import BoardTile from './BoardTile.vue';
+import { useFirestore } from 'vuefire'
+
+import { doc, updateDoc } from 'firebase/firestore'
+
+import { firebaseApp } from '@/firebaseSettings'
+
+const db = useFirestore(firebaseApp)
+
 const props = defineProps({
     tileData: {
         type: Object,
@@ -9,18 +29,27 @@ const props = defineProps({
     collected: {
         type: Array,
         default: () => { }
+    },
+    verify: {
+        type: Array,
+        default: () => { }
+    },
+    boardUUID: {
+        type: String,
+        required: true
+    },
+    teamUUID: {
+        type: String,
+        required: true
     }
 })
-const tileData = computed(() => props.tileData)
+
+const askforVerify = async () => {
+    if (!props.verify.includes(props.tileData.id)) {
+        // console.log(props.teamUUID)
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', props.teamUUID), { verify: [...props.verify, props.tileData.id] })
+    }
+}
+
 </script>
-<template>
-    <div v-if="props.tileData">
-        <BoardTile :tile="tileData" :collected="props.collected"/>
-        <h2>{ {{ tileData.id.split('')[0] }} , {{ tileData.id.split('')[1]  }} }</h2>
-    <h1>{{ tileData.title }}</h1>
-    <p>{{ tileData.description }}</p><button class="prevent-select">Mark Collected</button>
-    <!-- <h2>{1, 1}</h2>
-    <h1>boop-a-snoot</h1>
-    <p>boop froge nose pls &lt;3 </p><button class="prevent-select">Toggle Collected</button> -->
-</div>
-</template>
+
