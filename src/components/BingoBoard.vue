@@ -83,7 +83,7 @@ const goToTeam = async () => {
     let route = { name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } }
 
     const { data: modCheck } = useDocument(doc(db, 'Boards', props.boardUUID, 'Groups', teamCode.value))
-    if (modCheck && modCheck.value.name == 'moderator') {
+    if (modCheck && modCheck?.value?.name == 'moderator') {
       route.name = 'moderator'
     }
     router.push(route)
