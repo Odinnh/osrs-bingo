@@ -1,6 +1,6 @@
 <template>
-    <div class="flag" :style="{backgroundColor}">
-        <font-awesome-icon :icon="['fas', props.icon]" />
+    <div class="flag" :style="{backgroundColor}" :class="{inverted:props.inverted}">
+        <font-awesome-icon class="icon"  :icon="['fas', props.icon]" />
     </div>
 </template>
 <script setup>
@@ -13,6 +13,11 @@ const props = defineProps({
   icon: {
     type: String,
     required:true
+  },
+  inverted: {
+    type: String,
+    required:false,
+    default:() => false
   }
 })
 </script>
@@ -21,5 +26,13 @@ const props = defineProps({
 .flag {
     background-color:v-bind('props.color');
     padding:2px;
+}
+.icon{
+  position:relative;
+  z-index: 150;
+}
+.inverted{
+  color:#343434;
+  background-color:white;
 }
 </style>

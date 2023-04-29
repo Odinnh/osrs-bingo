@@ -1,6 +1,6 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :needVerifying="needVerifying(tile.id)" :selected="tile == tileSelected" :tile="tile" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :needVerifying="needVerifying(tile)" :selected="tile == tileSelected" :tile="tile" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
@@ -48,11 +48,11 @@ const setSidePannel = (tile) => {
   tileSelected.value = tile
 }
 
-const needVerifying = (tileID) => {  
+const needVerifying = (tile) => {  
   let hasRequest = false 
     if (props.groups){
         props.groups.forEach(group => {
-           if (group.verify.includes(tileID)) {hasRequest =  true}
+           if (group.verify.includes(tile.id)) {hasRequest =  true}
         })
     }
     return hasRequest

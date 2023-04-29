@@ -1,10 +1,11 @@
 <template>
+  <scoreCard v-if="groupsData"  class="scoreCard" :groupsData="groupsCollected"/>
   <main v-if="tiles" class="bingo-board">
     <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :groupsData="groupsCollected"
       :selected="tile == tileSelected" :collected="collected" :verify="verify" @click="setSidePannel(tile)" />
   </main>
   <aside>
-    <p v-if="groupData">{{ groupData.name }}</p>
+    <p v-if="groupData"><font-awesome-icon class="icon"  :icon="['fas', groupData.icon]" /> {{ groupData.name }}</p>
     <form v-if="!groupData" @submit.prevent="goToTeam">
       team code: <input type="text" name="teamId" v-model="teamCode">
     </form>
@@ -24,6 +25,7 @@ const props = defineProps({
 })
 import BoardTile from '@/components/BoardTile.vue'
 import sidePannel from '@/components/sidePannel.vue'
+import scoreCard from '@/components/scoreCard.vue'
 //external modules
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
@@ -67,7 +69,9 @@ const groupsCollected = computed(() => {
           collected: group.collected,
           color: group.color,
           name: group.name,
-          icon: group.icon
+          icon: group.icon,
+          points:group.points,
+          flagEnd: group.flagEnd
         }
       }
     })
@@ -128,5 +132,8 @@ aside {
   flex-direction: column;
   gap: 5px;
   padding: 20px;
+}
+.scoreCard{
+  padding:10px;
 }
 </style>
