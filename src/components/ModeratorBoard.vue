@@ -1,6 +1,6 @@
 <template>
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :needVerifying="needVerifying(tile)" :selected="tile == tileSelected" :tile="tile" @click="setSidePannel(tile)" />
+    <BoardTile v-for="tile in tiles" :key="tile.id" :groupsData="props.groups"  :needVerifying="needVerifying(tile)" :selected="tile == tileSelected" :tile="tile" @click="setSidePannel(tile)" />
   </main>
   <aside>
     <p v-if="groupData">{{ groupData.name }}</p>
@@ -36,6 +36,7 @@ const tileSelected = ref('')
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
 const { data: groupData } = useDocument(doc(db, `Boards/${props.boardUUID}/Groups/${props.teamCode}/`))
+const { data: groupsData } = useDocument(collection(db, 'Boards', props.boardUUID, 'Groups'))
 
 const boardWidth = computed(() => {
   return boardSettings?.value?.settings.width || 7

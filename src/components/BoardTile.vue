@@ -1,8 +1,8 @@
 <template>
   <div v-if="tileData" class="tile" :data-coord="tileData.id"
     :class="{ isCollected: collectedTile, needVerifying: props.needVerifying, isVerify: verifyTile, isSelected: tileSelected }">
-    <img :src="'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" />
-    <!-- <img :src="tileData.img || 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" /> -->
+    <!-- <img :src="'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" /> -->
+    <img :src="tileData.img || 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" />
     
     <div class="boardTileFlags">
     <template v-if="groups" v-for="group in groups" >
@@ -153,4 +153,9 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   display: flex;
 flex-direction: row;
 justify-content: space-between;
+z-index:-1;
+}
+
+img{
+  z-index:1000000;
 }</style>
