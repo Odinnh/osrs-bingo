@@ -2,8 +2,10 @@
     <div v-if="props.tileData">
         <BoardTile :tile="props.tileData" :verify="props.verify" :collected="props.collected" />
         <h2>{ {{ props.tileData.id.split('')[0] }} , {{ props.tileData.id.split('')[1] }} }</h2>
-        <h1>{{ props.tileData.title }}</h1>
-        <p>{{ props.tileData.description }}</p>
+        <h1>props.tileData.title</h1>
+        <p>props.tileData.description</p>
+        <!-- <h1>{{ props.tileData.title }}</h1>
+        <p>{{ props.tileData.description }}</p> -->
         <button class="btn" @click.prevent="askforVerify"
             :disabled="(props.verify.includes(props.tileData.id) || props.collected.includes(props.tileData.id))">Mark
             Collected</button>
