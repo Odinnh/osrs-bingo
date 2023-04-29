@@ -3,7 +3,7 @@
         <ul v-if="props.groupsData">
             <li v-for="(group, index) in props.groupsData" :key="index + groupsData">
                 <tileFlag :color="group.color" class="tileFlag" :class="'flag-end-' + group.flagEnd" :icon="group.icon"
-                    :style="{ '--groupColor': group.color, '--width': group.points + 'px' }" />
+                    :style="{ '--groupColor': group.color, '--width': (750 / 750 * 100) * 1.5 + 'px' }" />
                 {{ group.name }}<br>
                 score: {{ group.points }}<br><br>
             </li>

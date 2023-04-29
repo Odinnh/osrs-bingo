@@ -9,7 +9,7 @@
                 group.verify.includes(tileData.id) }}<br>
                 collected: <input type="checkbox" :key="group.id + tileData.id"
                     v-bind:checked="group.collected.includes(tileData.id)"
-                    @click.prevent="updateToCompleted({ id: tileData.id, group: group })">
+                    @click.prevent="updateToCompleted({ tile: tileData, group: group })">
             </li>
         </ul>
     </div>
@@ -41,14 +41,17 @@ const props = defineProps({
 const tileData = computed(() => props.tileData)
 const groups = computed(() => props.groups)
 // const groups = computed(() => props.groups.filter(group => group.name !== 'moderator'))
-const updateToCompleted = ({ id, group }) => {
-    if (!group.collected.includes(id)) {
-        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: [...group.collected, id] })
-        if (group.verify.includes(id)) {
-        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { verify: group.verify.filter((item) => item != id) })
+const updateToCompleted = ({ tile, group }) => {
+    if (!group.collected.includes(tile.id)) {
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: [...group.collected, tile.id] })
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { points: group.points + tile.points })
+        if (group.verify.includes(tile.id)) {
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { verify: group.verify.filter((item) => item != tile.id) })
         }
     } else {
-        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: group.collected.filter((item) => item != id) })
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { collected: group.collected.filter((item) => item != tile.id) })
+        updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), { points: group.points - tile.points })
+    
     }
 }
 </script>
