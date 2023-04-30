@@ -7,7 +7,7 @@ import router from './router'
 import { firebaseApp } from './firebaseSettings'
 
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCat, faCrow, faDisease, faDove, faFeatherPointed, faFrog, faHippo, faPaw, faRocket, faSpaghettiMonsterFlying } from "@fortawesome/free-solid-svg-icons";
+import { faCrow, faDisease, faDove, faFeatherPointed, faFrog, faHippo, faPaw, faRocket, faSpaghettiMonsterFlying, faSpoon } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 
@@ -20,6 +20,7 @@ library.add(faFrog)
 library.add(faFeatherPointed)
 library.add(faDisease)
 library.add(faDove)
+library.add(faSpoon)
 
 const app = createApp(App)
 
