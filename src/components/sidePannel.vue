@@ -12,7 +12,12 @@
             <font-awesome-icon class="icon" :icon="['fas', 'disease']" />
             <span class="tooltiptext">Infestid89 would've gotten this tile on the 30th of April 2023 1:42 AM EST</span>
         </div>
-
+        </p>
+        <p v-if="props.tileData.id == 41">
+        <div class="tooltip">
+            <font-awesome-icon class="icon fire" :icon="['fas', 'dove']" />
+            <span class="tooltiptext">LIES PHOENIX 1ST TRY!!!!</span>
+        </div>
         </p>
     </div>
 </template>
@@ -62,45 +67,11 @@ const askforVerify = async () => {
 </script>
 
 <style scoped>
-.tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
 
-.tooltip .tooltiptext {
-    visibility: hidden;
-width: 249px;
-background-color: #555;
-color: #fff;
-text-align: center;
-border-radius: 6px;
-padding: 5px 0;
-position: absolute;
-z-index: 1;
-bottom: 172%;
-left: 50%;
-margin-left: -124px;
-opacity: 0;
-transition: opacity 0.3s;
-padding: 15px;
-}
 .icon{
     color:greenyellow;
 }
-
-.tooltip .tooltiptext::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  margin-left: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: #555 transparent transparent transparent;
+.fire{
+    color:rgb(255, 161, 47);
 }
-
-.tooltip:hover .tooltiptext {
-  visibility: visible;
-  opacity: 1;
-}</style>
+</style>

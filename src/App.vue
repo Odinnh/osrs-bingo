@@ -12,7 +12,7 @@ const route = useRoute()
 </template>
 
 <style>
-body{
+body {
   background: var(--color-tertiary);
   color: white;
   font-family: 'Roboto', sans-serif;
@@ -20,7 +20,8 @@ body{
   margin: 0;
 
 }
-#app{
+
+#app {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,17 +29,48 @@ body{
   min-height: 100vh;
   padding-block: 50px;
 }
-.container{
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 249px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 2000;
+  top: 25px;
+  left: 50%;
+  margin-left: -124px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  padding: 15px;
+}
+
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+.container {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
+
 section {
   display: flex;
   gap: 20px;
   margin: auto;
   animation: 0.8s zoom-in ease-out;
 }
+
 @keyframes zoom-in {
   0% {
     scale: 0;
@@ -48,6 +80,7 @@ section {
     scale: 1;
   }
 }
+
 .btn {
   display: inline-block;
   padding: 0.5rem;
@@ -58,17 +91,20 @@ section {
   color: white;
   text-decoration: none;
 }
+
 .btn:active {
   border-bottom: 0px solid #0b0b0b;
   border-top: 2px solid #0b0b0b;
   margin-top: -2px;
   margin-bottom: 2px;
 }
+
 .btn:disabled {
   pointer-events: none;
-  color:black;
+  color: black;
 }
-input[type='text']{
+
+input[type='text'] {
   display: inline-block;
   padding: 0.5rem;
   background-color: #7b7b7b;
@@ -77,6 +113,5 @@ input[type='text']{
   border-radius: 5px;
   color: white;
   text-decoration: none;
-  margin-right:5px;
-}
-</style>
+  margin-right: 5px;
+}</style>

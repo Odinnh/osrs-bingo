@@ -71,7 +71,8 @@ const groupsCollected = computed(() => {
           name: group.name,
           icon: group.icon,
           points:group.points,
-          flagEnd: group.flagEnd
+          flagEnd: group.flagEnd,
+          member: group.members
         }
       }
     })
