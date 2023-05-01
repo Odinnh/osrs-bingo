@@ -24,7 +24,7 @@
     <div v-if="props.tileData.id == 41">
       <p class="tooltip">
         <FontAwesomeIcon class="icon fire" :icon="['fas', 'dove']" />
-        <span class="tooltiptext">LIES PHOENIX 1ST TRY!!!!</span>
+        <span class="tooltiptext">Lies? Phoenix maybe?</span>
       </p>
     </div>
   </div>
