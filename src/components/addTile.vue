@@ -1,15 +1,12 @@
 <template>
-  <div class="tile" @click="addTileModal">+</div>
+  <div class="tile" @click="addTileModal">edit</div>
   <div class="modal" :class="{ open: isActive }">
     <form @submit.prevent="addTileToDB">
-      coord:
-      <input type="text" v-model="form.coordinate" name="coordinate" id="addtiletitle" /><br />
       title: <input type="text" v-model="form.title" name="title" id="addtiletitle" /><br />
       description:
       <input type="text" v-model="form.description" name="description" id="addtiletitle" /><br />
-      icon: <input type="text" v-model="form.img" name="img" id="addtiletitle" /><br />
-      type: <input type="text" v-model="form.type" name="type" id="addtiletitle" /><br />
-      <button type="submit">Add Tile</button>
+      points: <input type="text" v-model="form.points" name="type" id="addtiletitle" /><br />
+      <button type="submit">Update Tile</button>
     </form>
   </div>
 </template>
@@ -22,23 +19,27 @@ import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
 
-const defaultForm = {
-  coordinate: '',
-  title: '',
-  description: '',
-  img: '',
-  type: 'drop'
-}
+// const defaultForm = {
+//   coordinate: '',
+//   title: '',
+//   description: '',
+//   img: '',
+//   type: 'drop'
+// }
 const form = ref({
-  coordinate: '',
-  title: '',
-  description: '',
-  img: '',
-  type: ''
+  coordinate: props.tile.id,
+  title: props.tile.title,
+  description: props.tile.description,
+  img: props.tile.img,
+  points: props.tile.points
 })
 const props = defineProps({
   boardUUID: {
     type: String,
+    required: true
+  },
+  tile: {
+    type: Object,
     required: true
   }
 })
@@ -51,9 +52,8 @@ const addTileToDB = async () => {
     description: form.value.description,
     img: form.value.img,
     title: form.value.title,
-    type: form.value.type
+    points: form.value.points
   })
-  form.value = defaultForm.value
 }
 </script>
 <style scoped>
@@ -66,7 +66,7 @@ const addTileToDB = async () => {
   position: relative;
   overflow: clip;
   aspect-ratio: 1;
-  font-size: 100px;
+  font-size: 1rem;
   line-height: 50px;
   display: flex;
   justify-content: center;

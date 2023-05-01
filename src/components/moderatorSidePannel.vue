@@ -23,6 +23,7 @@
         </label>
       </li>
     </ul>
+    <AddTile :tile="tileData" :boardUUID="props.boardUUID" />
   </div>
 </template>
 
@@ -33,6 +34,8 @@ import BoardTile from './BoardTile.vue'
 import { doc, updateDoc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
+import AddTile from '@/components/addTile.vue'
+
 const db = useFirestore(firebaseApp)
 
 const props = defineProps({
@@ -41,7 +44,7 @@ const props = defineProps({
     required: true
   },
   boardUUID: {
-    type: Object,
+    type: String,
     required: true
   },
   groups: {
