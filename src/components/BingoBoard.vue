@@ -1,16 +1,31 @@
 <template>
-  <scoreCard v-if="groupsData"  class="scoreCard" :groupsData="groupsCollected"/>
+  <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsCollected" />
   <main v-if="tiles" class="bingo-board">
-    <BoardTile v-for="tile in tiles" :key="tile.id" :tile="tile" :groupsData="groupsCollected"
-      :selected="tile == tileSelected" :collected="collected" :verify="verify" @click="setSidePannel(tile)" />
+    <BoardTile
+      v-for="tile in tiles"
+      :key="tile.id"
+      :tile="tile"
+      :groupsData="groupsCollected"
+      :selected="tile == tileSelected"
+      :collected="collected"
+      :verify="verify"
+      @click="setSidePannel(tile)"
+    />
   </main>
   <aside>
-    <p v-if="groupData"><font-awesome-icon class="icon"  :icon="['fas', groupData.icon]" /> {{ groupData.name }}</p>
+    <p v-if="groupData">
+      <fontAwesomeIcon class="icon" :icon="['fas', groupData.icon]" /> {{ groupData.name }}
+    </p>
     <form v-if="!groupData" @submit.prevent="goToTeam">
-      team code: <input type="text" name="teamId" v-model="teamCode">
+      team code: <input type="text" name="teamId" v-model="teamCode" />
     </form>
-    <sidePannel :tileData="tileData" :collected="collected" :verify="verify" :boardUUID="props.boardUUID"
-:teamUUID="props.teamCode" />
+    <sidePannel
+      :tileData="tileData"
+      :collected="collected"
+      :verify="verify"
+      :boardUUID="props.boardUUID"
+      :teamUUID="props.teamCode"
+    />
   </aside>
 </template>
 
@@ -20,7 +35,7 @@ const props = defineProps({
     type: String
   },
   teamCode: {
-    type: String,
+    type: String
   }
 })
 import BoardTile from '@/components/BoardTile.vue'
@@ -41,10 +56,11 @@ const teamCode = ref('')
 const tileData = ref('')
 const tileSelected = ref('')
 
-
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
-const { data: groupData } = useDocument(doc(db, `Boards/${props.boardUUID}/Groups/${props.teamCode}/`))
+const { data: groupData } = useDocument(
+  doc(db, `Boards/${props.boardUUID}/Groups/${props.teamCode}/`)
+)
 const { data: groupsData } = useDocument(collection(db, 'Boards', props.boardUUID, 'Groups'))
 
 const boardWidth = computed(() => {
@@ -63,14 +79,14 @@ const verify = computed(() => {
 const groupsCollected = computed(() => {
   let tempObject = {}
   if (groupsData) {
-    groupsData?.value?.forEach((group, index) => {
+    groupsData?.value?.forEach((group) => {
       if (group.name != 'moderator') {
         tempObject[group.id] = {
           collected: group.collected,
           color: group.color,
           name: group.name,
           icon: group.icon,
-          points:group.points,
+          points: group.points,
           flagEnd: group.flagEnd,
           member: group.members
         }
@@ -80,14 +96,17 @@ const groupsCollected = computed(() => {
   return tempObject || {}
 })
 
-
 //functions
 const goToTeam = async () => {
   if (teamCode.value !== '') {
+    let route = {
+      name: 'private-board',
+      params: { boardUUID: props.boardUUID, teamCode: teamCode.value }
+    }
 
-    let route = { name: 'private-board', params: { boardUUID: props.boardUUID, teamCode: teamCode.value } }
-
-    const { data: modCheck } = useDocument(doc(db, 'Boards', props.boardUUID, 'Groups', teamCode.value))
+    const { data: modCheck } = useDocument(
+      doc(db, 'Boards', props.boardUUID, 'Groups', teamCode.value)
+    )
     if (modCheck && modCheck?.value?.name == 'moderator') {
       route.name = 'moderator'
     }
@@ -98,7 +117,6 @@ const setSidePannel = (tile) => {
   tileData.value = tile
   tileSelected.value = tile
 }
-
 </script>
 
 <style scoped>
@@ -119,7 +137,7 @@ const setSidePannel = (tile) => {
 }
 
 aside {
-  --color-primary: #D9D9D9;
+  --color-primary: #d9d9d9;
   --color-secondairy: #242424;
   --border-radius: 5px;
   --border: 1px solid var(--color-primary);
@@ -134,7 +152,7 @@ aside {
   gap: 5px;
   padding: 20px;
 }
-.scoreCard{
-  padding:10px;
+.scoreCard {
+  padding: 10px;
 }
 </style>

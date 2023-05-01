@@ -1,9 +1,9 @@
 <template>
-    <form @submit.prevent="toBoard">
-        Enter your bingo key: <input type="text" v-model="boardUUID" />
-        <button class="btn" :disabled="boardUUID == ''">Open Board</button>
-    </form>
-    <router-view :key="route.fullPath" />
+  <form @submit.prevent="toBoard">
+    Enter your bingo key: <input type="text" v-model="boardUUID" />
+    <button class="btn" :disabled="boardUUID == ''">Open Board</button>
+  </form>
+  <routerView :key="route.fullPath" />
 </template>
 <script setup>
 import { RouterView, useRouter, useRoute } from 'vue-router'
@@ -25,6 +25,6 @@ input {
   border-radius: 5px;
   color: white;
   text-decoration: none;
-  margin-right:5px;
+  margin-right: 5px;
 }
 </style>

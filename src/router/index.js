@@ -1,7 +1,7 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import BoardView from '@/views/BoardView.vue'
 import ModeratorView from '@/views/ModeratorView.vue'
-import Home from '@/views/Home.vue'
+import HomeView from '@/views/HomeView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(),
@@ -10,13 +10,13 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: Home
-    }, 
+      component: HomeView
+    },
     {
       path: '/b/:boardUUID',
       name: 'overview',
       param: true,
-      component: BoardView,
+      component: BoardView
     },
     {
       path: '/b/:boardUUID/team/:teamCode',
@@ -29,7 +29,6 @@ const router = createRouter({
       name: 'moderator',
       param: true,
       component: ModeratorView
-
     }
   ]
 })

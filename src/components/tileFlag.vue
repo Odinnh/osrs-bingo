@@ -1,9 +1,10 @@
 <template>
-    <div class="flag" :style="{backgroundColor}" :class="{inverted:props.inverted}">
-        <font-awesome-icon class="icon"  :icon="['fas', props.icon]" />
-    </div>
+  <div class="flag" :style="{ backgroundColor }" :class="{ inverted: props.inverted }">
+    <FontAwesomeIcon class="icon" :icon="['fas', props.icon]" />
+  </div>
 </template>
 <script setup>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps({
   color: {
@@ -12,27 +13,27 @@ const props = defineProps({
   },
   icon: {
     type: String,
-    required:true
+    required: true
   },
   inverted: {
-    type: String,
-    required:false,
-    default:() => false
+    type: Boolean,
+    required: false,
+    default: () => false
   }
 })
 </script>
 
 <style scoped>
 .flag {
-    background-color:v-bind('props.color');
-    padding:2px;
+  background-color: v-bind('props.color');
+  padding: 2px;
 }
-.icon{
-  position:relative;
+.icon {
+  position: relative;
   z-index: 150;
 }
-.inverted{
-  color:#343434;
-  background-color:white;
+.inverted {
+  color: #343434;
+  background-color: white;
 }
 </style>

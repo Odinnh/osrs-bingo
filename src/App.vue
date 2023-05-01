@@ -2,12 +2,11 @@
 import { RouterView, useRoute } from 'vue-router'
 
 const route = useRoute()
-
 </script>
 
 <template>
   <div class="container">
-    <router-view :key="route.fullPath" />
+    <routerView :key="route.fullPath" />
   </div>
 </template>
 
@@ -18,7 +17,6 @@ body {
   font-family: 'Roboto', sans-serif;
   padding: 0;
   margin: 0;
-
 }
 
 #app {
@@ -51,7 +49,6 @@ body {
   transition: opacity 0.3s;
   padding: 15px;
 }
-
 
 .tooltip:hover .tooltiptext {
   visibility: visible;
@@ -114,4 +111,5 @@ input[type='text'] {
   color: white;
   text-decoration: none;
   margin-right: 5px;
-}</style>
+}
+</style>
