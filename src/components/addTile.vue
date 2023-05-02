@@ -52,7 +52,7 @@ const addTileToDB = async () => {
     description: form.value.description,
     img: form.value.img,
     title: form.value.title,
-    points: form.value.points
+    points: parseInt(form.value.points)
   })
 }
 </script>
