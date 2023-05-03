@@ -23,7 +23,7 @@ import { useFirestore } from 'vuefire'
 import { firebaseApp } from '@/firebaseSettings'
 
 const db = useFirestore(firebaseApp)
-
+// 33 + 82 + 69 + 44 + 15
 // const defaultForm = {
 //   coordinate: '',
 //   title: '',
