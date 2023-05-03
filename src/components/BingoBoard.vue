@@ -150,7 +150,6 @@ const setSidePannel = (tile) => {
 .bingo-board {
   font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
-  aspect-ratio: v-bind(boardWidth) / v-bind(boardHeight);
   width: min(70vh, 70vw);
   background-color: var(--color-secondairy);
   border: var(--border);
@@ -164,10 +163,6 @@ const setSidePannel = (tile) => {
 }
 
 aside {
-  --color-primary: #d9d9d9;
-  --color-secondairy: #242424;
-  --border-radius: 5px;
-  --border: 1px solid var(--color-primary);
   font-family: 'Roboto', sans-serif;
   box-sizing: border-box;
   width: calc(min(29vw, 29vh) - 15px);

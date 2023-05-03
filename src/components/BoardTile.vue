@@ -17,7 +17,6 @@
         'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
-
     <div class="boardTileFlags">
       <template v-if="groups">
         <template v-for="group in groups" :key="tileData.id + group.color">
@@ -111,12 +110,12 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
 
 .isVerify,
 .needVerifying {
-  background-color: rgba(249, 191, 83, 0.1);
+  background-color: var(--color-verifying);
 }
 
 .isCollected {
   position: relative;
-  background-color: rgba(83, 249, 93, 0.1);
+  background-color: var(--color-collected);
 }
 
 .tileFlag {
@@ -138,7 +137,7 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   left: 0;
   z-index: 50;
   content: ' ';
-  background-color: white;
+  background-color: var(--color-primary);
 }
 
 .flag-end-round:after {
@@ -152,9 +151,9 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   border-style: solid;
   height: 0;
   width: 0px;
-  border-left-color: white;
-  border-right-color: white;
-  border-top-color: white;
+  border-left-color: var(--color-primary);
+  border-right-color: var(--color-primary);
+  border-top-color: var(--color-primary);
   border-bottom-color: transparent;
 }
 
@@ -168,7 +167,7 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   height: 0;
   border-left-color: transparent;
   border-right-color: transparent;
-  border-top-color: white;
+  border-top-color: var(--color-primary);
   border-bottom-color: transparent;
 }
 
@@ -178,8 +177,7 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   justify-content: space-between;
   z-index: -1;
 }
-
-img {
+.tile img {
   z-index: 1000000;
 }
 </style>

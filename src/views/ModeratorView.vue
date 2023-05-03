@@ -68,9 +68,9 @@ const goToTeam = async () => {
 
 <style scoped>
 textarea {
-  border: 1px solid white;
+  border: 1px solid var(--color-primary);
   background-color: #343434;
-  color: white;
+  color: var(--color-primary);
   font-size: 1.1rem;
   padding: 15px;
 }

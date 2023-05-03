@@ -11,9 +11,24 @@ const route = useRoute()
 </template>
 
 <style>
+:root {
+  --color-verifying: rgb(249 191 83 0.1);
+  --color-collected: rgb(83 249 93 0.1);
+  --color-primary: #d9d9d9;
+  --color-secondairy: #242424;
+  --color-tertiary: #1e1e1e;
+  --color-accent: #d365ff;
+  --border-radius: 5px;
+  --border: 1px solid var(--color-primary);
+
+  --text-color: var(--color-primary);
+  --text-alt: var(--color-accent);
+
+  --background-color: var(--color-secondairy);
+}
 body {
   background: var(--color-tertiary);
-  color: white;
+  color: var(--color-primary);
   font-family: 'Roboto', sans-serif;
   padding: 0;
   margin: 0;
@@ -38,7 +53,7 @@ body {
   background-color: #555;
   color: #fff;
   text-align: center;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   padding: 5px 0;
   position: absolute;
   z-index: 2000;
@@ -84,8 +99,8 @@ section {
   background-color: #343434;
   border: none;
   border-bottom: 2px solid #0b0b0b;
-  border-radius: 5px;
-  color: white;
+  border-radius: var(--border-radius);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -107,9 +122,16 @@ input[type='text'] {
   background-color: #7b7b7b;
   border: none;
   border-top: 2px solid #0b0b0b;
-  border-radius: 5px;
-  color: white;
+  border-radius: var(--border-radius);
+  color: var(--color-primary);
   text-decoration: none;
   margin-right: 5px;
 }
+/* TODO: change this soit */
+/* img {
+  filter: sepia(100%) contrast(80%) hue-rotate(1010deg) saturate(200%);
+}
+.isCollected img {
+  filter: unset;
+} */
 </style>

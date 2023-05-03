@@ -34,6 +34,7 @@ const props = defineProps({
 }
 .inverted {
   color: #343434;
-  background-color: white;
+  background-color: var(--color-primary);
+  --groupColor: var(--color-primary) !important;
 }
 </style>
