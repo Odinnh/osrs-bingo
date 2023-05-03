@@ -20,15 +20,16 @@
 
     <div class="boardTileFlags">
       <template v-if="groups">
-        <template v-for="group in groups">
+        <template v-for="group in groups" :key="tileData.id + group.color">
           <tileFlag
             class="tileFlag"
-            v-if="group.collected.includes(tileData.id)"
             :class="'flag-end-' + group.flagEnd"
-            :key="tileData.id + group.color"
             :icon="group.icon"
             :color="none"
             :inverted="true"
+            :style="{
+              opacity: group.collected.includes(tileData.id) ? 1 : 0
+            }"
           />
         </template>
       </template>
