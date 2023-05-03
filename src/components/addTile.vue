@@ -1,18 +1,23 @@
 <template>
   <div class="tile" @click="addTileModal">edit</div>
   <div class="modal" :class="{ open: isActive }">
+    id: <input type="text" v-model="form.coordinate" name="id" id="addtiletitle" /><br />
     <form @submit.prevent="addTileToDB">
       title: <input type="text" v-model="form.title" name="title" id="addtiletitle" /><br />
       description:
       <input type="text" v-model="form.description" name="description" id="addtiletitle" /><br />
       points: <input type="text" v-model="form.points" name="type" id="addtiletitle" /><br />
+      img: <input type="text" v-model="form.img" name="type" id="addtiletitle" /><br />
       <button type="submit">Update Tile</button>
+      <button v-if="!props.boardSettings.settings.public" @click.prevent="deleteTile">
+        delete Tile
+      </button>
     </form>
   </div>
 </template>
 <script setup>
 import { ref } from 'vue'
-import { setDoc, doc } from 'firebase/firestore'
+import { setDoc, doc, deleteDoc } from 'firebase/firestore'
 import { useFirestore } from 'vuefire'
 
 import { firebaseApp } from '@/firebaseSettings'
@@ -41,6 +46,13 @@ const props = defineProps({
   tile: {
     type: Object,
     required: true
+  },
+  boardSettings: {
+    type: Object,
+    required: false,
+    default: () => {
+      false
+    }
   }
 })
 const isActive = ref(false)
@@ -54,6 +66,10 @@ const addTileToDB = async () => {
     title: form.value.title,
     points: parseInt(form.value.points)
   })
+}
+
+const deleteTile = async () => {
+  await deleteDoc(doc(db, 'Boards', props.boardUUID, 'Tiles', form.value.coordinate))
 }
 </script>
 <style scoped>

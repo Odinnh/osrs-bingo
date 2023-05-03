@@ -23,7 +23,7 @@
         </label>
       </li>
     </ul>
-    <AddTile :tile="tileData" :boardUUID="props.boardUUID" />
+    <AddTile :tile="tileData" :boardUUID="props.boardUUID" :boardSettings="props.boardSettings" />
   </div>
 </template>
 
@@ -50,6 +50,10 @@ const props = defineProps({
   groups: {
     type: Object,
     required: true
+  },
+  boardSettings: {
+    type: Object,
+    required: false
   }
 })
 const tileData = computed(() => props.tileData)

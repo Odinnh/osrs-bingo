@@ -5,6 +5,7 @@
     <h1>{{ props.tileData.title }}</h1>
     <p>{{ props.tileData.description }}</p>
     <button
+      v-if="teamUUID"
       class="btn"
       @click.prevent="askforVerify"
       :disabled="
@@ -13,7 +14,7 @@
     >
       Mark Collected
     </button>
-    <div v-if="props.tileData.id == 44">
+    <div v-if="props.tileData.id == 44 && props.boardUUID == 'lcB4kyFpY3N6Kb4yGpLj'">
       <p class="tooltip">
         <FontAwesomeIcon class="icon" :icon="['fas', 'disease']" />
         <span class="tooltiptext"
@@ -21,7 +22,7 @@
         >
       </p>
     </div>
-    <div v-if="props.tileData.id == 41">
+    <div v-if="props.tileData.id == 41 && props.boardUUID == 'lcB4kyFpY3N6Kb4yGpLj'">
       <p class="tooltip">
         <FontAwesomeIcon class="icon fire" :icon="['fas', 'dove']" />
         <span class="tooltiptext">Lies? Phoenix maybe?</span>

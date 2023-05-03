@@ -17,6 +17,7 @@
       :key="tileData"
       :boardUUID="props.boardUUID"
       :groups="props.groups"
+      :boardSettings="boardSettings"
     />
   </aside>
 </template>

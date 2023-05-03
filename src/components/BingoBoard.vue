@@ -12,13 +12,38 @@
       @click="setSidePannel(tile)"
     />
   </main>
-  <aside>
-    <p v-if="groupData">
-      <fontAwesomeIcon class="icon" :icon="['fas', groupData.icon]" /> {{ groupData.name }}
-    </p>
-    <form v-if="!groupData" @submit.prevent="goToTeam">
-      team code: <input type="text" name="teamId" v-model="teamCode" />
-    </form>
+  <aside v-if="boardSettings?.settings?.mode == 'teams' || openAside">
+    <div style="justify-content: end; display: flex">
+      <button
+        style="
+          color: #ff3359;
+          font-weight: bolder;
+          font-size: 1.3rem;
+          line-height: 0.2rem;
+          aspect-ratio: 1/1.2;
+          text-align: center;
+          padding-top: 3px;
+        "
+        class="btn"
+        v-if="openAside"
+        @click="
+          () => {
+            openAside = !openAside
+            tileSelected = ''
+          }
+        "
+      >
+        ╳
+      </button>
+    </div>
+    <template v-if="boardSettings?.settings?.mode == 'teams'">
+      <p v-if="groupData">
+        <fontAwesomeIcon class="icon" :icon="['fas', groupData.icon]" /> {{ groupData.name }}
+      </p>
+      <form v-if="!groupData" @submit.prevent="goToTeam">
+        team code: <input type="text" name="teamId" v-model="teamCode" />
+      </form>
+    </template>
     <sidePannel
       :tileData="tileData"
       :collected="collected"
@@ -55,6 +80,7 @@ const router = useRouter()
 const teamCode = ref('')
 const tileData = ref('')
 const tileSelected = ref('')
+const openAside = ref(false)
 
 const boardSettings = useDocument(doc(db, 'Boards', props.boardUUID))
 const tiles = useDocument(collection(db, `Boards/${props.boardUUID}/Tiles`))
@@ -114,6 +140,7 @@ const goToTeam = async () => {
   }
 }
 const setSidePannel = (tile) => {
+  openAside.value = true
   tileData.value = tile
   tileSelected.value = tile
 }
