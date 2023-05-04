@@ -38,14 +38,9 @@ const props = defineProps({
   tilesData: {
     type: Object,
     required: true
-  },
-  selectedTile: {
-    type: String,
-    required: true
   }
 })
 const setSelectedTile = (tile) => {
-  // props.selectedTile = tile
   store.setSelectedTile(tile)
 }
 </script>

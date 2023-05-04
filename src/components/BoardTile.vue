@@ -5,6 +5,7 @@
       isSelected: store.selectedTile.id == props.tileData.id && groupsData,
       isCollected: props.teamData?.collected?.includes(props.tileData.id),
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
+      needVerifying: props.needVerifying,
       allowHover: groupsData ? true : false
     }"
   >
@@ -36,7 +37,6 @@
 <script setup>
 import tileFlag from './tileFlag.vue'
 import { useBoardStore } from '@/stores/board.js'
-import { ref } from 'vue'
 const store = useBoardStore()
 const props = defineProps({
   tileData: {
@@ -50,18 +50,12 @@ const props = defineProps({
   teamData: {
     type: Object,
     required: false
+  },
+  needVerifying: {
+    type: Boolean,
+    required: false
   }
 })
-const needVerify = ref(false)
-;() => {
-  if (props.teamData?.name == 'moderator') {
-    props.groupsData.forEach((group) => {
-      if (group.verify.includes(props.tileData.id)) {
-        needVerify.value = true
-      }
-    })
-  }
-}
 </script>
 
 <style scoped>

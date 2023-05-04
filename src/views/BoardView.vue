@@ -10,7 +10,6 @@
       :teamData="teamData"
       :tilesData="tilesData"
       @set-selected-tile="openSidePannel(tile)"
-      :selectedTile="store.selectedTile"
     />
 
     <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
@@ -154,5 +153,6 @@ aside {
   flex-direction: column;
   gap: 5px;
   padding: 20px;
+  width: 300px;
 }
 </style>

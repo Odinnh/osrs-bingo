@@ -149,8 +149,7 @@ input[type='text'] {
     flex-direction: column !important;
     align-items: center;
   }
-  .main-section > *,
-  .bingo-board {
+  .main-section {
     width: 90% !important;
   }
   .scoreCard ul {
@@ -162,6 +161,9 @@ input[type='text'] {
   .bingo-board .tileFlag {
     --width: 14px !important;
     font-size: 0.5rem;
+  }
+  .main-section > * {
+    width: 100% !important;
   }
 }
 </style>

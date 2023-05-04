@@ -1,12 +1,11 @@
 <template>
   <div v-if="props.tileData" :key="props.tileData.id">
-    <BoardTile :tile="tileData" :groupsData="props.groups" />
-    <h2>{ {{ tileData.id.split('')[0] }} , {{ tileData.id.split('')[1] }} }</h2>
+    <h2>{ {{ props.tileData.id.split('')[0] }} , {{ props.tileData.id.split('')[1] }} }</h2>
     <!-- <h1>{{ tileData.title }}</h1>
         <p>{{ tileData.description }}</p> -->
     <ul>
       <li
-        v-for="group in groups"
+        v-for="group in props.groupsData"
         :key="group.id + tileData.id"
         :class="{ checkThis: group.verify.includes(tileData.id) }"
       >
@@ -23,42 +22,29 @@
         </label>
       </li>
     </ul>
-    <AddTile :tile="tileData" :boardUUID="props.boardUUID" :boardSettings="props.boardSettings" />
+    <!-- <AddTile :tile="tileData" :boardUUID="props.boardUUID" :boardSettings="props.boardSettings" /> -->
   </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
 import { useFirestore } from 'vuefire'
-import BoardTile from './BoardTile.vue'
 import { doc, updateDoc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 
-import AddTile from '@/components/addTile.vue'
+// import AddTile from '@/components/addTile.vue'
 
 const db = useFirestore(firebaseApp)
 
 const props = defineProps({
-  tileData: {
-    type: Object,
-    required: true
-  },
-  boardUUID: {
-    type: String,
-    required: true
-  },
-  groups: {
-    type: Object,
-    required: true
-  },
-  boardSettings: {
-    type: Object,
-    required: false
-  }
+  tileData: { type: Object, required: true },
+  boardUUID: { type: Object, required: true },
+  groupsData: { type: Object, required: true },
+  boardData: { type: Object, required: true }
 })
 const tileData = computed(() => props.tileData)
-// const groups = computed(() => props.groups)
-const groups = computed(() => props.groups.filter((group) => group.name !== 'moderator'))
+
+// const groupsData = computed(() => props.groupsData.filter((group) => group.name !== 'moderator'))
 const updateToCompleted = ({ tile, group }) => {
   if (!group.collected.includes(tile.id)) {
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {

@@ -1,69 +1,74 @@
 <template>
   <section>
-    <ModeratorBoard
-      v-if="groupData && groupData.name == 'moderator'"
-      :boardUUID="boardUUID"
-      :teamCode="teamCode"
-      @verifyTile="verifyTile(tile, groupid)"
-      :groups="groups"
+    <BingoBoard
+      v-if="teamData && teamData.name == 'moderator'"
+      :boardData="boardData"
+      :groupsData="groupsData"
+      :teamData="teamData"
+      :tilesData="tilesData"
     />
     <aside>
-      <form v-if="groupData && groupData.name != 'moderator'" @submit.prevent="goToTeam">
-        You are not a moderator, <br />please enter your code to go to the appropriate board for
-        your team<br /><br />
-        team code: <input type="text" name="teamId" v-model="teamCodeInput" /><button
-          type="submit"
-          class="btn"
-        >
-          Go To Board
-        </button>
-      </form>
+      <p v-if="teamData">{{ teamData.name }}</p>
+      <moderatorSidePannel
+        :tileData="store.selectedTile"
+        :key="store.selectedTile.id"
+        :boardUUID="boardUUID"
+        :groupsData="groupsData"
+        :boardData="boardData"
+      />
     </aside>
   </section>
 </template>
 
 <script setup>
 //project modules
-import ModeratorBoard from '@/components/moderatorBoard.vue'
+// import ModeratorBoard from '@/components/moderatorBoard.vue'
+import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
 //vue modules
-import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
+import { computed } from 'vue'
+import { useRoute } from 'vue-router'
+import { useBoardStore } from '@/stores/board'
 //external modules
+const store = useBoardStore()
 import { useFirestore, useDocument } from 'vuefire'
 
 import { doc, collection } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
-
-const db = useFirestore(firebaseApp)
+import BingoBoard from '@/components/BingoBoard.vue'
 
 const route = useRoute()
-const router = useRouter()
 const teamCode = computed(() => route.params.teamCode)
-const teamCodeInput = ref('')
 const boardUUID = computed(() => route.params.boardUUID)
-const { data: groupData } = useDocument(
+const db = useFirestore(firebaseApp)
+const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
+
+const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
+const { data: teamData } = useDocument(
   doc(db, `Boards/${boardUUID.value}/Groups/${teamCode.value}/`)
 )
-const { data: groups } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
-
-//functions
-const goToTeam = async () => {
-  if (teamCode.value !== '') {
-    let route = {
-      name: 'private-board',
-      params: { boardUUID: boardUUID.value, teamCode: teamCodeInput.value }
-    }
-
-    const { data: modCheck } = useDocument(
-      doc(db, 'Boards', boardUUID.value, 'Groups', teamCodeInput.value)
-    )
-    if (modCheck && modCheck.value.name == 'moderator') {
-      route.name = 'moderator'
-    }
-    router.push(route)
+const groupsData = computed(() => {
+  let tempObject = {}
+  if (GROUPS) {
+    GROUPS?.value?.forEach((group) => {
+      if (group.name != 'moderator') {
+        tempObject[group.id] = {
+          id: group.id,
+          name: group.name,
+          member: group.members,
+          icon: group.icon,
+          color: group.color,
+          points: group.points,
+          flagEnd: group.flagEnd,
+          collected: group.collected,
+          verify: group.verify
+        }
+      }
+    })
   }
-}
+  return tempObject || {}
+})
+
+const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID.value}/Tiles`))
 </script>
 
 <style scoped>
