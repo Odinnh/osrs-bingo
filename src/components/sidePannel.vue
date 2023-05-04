@@ -2,7 +2,7 @@
   <BoardTile :tileData="store.selectedTile" />
   <h2>{{ store.selectedTile.id.split('')[0] }}, {{ store.selectedTile.id.split('')[1] }}</h2>
   <h1>{{ store.selectedTile.title }}</h1>
-  <p>{{ store.selectedTile.title }}</p>
+  <p>{{ store.selectedTile.description }}</p>
   <button class="btn" v-if="teamData" @click.prevent="askforVerify()">Mark Collected</button>
 </template>
 
