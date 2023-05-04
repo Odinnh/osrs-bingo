@@ -12,8 +12,8 @@ const route = useRoute()
 
 <style>
 :root {
-  --color-verifying: rgb(249 191 83 0.1);
-  --color-collected: rgb(83 249 93 0.1);
+  --color-verifying: rgb(249, 191, 83, 10%);
+  --color-collected: rgb(83, 249, 93, 10%);
   --color-primary: #d9d9d9;
   --color-secondairy: #242424;
   --color-tertiary: #1e1e1e;
@@ -103,6 +103,15 @@ section {
   color: var(--color-primary);
   text-decoration: none;
 }
+.btn.close {
+  color: #ff3359;
+  font-weight: bolder;
+  font-size: 1.3rem;
+  line-height: 0.2rem;
+  aspect-ratio: 1/1.2;
+  text-align: center;
+  padding-top: 3px;
+}
 
 .btn:active {
   border-bottom: 0px solid #0b0b0b;
@@ -134,4 +143,25 @@ input[type='text'] {
 .isCollected img {
   filter: unset;
 } */
+
+@media only screen and (max-width: 940px) {
+  .main-section {
+    flex-direction: column !important;
+    align-items: center;
+  }
+  .main-section > *,
+  .bingo-board {
+    width: 90% !important;
+  }
+  .scoreCard ul {
+    padding-left: 0;
+  }
+  .container {
+    width: 100%;
+  }
+  .bingo-board .tileFlag {
+    --width: 14px !important;
+    font-size: 0.5rem;
+  }
+}
 </style>

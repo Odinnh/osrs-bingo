@@ -1,25 +1,22 @@
 <template>
   <div
-    v-if="tileData"
     class="tile"
-    :data-coord="tileData.id"
     :class="{
-      isCollected: collectedTile,
-      needVerifying: props.needVerifying,
-      isVerify: verifyTile,
-      isSelected: tileSelected
+      isSelected: store.selectedTile.id == props.tileData.id && groupsData,
+      isCollected: props.teamData?.collected?.includes(props.tileData.id),
+      isVerify: props.teamData?.verify?.includes(props.tileData.id),
+      allowHover: groupsData ? true : false
     }"
   >
-    <!-- <img :src="'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'" /> -->
     <img
       :src="
-        tileData.img ||
+        props.tileData.img ||
         'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
     <div class="boardTileFlags">
-      <template v-if="groups">
-        <template v-for="group in groups" :key="tileData.id + group.color">
+      <template v-if="props.groupsData">
+        <template v-for="group in props.groupsData" :key="props.tileData.id + group.color">
           <tileFlag
             class="tileFlag"
             :class="'flag-end-' + group.flagEnd"
@@ -27,7 +24,7 @@
             :color="none"
             :inverted="true"
             :style="{
-              opacity: group.collected.includes(tileData.id) ? 1 : 0
+              opacity: group.collected.includes(props.tileData.id) ? 1 : 0
             }"
           />
         </template>
@@ -37,38 +34,34 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import tileFlag from './tileFlag.vue'
+import { useBoardStore } from '@/stores/board.js'
+import { ref } from 'vue'
+const store = useBoardStore()
 const props = defineProps({
-  tile: {
+  tileData: {
     type: Object,
     required: true
   },
-  collected: {
-    type: Array,
-    default: () => {}
-  },
-  verify: {
-    type: Array,
-    default: () => {}
-  },
-  selected: {
-    type: Boolean,
-    default: false
-  },
-  needVerifying: {
-    type: Boolean,
+  groupsData: {
+    type: Object,
     required: false
   },
-  groupsData: {
-    type: Object
+  teamData: {
+    type: Object,
+    required: false
   }
 })
-const tileData = computed(() => props.tile)
-const groups = computed(() => props.groupsData)
-const tileSelected = computed(() => props.selected)
-const collectedTile = computed(() => props.collected?.includes(tileData.value.id))
-const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
+const needVerify = ref(false)
+;() => {
+  if (props.teamData?.name == 'moderator') {
+    props.groupsData.forEach((group) => {
+      if (group.verify.includes(props.tileData.id)) {
+        needVerify.value = true
+      }
+    })
+  }
+}
 </script>
 
 <style scoped>
@@ -90,7 +83,7 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
   border-collapse: separate;
 }
 
-.tile:hover {
+.tile.allowHover:hover {
   scale: 1.05;
   border-color: rgb(252, 229, 55);
   background-color: #3c3c3c;
@@ -147,7 +140,7 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
 
 .flag-end-split:after {
   background-color: unset;
-  border-width: 12px;
+  border-width: calc(var(--width) / 2);
   border-style: solid;
   height: 0;
   width: 0px;
@@ -159,8 +152,8 @@ const verifyTile = computed(() => props.verify?.includes(tileData.value.id))
 
 .flag-end-point:after {
   background-color: unset;
-  border-width: 12px;
-  border-top-width: 22px;
+  border-width: calc(var(--width) / 2);
+  border-top-width: var(--width);
   width: 0px;
   aspect-ratio: 1;
   border-style: solid;

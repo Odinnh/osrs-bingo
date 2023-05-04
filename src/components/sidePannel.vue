@@ -1,76 +1,41 @@
 <template>
-  <div v-if="props.tileData">
-    <BoardTile :tile="props.tileData" :verify="props.verify" :collected="props.collected" />
-    <h2>{ {{ props.tileData.id.split('')[0] }} , {{ props.tileData.id.split('')[1] }} }</h2>
-    <h1>{{ props.tileData.title }}</h1>
-    <p>{{ props.tileData.description }}</p>
-    <button
-      v-if="teamUUID"
-      class="btn"
-      @click.prevent="askforVerify"
-      :disabled="
-        props.verify.includes(props.tileData.id) || props.collected.includes(props.tileData.id)
-      "
-    >
-      Mark Collected
-    </button>
-    <div v-if="props.tileData.id == 44 && props.boardUUID == 'lcB4kyFpY3N6Kb4yGpLj'">
-      <p class="tooltip">
-        <FontAwesomeIcon class="icon" :icon="['fas', 'disease']" />
-        <span class="tooltiptext"
-          >Infestid89 would've gotten this tile on the 30th of April 2023 1:42 AM EST</span
-        >
-      </p>
-    </div>
-    <div v-if="props.tileData.id == 41 && props.boardUUID == 'lcB4kyFpY3N6Kb4yGpLj'">
-      <p class="tooltip">
-        <FontAwesomeIcon class="icon fire" :icon="['fas', 'dove']" />
-        <span class="tooltiptext">Lies? Phoenix maybe?</span>
-      </p>
-    </div>
-  </div>
+  <BoardTile :tileData="store.selectedTile" />
+  <h2>{{ store.selectedTile.id.split('')[0] }}, {{ store.selectedTile.id.split('')[1] }}</h2>
+  <h1>{{ store.selectedTile.title }}</h1>
+  <p>{{ store.selectedTile.title }}</p>
+  <button class="btn" v-if="teamData" @click.prevent="askforVerify()">Mark Collected</button>
 </template>
 
 <script setup>
+import { useBoardStore } from '@/stores/board.js'
+const store = useBoardStore()
 import BoardTile from './BoardTile.vue'
 import { useFirestore } from 'vuefire'
 
 import { doc, updateDoc } from 'firebase/firestore'
 
 import { firebaseApp } from '@/firebaseSettings'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-const db = useFirestore(firebaseApp)
+// import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const props = defineProps({
-  tileData: {
-    type: Object,
-    required: true
-  },
-  collected: {
-    type: Array,
-    default: () => {}
-  },
-  verify: {
-    type: Array,
-    default: () => {}
+  teamData: {
+    type: Object
   },
   boardUUID: {
     type: String,
     required: true
-  },
-  teamUUID: {
-    type: String,
-    required: true
   }
 })
+const db = useFirestore(firebaseApp)
 
-const askforVerify = async () => {
-  if (!props.verify.includes(props.tileData.id)) {
-    // console.log(props.teamUUID)
-    updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', props.teamUUID), {
-      verify: [...props.verify, props.tileData.id]
-    })
+const askforVerify = () => {
+  if (props.teamData) {
+    if (!props.teamData?.verify.includes(store.selectedTile.id)) {
+      console.log(props.teamData.id)
+      updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', props.teamData.id), {
+        verify: [...props.teamData.verify, store.selectedTile.id]
+      })
+    }
   }
 }
 </script>
