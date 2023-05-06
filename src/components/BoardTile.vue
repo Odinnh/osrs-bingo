@@ -3,7 +3,7 @@
     class="tile"
     :class="{
       isSelected: store.selectedTile.id == props.tileData.id && groupsData,
-      isCollected: props.teamData?.collected?.includes(props.tileData.id),
+      isCollected: props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
       needVerifying: props.needVerifying,
       allowHover: groupsData ? true : false

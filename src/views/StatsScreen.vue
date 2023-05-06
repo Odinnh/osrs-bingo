@@ -1,4 +1,10 @@
 <template>
+  <div>
+    <router-link class="btn" :to="{ name: 'overview', params: { boardUUID: boardUUID } }">
+      Go to Bingo Board Overview
+    </router-link>
+  </div>
+
   <h1>{{ boardData?.name }} stats:</h1>
   <div class="graph">
     <BarChart :datasets="datasets" />
