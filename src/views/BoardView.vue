@@ -1,7 +1,12 @@
 <template>
   <section></section>
   <section class="main-section">
-    <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
+    <scoreCard
+      v-if="groupsData"
+      class="scoreCard"
+      :groupsData="groupsData"
+      :boardUUID="boardUUID"
+    />
 
     <BingoBoard
       v-if="boardData"
@@ -9,7 +14,6 @@
       :groupsData="groupsData"
       :teamData="teamData"
       :tilesData="tilesData"
-      @set-selected-tile="openSidePannel(tile)"
     />
 
     <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
@@ -115,15 +119,6 @@ const tilesData = useDocument(collection(db, `Boards/${boardUUID.value}/Tiles`) 
 
 const tileSelected = ref('')
 const openAside = ref(false)
-
-//functions
-
-const openSidePannel = (event, tile) => {
-  // openAside.value = true
-  // tilesData.value = tile
-  // tileSelected.value = tile
-  console.log(tile)
-}
 </script>
 
 <style scoped>

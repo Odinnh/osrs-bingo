@@ -46,13 +46,11 @@ const tileData = computed(() => props.tileData)
 
 // const groupsData = computed(() => props.groupsData.filter((group) => group.name !== 'moderator'))
 const updateToCompleted = ({ tile, group }) => {
-  console.log(Object.hasOwn(group.collected, tile.id))
   if (!Object.hasOwn(group.collected, tile.id)) {
     let temp = {
       ...group.collected
     }
     temp[tile.id] = new Date()
-    console.log(temp)
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
       collected: temp
     })

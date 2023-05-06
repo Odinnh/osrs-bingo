@@ -3,6 +3,7 @@ import BoardView from '@/views/BoardView.vue'
 import ModeratorView from '@/views/ModeratorView.vue'
 import HomeView from '@/views/HomeView.vue'
 import BoardList from '@/views/BoardList.vue'
+import StatsScreen from '@/views/StatsScreen.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -29,6 +30,12 @@ const router = createRouter({
       name: 'private-board',
       param: true,
       component: BoardView
+    },
+    {
+      path: '/b/:boardUUID/stats/',
+      name: 'stats-graph',
+      param: true,
+      component: StatsScreen
     },
     {
       path: '/b/:boardUUID/m/:teamCode',

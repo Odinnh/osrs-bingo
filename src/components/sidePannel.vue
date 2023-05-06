@@ -31,7 +31,6 @@ const db = useFirestore(firebaseApp)
 const askforVerify = () => {
   if (props.teamData) {
     if (!props.teamData?.verify.includes(store.selectedTile.id)) {
-      console.log(props.teamData.id)
       updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', props.teamData.id), {
         verify: [...props.teamData.verify, store.selectedTile.id]
       })

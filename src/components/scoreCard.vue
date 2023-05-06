@@ -19,6 +19,13 @@
         </span>
         score: {{ group.points }}<br /><br />
       </li>
+      <li>
+        <router-link
+          class="btn"
+          :to="{ name: 'stats-graph', params: { boardUUID: props.boardUUID } }"
+          >Go To Graph</router-link
+        >
+      </li>
     </ul>
   </div>
 </template>
@@ -27,6 +34,10 @@ import tileFlag from './tileFlag.vue'
 
 const props = defineProps({
   groupsData: {
+    type: Object,
+    required: true
+  },
+  boardUUID: {
     type: Object,
     required: true
   }
