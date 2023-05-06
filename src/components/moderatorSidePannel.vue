@@ -16,7 +16,7 @@
             :id="group.id + tileData.id"
             type="checkbox"
             :key="group.id + tileData.id"
-            v-bind:checked="group.collected.includes(tileData.id)"
+            v-bind:checked="group.collected.hasOwnProperty(props.tileData.id)"
             @click.prevent="updateToCompleted({ tile: tileData, group: group })"
           />
         </label>
@@ -46,9 +46,15 @@ const tileData = computed(() => props.tileData)
 
 // const groupsData = computed(() => props.groupsData.filter((group) => group.name !== 'moderator'))
 const updateToCompleted = ({ tile, group }) => {
-  if (!group.collected.includes(tile.id)) {
+  console.log(Object.hasOwn(group.collected, tile.id))
+  if (!Object.hasOwn(group.collected, tile.id)) {
+    let temp = {
+      ...group.collected
+    }
+    temp[tile.id] = new Date()
+    console.log(temp)
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
-      collected: [...group.collected, tile.id]
+      collected: temp
     })
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
       points: group.points + tile.points
@@ -59,8 +65,12 @@ const updateToCompleted = ({ tile, group }) => {
       })
     }
   } else {
+    let temp = {
+      ...group.collected
+    }
+    delete temp[tile.id]
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
-      collected: group.collected.filter((item) => item != tile.id)
+      collected: temp
     })
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
       points: group.points - tile.points

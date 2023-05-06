@@ -40,11 +40,4 @@ const askforVerify = () => {
 }
 </script>
 
-<style scoped>
-.icon {
-  color: greenyellow;
-}
-.fire {
-  color: rgb(255, 161, 47);
-}
-</style>
+<style scoped></style>

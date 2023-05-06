@@ -25,7 +25,7 @@
             :color="none"
             :inverted="true"
             :style="{
-              opacity: group.collected.includes(props.tileData.id) ? 1 : 0
+              opacity: group.collected.hasOwnProperty(props.tileData.id) ? 1 : 0
             }"
           />
         </template>
