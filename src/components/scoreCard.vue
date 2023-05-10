@@ -38,7 +38,7 @@ const props = defineProps({
     required: true
   },
   boardUUID: {
-    type: Object,
+    type: String,
     required: true
   }
 })

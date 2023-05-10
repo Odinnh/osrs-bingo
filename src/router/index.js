@@ -16,31 +16,31 @@ const router = createRouter({
     {
       path: '/b/:boardUUID',
       name: 'overview',
-      param: true,
+      params: true,
       component: BoardView
     },
     {
       path: '/boards/',
       name: 'boardOverview',
-      param: true,
+      params: true,
       component: BoardList
     },
     {
       path: '/b/:boardUUID/team/:teamCode',
       name: 'private-board',
-      param: true,
+      params: true,
       component: BoardView
     },
     {
       path: '/b/:boardUUID/stats/',
       name: 'stats-graph',
-      param: true,
+      params: true,
       component: StatsScreen
     },
     {
       path: '/b/:boardUUID/m/:teamCode',
       name: 'moderator',
-      param: true,
+      params: true,
       component: ModeratorView
     }
   ]

@@ -3,8 +3,7 @@
   <main v-if="props.boardData" class="bingo-board">
     <BoardTile
       v-for="tileData in props.tilesData"
-      @click="setSelectedTile({ id: tileData.id, ...tileData })"
-      :key="tileData.id"
+      :key="'board-tile-' + tileData.id"
       :tileData="tileData"
       :groupsData="props.groupsData"
       :teamData="props.teamData"
@@ -40,9 +39,6 @@ const props = defineProps({
     required: true
   }
 })
-const setSelectedTile = (tile) => {
-  store.setSelectedTile(tile)
-}
 </script>
 
 <style scoped>

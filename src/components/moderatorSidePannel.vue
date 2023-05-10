@@ -38,7 +38,7 @@ const db = useFirestore(firebaseApp)
 
 const props = defineProps({
   tileData: { type: Object, required: true },
-  boardUUID: { type: Object, required: true },
+  boardUUID: { type: String, required: true },
   groupsData: { type: Object, required: true },
   boardData: { type: Object, required: true }
 })

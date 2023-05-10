@@ -14,6 +14,7 @@
       :groupsData="groupsData"
       :teamData="teamData"
       :tilesData="tilesData"
+      :key="'bingo-board-' + boardUUID"
     />
 
     <aside v-if="boardData?.settings?.mode == 'teams' || openAside">

@@ -1,6 +1,7 @@
 <template>
   <div
     class="tile"
+    @click="setSelectedTile({ id: props.tileData.id, ...props.tileData })"
     :class="{
       isSelected: store.selectedTile.id == props.tileData.id && groupsData,
       isCollected: props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
@@ -17,7 +18,10 @@
     />
     <div class="boardTileFlags">
       <template v-if="props.groupsData">
-        <template v-for="group in props.groupsData" :key="props.tileData.id + group.color">
+        <template
+          v-for="group in props.groupsData"
+          :key="'tile-flag-' + group.name + '-' + props.tileData.id"
+        >
           <tileFlag
             class="tileFlag"
             :class="'flag-end-' + group.flagEnd"
@@ -56,6 +60,9 @@ const props = defineProps({
     required: false
   }
 })
+const setSelectedTile = (tile) => {
+  store.setSelectedTile(tile)
+}
 </script>
 
 <style scoped>
