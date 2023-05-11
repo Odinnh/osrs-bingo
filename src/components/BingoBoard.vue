@@ -36,7 +36,8 @@ const props = defineProps({
   },
   tilesData: {
     type: Object,
-    required: true
+    required: true,
+    default: () => {}
   }
 })
 </script>

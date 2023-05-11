@@ -11,7 +11,7 @@
   </div>
 </template>
 <script setup>
-import { computed, onBeforeMount } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useFirestore, useDocument } from 'vuefire'
 //external modules
@@ -20,13 +20,9 @@ import { firebaseApp } from '@/firebaseSettings'
 import BarChart from '@/components/BarChart.vue'
 const route = useRoute()
 const boardUUID = computed(() => route.params.boardUUID || '')
-let GROUPS = undefined
-let TILESDATA = undefined
-onBeforeMount(() => {
-  GROUPS = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
-  TILESDATA = useDocument(collection(db, 'Boards', boardUUID.value, 'Tiles'))
-})
 const db = useFirestore(firebaseApp)
+let GROUPS = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
+let TILESDATA = useDocument(collection(db, 'Boards', boardUUID.value, 'Tiles'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
 const tiles = computed(() => {
@@ -61,6 +57,7 @@ const datasets = computed(() => {
   let tempObject = []
 
   if (GROUPS?.value) {
+    //TODO: use reduce/map instead of forEach
     GROUPS?.value?.forEach((group) => {
       if (group.name != 'moderator') {
         tempObject.push({
@@ -73,7 +70,7 @@ const datasets = computed(() => {
     })
   }
 
-  return tempObject || []
+  return tempObject
 })
 </script>
 <style>

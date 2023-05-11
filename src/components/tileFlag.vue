@@ -1,5 +1,5 @@
 <template>
-  <div class="flag" :style="{ backgroundColor }" :class="{ inverted: props.inverted }">
+  <div class="flag" :style="{ backgroundColor: props.color }" :class="{ inverted: props.inverted }">
     <FontAwesomeIcon class="icon" :icon="['fas', props.icon]" />
   </div>
 </template>
@@ -25,7 +25,6 @@ const props = defineProps({
 
 <style scoped>
 .flag {
-  background-color: v-bind('props.color');
   padding: 2px;
 }
 .icon {

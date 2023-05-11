@@ -26,7 +26,7 @@
             class="tileFlag"
             :class="'flag-end-' + group.flagEnd"
             :icon="group.icon"
-            :color="none"
+            color="none"
             :inverted="true"
             :style="{
               opacity: group.collected.hasOwnProperty(props.tileData.id) ? 1 : 0
