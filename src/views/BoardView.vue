@@ -1,12 +1,7 @@
 <template>
   <section></section>
   <section class="main-section">
-    <scoreCard
-      v-if="groupsData"
-      class="scoreCard"
-      :groupsData="groupsData"
-      :boardUUID="boardStore.boardUUID"
-    />
+    <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
 
     <BingoBoard
       v-if="boardData && tilesData"
@@ -14,7 +9,7 @@
       :groupsData="groupsData"
       :teamData="teamData"
       :tilesData="tilesData"
-      :key="'bingo-board-' + boardStore.boardUUID"
+      :key="'bingo-board-' + boardUUID"
     />
 
     <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
@@ -40,13 +35,7 @@
           team code: <input type="text" name="teamId" v-model="teamCode" />
         </form>
       </template>
-      <sidePannel
-        v-if="boardStore.selectedTile != ''"
-        :groupsData="groupsData"
-        :teamData="teamData"
-        :boardData="boardData"
-        :boardUUID="boardUUID"
-      />
+      <sidePannel v-if="boardStore.selectedTile != ''" />
     </aside>
   </section>
   <section></section>
@@ -65,24 +54,28 @@ import BingoBoard from '@/components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '@/stores/board.js'
-
+const props = defineProps({
+  boardUUID: { type: String },
+  teamCode: { type: String }
+})
+console.log(props)
 const boardStore = useBoardStore()
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
-const teamCode = computed(() => route.params.teamCode || 'all')
+const boardUUID = boardStore.boardUUID
+const teamCode = ref(route.params.teamCode || 'all')
 
 const goToTeam = async () => {
   if (teamCode.value !== '') {
     let route = {
       name: 'private-board',
-      params: { boardUUID: boardStore.boardUUID, teamCode: teamCode.value }
+      params: { boardUUID: boardUUID, teamCode: teamCode.value }
     }
 
-    const { data: modCheck } = useDocument(
-      doc(db, 'Boards', boardStore.boardUUID, 'Groups', teamCode.value)
-    )
+    const { data: modCheck } = useDocument(doc(db, 'Boards', boardUUID, 'Groups', teamCode.value))
     if (modCheck && modCheck?.value?.name == 'moderator') {
+      console.log(modCheck.value)
       route.name = 'moderator'
     }
     router.push(route)
@@ -90,12 +83,10 @@ const goToTeam = async () => {
 }
 
 const db = useFirestore(firebaseApp)
-const { data: GROUPS } = useDocument(collection(db, 'Boards', boardStore.boardUUID, 'Groups'))
+const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
-const boardData = useDocument(doc(db, 'Boards', boardStore.boardUUID))
-const { data: teamData } = useDocument(
-  doc(db, `Boards/${boardStore.boardUUID}/Groups/${teamCode.value}/`)
-)
+const boardData = useDocument(doc(db, 'Boards', boardUUID))
+const { data: teamData } = useDocument(doc(db, `Boards/${boardUUID}/Groups/${teamCode.value}/`))
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
@@ -117,7 +108,7 @@ const groupsData = computed(() => {
   }
   return tempObject || {}
 })
-const { data: tilesData } = useDocument(collection(db, `Boards/${boardStore.boardUUID}/Tiles`))
+const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
 const tileSelected = ref('')
 const openAside = ref(false)
 </script>

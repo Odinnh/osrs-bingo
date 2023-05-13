@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul v-if="props.groupsData">
-      <li v-for="(group, index) in props.groupsData" :key="index + groupsData" class="tooltip">
+      <li v-for="(group, index) in props.groupsData" :key="index + group.id" class="tooltip">
         <tileFlag
           :color="group.color"
           class="tileFlag"
@@ -20,9 +20,7 @@
         score: {{ group.points }}<br /><br />
       </li>
       <li>
-        <router-link
-          class="btn"
-          :to="{ name: 'stats-graph', params: { boardUUID: props.boardUUID } }"
+        <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: UUID } }"
           >Go To Graph</router-link
         >
       </li>
@@ -30,15 +28,14 @@
   </div>
 </template>
 <script setup>
+// import { storeToRefs } from 'pinia'
 import tileFlag from './tileFlag.vue'
-
+import { useBoardStore } from '@/stores/board'
+const boardStore = useBoardStore()
+const UUID = boardStore.boardUUID
 const props = defineProps({
   groupsData: {
     type: Object,
-    required: true
-  },
-  boardUUID: {
-    type: String,
     required: true
   }
 })

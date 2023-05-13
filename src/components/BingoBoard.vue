@@ -7,7 +7,7 @@
       :tileData="tileData"
       :groupsData="props.groupsData"
       :teamData="props.teamData"
-      :selected="boardStore.selectedTile == tileData.id"
+      :selected="selectedTile == tileData.id"
     />
   </main>
 </template>
@@ -15,7 +15,9 @@
 <script setup>
 import BoardTile from '@/components/BoardTile.vue'
 import { useBoardStore } from '@/stores/board.js'
+import { storeToRefs } from 'pinia'
 const boardStore = useBoardStore()
+const selectedTile = storeToRefs(boardStore.selectedTile)
 const props = defineProps({
   boardData: {
     type: Object,

@@ -1,68 +1,31 @@
 <template>
-  <div
-    class="tile"
-    @click="setSelectedTile({ id: props.tileData.id, ...props.tileData })"
-    :class="{
-      isSelected: boardStore.selectedTile.id == props.tileData.id && groupsData,
-      isCollected:
-        props.teamData && props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
-      isVerify: props.teamData?.verify?.includes(props.tileData.id),
-      needVerifying: props.needVerifying,
-      allowHover: groupsData ? true : false
-    }"
-  >
+  <div class="tile" @click="setSelectedTile()">
     <img
-      :src="
-        props.tileData.img ||
-        'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+      src="
+        https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e
       "
     />
-    <div class="boardTileFlags">
-      <template v-if="props.groupsData">
-        <template
-          v-for="group in props.groupsData"
-          :key="'tile-flag-' + group.name + '-' + props.tileData.id"
-        >
-          <tileFlag
-            class="tileFlag"
-            :class="'flag-end-' + group.flagEnd"
-            :icon="group.icon"
-            color="none"
-            :inverted="true"
-            :style="{
-              opacity: group.collected.hasOwnProperty(props.tileData.id) ? 1 : 0
-            }"
-          />
-        </template>
-      </template>
-    </div>
+    index:{{ props.tileID }}
   </div>
 </template>
 
 <script setup>
-import tileFlag from './tileFlag.vue'
-import { useBoardStore } from '@/stores/board.js'
-const boardStore = useBoardStore()
+import { defineProps } from 'vue'
+import { useCreateStore } from '../stores/boardCreation'
 const props = defineProps({
-  tileData: {
-    type: Object,
-    required: true
+  tileID: {
+    type: Number
   },
-  groupsData: {
-    type: Object,
-    required: false
+  width: {
+    type: Number
   },
-  teamData: {
-    type: Object,
-    required: false
-  },
-  needVerifying: {
-    type: Boolean,
-    required: false
+  height: {
+    type: Number
   }
 })
-const setSelectedTile = (tile) => {
-  boardStore.setSelectedTile(tile)
+const createStore = useCreateStore()
+const setSelectedTile = () => {
+  createStore.selectedTile = props.tileID
 }
 </script>
 
