@@ -3,7 +3,7 @@
     class="tile"
     @click="setSelectedTile({ id: props.tileData.id, ...props.tileData })"
     :class="{
-      isSelected: store.selectedTile.id == props.tileData.id && groupsData,
+      isSelected: boardStore.selectedTile.id == props.tileData.id && groupsData,
       isCollected: props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
       needVerifying: props.needVerifying,
@@ -41,7 +41,7 @@
 <script setup>
 import tileFlag from './tileFlag.vue'
 import { useBoardStore } from '@/stores/board.js'
-const store = useBoardStore()
+const boardStore = useBoardStore()
 const props = defineProps({
   tileData: {
     type: Object,
@@ -61,7 +61,7 @@ const props = defineProps({
   }
 })
 const setSelectedTile = (tile) => {
-  store.setSelectedTile(tile)
+  boardStore.setSelectedTile(tile)
 }
 </script>
 
