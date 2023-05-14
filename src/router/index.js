@@ -5,6 +5,7 @@ import HomeView from '@/views/HomeView.vue'
 import newBoard from '@/views/newBoard.vue'
 import BoardList from '@/views/BoardList.vue'
 import StatsScreen from '@/views/StatsScreen.vue'
+import EditBoard from '../views/EditBoard.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -18,6 +19,12 @@ const router = createRouter({
       path: '/new',
       name: 'newBoard',
       component: newBoard
+    },
+    {
+      path: '/edit/:boardUUID',
+      name: 'editBoard',
+      props: true,
+      component: EditBoard
     },
     {
       path: '/b/:boardUUID',

@@ -5,34 +5,26 @@
         https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e
       "
     />
-    index:{{ props.tileID }}
+    {{ props.tile.coordinates }}
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
 import { useCreateStore } from '../stores/boardCreation'
 const props = defineProps({
-  tileID: {
-    type: Number
-  },
-  width: {
-    type: Number
-  },
-  height: {
-    type: Number
+  tile: {
+    type: Object
   }
 })
 const createStore = useCreateStore()
 const setSelectedTile = () => {
-  createStore.selectedTile = props.tileID
+  createStore.selectedTile = { coordinates: props.tile.coordinates }
 }
 </script>
 
 <style scoped>
 .tile {
   font-family: 'Roboto', sans-serif;
-  user-select: none;
   box-sizing: border-box;
   border: var(--border);
   border-radius: var(--border-radius);
