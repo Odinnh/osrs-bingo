@@ -1,55 +1,54 @@
 <template>
-  <section></section>
-  <section class="main-section">
-    <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
-
-    <BingoBoard
-      v-if="
-        boardData &&
-        tilesData &&
-        (boardData.settings.public ||
-          user.data.uid == boardData.ownerID ||
-          user.data.uid == ADMIN_ID)
-      "
-      :boardData="boardData"
-      :groupsData="groupsData"
-      :teamData="teamData"
-      :tilesData="tilesData"
-      :key="'bingo-board-' + boardUUID"
-    />
-    <h1
-      v-if="!boardData.public && (boardData.ownerID == user.data.uid || user.data.uid == ADMIN_ID)"
-    >
-      Not authenticated
-    </h1>
-
-    <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
-      <div style="justify-content: end; display: flex">
-        <button
-          class="btn close"
-          v-if="openAside"
-          @click="
-            () => {
-              openAside = !openAside
-              tileSelected = ''
-            }
-          "
-        >
-          ╳
-        </button>
-      </div>
-      <template v-if="boardData?.settings?.mode == 'teams'">
-        <p v-if="teamData">
-          <fontAwesomeIcon class="icon" :icon="['fas', teamData.icon]" /> {{ teamData.name }}
-        </p>
-        <form v-if="!teamData" @submit.prevent="goToTeam">
-          team code: <input type="text" name="teamId" v-model="teamCode" />
-        </form>
-      </template>
-      <sidePannel v-if="boardStore.selectedTile != ''" />
-    </aside>
-  </section>
-  <section></section>
+  <template
+    v-if="
+      boardData &&
+      tilesData &&
+      (boardData.settings.public || user.data.uid == boardData.ownerID || user.data.uid == ADMIN_ID)
+    "
+  >
+    <section></section>
+    <section class="main-section">
+      <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
+      <BingoBoard
+        :boardData="boardData"
+        :groupsData="groupsData"
+        :teamData="teamData"
+        :tilesData="tilesData"
+        :key="'bingo-board-' + boardUUID"
+      />
+      <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
+        <div style="justify-content: end; display: flex">
+          <button
+            class="btn close"
+            v-if="openAside"
+            @click="
+              () => {
+                openAside = !openAside
+                tileSelected = ''
+              }
+            "
+          >
+            ╳
+          </button>
+        </div>
+        <template v-if="boardData?.settings?.mode == 'teams'">
+          <p v-if="teamData">
+            <fontAwesomeIcon class="icon" :icon="['fas', teamData.icon]" /> {{ teamData.name }}
+          </p>
+          <form v-if="!teamData" @submit.prevent="goToTeam">
+            team code: <input type="text" name="teamId" v-model="teamCode" />
+          </form>
+        </template>
+        <sidePannel v-if="boardStore.selectedTile != ''" />
+      </aside>
+    </section>
+    <section></section>
+  </template>
+  <h1
+    v-if="!boardData.public && !(boardData.ownerID == user.data.uid || user.data.uid == ADMIN_ID)"
+  >
+    Not authenticated
+  </h1>
 </template>
 
 <script setup>
