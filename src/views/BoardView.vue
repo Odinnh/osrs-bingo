@@ -4,7 +4,13 @@
     <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
 
     <BingoBoard
-      v-if="boardData && tilesData"
+      v-if="
+        boardData &&
+        tilesData &&
+        (boardData.settings.public ||
+          user.data.uid == boardData.ownerID ||
+          user.data.uid == ADMIN_ID)
+      "
       :boardData="boardData"
       :groupsData="groupsData"
       :teamData="teamData"
@@ -54,12 +60,11 @@ import BingoBoard from '@/components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '@/stores/board.js'
-const props = defineProps({
-  boardUUID: { type: String },
-  teamCode: { type: String }
-})
-console.log(props)
+import { useUserStateStore } from '../stores/userState'
+const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
+const userStateStore = useUserStateStore()
+const user = userStateStore.user
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
@@ -75,7 +80,6 @@ const goToTeam = async () => {
 
     const { data: modCheck } = useDocument(doc(db, 'Boards', boardUUID, 'Groups', teamCode.value))
     if (modCheck && modCheck?.value?.name == 'moderator') {
-      console.log(modCheck.value)
       route.name = 'moderator'
     }
     router.push(route)

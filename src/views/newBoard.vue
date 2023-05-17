@@ -1,34 +1,37 @@
 <template>
-  <h1
-    class="board-title"
-    ref="titleElement"
-    contenteditable
-    spellcheck="false"
-    @keydown.enter="validate"
-    @blur="validate"
-  >
-    {{ board.name }}
-  </h1>
-  <div>
-    name: width:
-    <input min="2" max="9" name="width" type="range" v-model="board.settings.width" />{{
-      board.settings.width
-    }}<br />
-    height: <input min="2" max="9" name="height" type="range" v-model="board.settings.height" />{{
-      board.settings.height
-    }}<br />
-    total tiles: {{ board.settings.width * board.settings.height }}
-  </div>
-  <main v-if="tiles" class="bingo-board">
-    <template v-for="tile of tiles" :key="tile.coordinates">
-      <emptyTile :tile="tile" />
-    </template>
-  </main>
-  <aside>
-    {{ createStore.selectedTile.hasOwnProperty('coordinates') }}
-    <EditTileSidePanel v-if="createStore.selectedTile.hasOwnProperty('coordinates')" />
-  </aside>
-  <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
+  <template v-if="user.loggedIn">
+    <h1
+      class="board-title"
+      ref="titleElement"
+      contenteditable
+      spellcheck="false"
+      @keydown.enter="validate"
+      @blur="validate"
+    >
+      {{ board.name }}
+    </h1>
+    <div>
+      name: width:
+      <input min="2" max="9" name="width" type="range" v-model="board.settings.width" />{{
+        board.settings.width
+      }}<br />
+      height: <input min="2" max="9" name="height" type="range" v-model="board.settings.height" />{{
+        board.settings.height
+      }}<br />
+      total tiles: {{ board.settings.width * board.settings.height }}
+    </div>
+    <main v-if="tiles" class="bingo-board">
+      <template v-for="tile of tiles" :key="tile.coordinates">
+        <emptyTile :tile="tile" />
+      </template>
+    </main>
+    <aside>
+      {{ createStore.selectedTile.hasOwnProperty('coordinates') }}
+      <EditTileSidePanel v-if="createStore.selectedTile.hasOwnProperty('coordinates')" />
+    </aside>
+    <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
+  </template>
+  <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
 </template>
 
 <script setup>
@@ -36,6 +39,7 @@ import { ref, computed } from 'vue'
 import emptyTile from '../components/emptyTile.vue'
 import EditTileSidePanel from '../components/editTileSidePanel.vue'
 import { useCreateStore } from '../stores/boardCreation'
+import { useUserStateStore } from '../stores/userState'
 import { setDoc, doc, collection } from 'firebase/firestore'
 import { useFirestore } from 'vuefire'
 
@@ -44,16 +48,19 @@ import { useRouter } from 'vue-router'
 
 const db = useFirestore(firebaseApp)
 const createStore = useCreateStore()
+const userStateStore = useUserStateStore()
 const router = useRouter()
 
 const board = ref({
   name: '<name of bingo board>',
+
   settings: {
     width: 8,
     height: 11,
     public: false
   }
 })
+const user = userStateStore.user
 const titleElement = ref(null)
 
 const validate = (event) => {
@@ -68,11 +75,6 @@ const tiles = computed(() => {
     i <= parseInt(board.value.settings.width) * board.value.settings.height - 1;
     i++
   ) {
-    console.table({
-      index: i,
-      x: ((i % parseInt(board.value.settings.width)) + 1) * 100,
-      y: Math.floor(i / parseInt(board.value.settings.width)) + 1
-    })
     let coords =
       ((i % parseInt(board.value.settings.width)) + 1) * 100 +
       (Math.floor(i / parseInt(board.value.settings.width)) + 1)
@@ -83,7 +85,7 @@ const tiles = computed(() => {
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
 
-  await setDoc(newBoard, board.value).then(() => {
+  await setDoc(newBoard, { ...board.value, ownerID: user.data.uid }).then(() => {
     router.push({
       name: 'editBoard',
       params: {
