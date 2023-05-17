@@ -1,10 +1,5 @@
 <template>
   <div class="tile" @click="setSelectedTile()">
-    <img
-      src="
-        https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e
-      "
-    />
     {{ props.tile.coordinates }}
   </div>
 </template>

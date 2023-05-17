@@ -1,5 +1,5 @@
 <template>
-  <template v-if="user.loggedIn">
+  <template v-if="user.loggedIn && user.data.uid != 0">
     <h1
       class="board-title"
       ref="titleElement"

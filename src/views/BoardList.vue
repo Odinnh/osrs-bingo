@@ -6,7 +6,7 @@
       <router-link :to="{ name: 'newBoard' }" class="btn">+ create board</router-link>
     </ul>
   </template>
-  <template v-if="!user.loggedIn">sorry you cant view your boards</template>
+  <h1 v-if="!user.loggedIn">Not Authenticated</h1>
 </template>
 <script setup>
 import { useRouter } from 'vue-router'

@@ -17,6 +17,9 @@
       :tilesData="tilesData"
       :key="'bingo-board-' + boardUUID"
     />
+    <h1 v-if="!(boardData.ownerID == user.data.uid || user.data.uid == ADMIN_ID)">
+      Not authenticated
+    </h1>
 
     <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
       <div style="justify-content: end; display: flex">
