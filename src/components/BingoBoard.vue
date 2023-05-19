@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import BoardTile from '@/components/BoardTile.vue'
+import BoardTile from '../components/BoardTile.vue'
 import { useBoardStore } from '@/stores/board.js'
 import { storeToRefs } from 'pinia'
 const boardStore = useBoardStore()

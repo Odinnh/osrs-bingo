@@ -55,8 +55,8 @@ const board = ref({
   name: '<name of bingo board>',
 
   settings: {
-    width: 8,
-    height: 11,
+    width: 2,
+    height: 2,
     public: false
   }
 })
@@ -69,30 +69,44 @@ const validate = (event) => {
 }
 
 const tiles = computed(() => {
-  let tempObject = {}
+  let tempObject = []
   for (
     let i = 0;
     i <= parseInt(board.value.settings.width) * board.value.settings.height - 1;
     i++
   ) {
     let coords =
-      ((i % parseInt(board.value.settings.width)) + 1) * 100 +
-      (Math.floor(i / parseInt(board.value.settings.width)) + 1)
-    tempObject[coords] = { coordinates: coords }
+      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 100 +
+      ((i % parseInt(board.value.settings.width)) + 1)
+    tempObject.push({
+      title: '<title of tile>',
+      points: 0,
+      type: 'drop',
+      description: 'description',
+      coordinates: coords,
+      img: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+    })
   }
   return tempObject
 })
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
-
-  await setDoc(newBoard, { ...board.value, ownerID: user.data.uid }).then(() => {
-    router.push({
-      name: 'editBoard',
-      params: {
-        boardUUID: newBoard.id
-      }
+  await setDoc(newBoard, { ...board.value, ownerID: user.data.uid })
+    .then(() => {
+      tiles.value.forEach((tile) => {
+        setDoc(doc(db, 'Boards', newBoard.id, 'Tiles', `${tile.coordinates}`), {
+          ...tile
+        })
+      })
     })
-  })
+    .then(() => {
+      router.push({
+        name: 'editBoard',
+        params: {
+          boardUUID: newBoard.id
+        }
+      })
+    })
 }
 </script>
 

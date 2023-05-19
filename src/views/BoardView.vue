@@ -6,7 +6,7 @@
       (boardData.settings.public || user.data.uid == boardData.ownerID || user.data.uid == ADMIN_ID)
     "
   >
-    <section></section>
+    <section>{{ boardData.name }}</section>
     <section class="main-section">
       <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
       <BingoBoard
@@ -14,17 +14,15 @@
         :groupsData="groupsData"
         :teamData="teamData"
         :tilesData="tilesData"
-        :key="'bingo-board-' + boardUUID"
+        :key="'bingo-board-' + boardStore.boardUUID"
       />
-      <aside v-if="boardData?.settings?.mode == 'teams' || openAside">
+      <aside v-if="selectedTile != ''">
         <div style="justify-content: end; display: flex">
           <button
             class="btn close"
-            v-if="openAside"
             @click="
               () => {
-                openAside = !openAside
-                tileSelected = ''
+                boardStore.setSelectedTile('')
               }
             "
           >
@@ -44,15 +42,12 @@
     </section>
     <section></section>
   </template>
-  <h1
-    v-if="!boardData.public && !(boardData.ownerID == user.data.uid || user.data.uid == ADMIN_ID)"
-  >
-    Not authenticated
-  </h1>
+  <template v-else>
+    <h1>Not authenticated</h1>
+  </template>
 </template>
 
 <script setup>
-// TODO: suspense mischien
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFirestore, useDocument } from 'vuefire'
@@ -63,10 +58,11 @@ import { firebaseApp } from '@/firebaseSettings'
 import BingoBoard from '@/components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
-import { useBoardStore } from '@/stores/board.js'
+import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
+const selectedTile = boardStore.selectedTile
 const userStateStore = useUserStateStore()
 const user = userStateStore.user
 const route = useRoute()
@@ -117,8 +113,6 @@ const groupsData = computed(() => {
   return tempObject || {}
 })
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
-const tileSelected = ref('')
-const openAside = ref(false)
 </script>
 
 <style scoped>

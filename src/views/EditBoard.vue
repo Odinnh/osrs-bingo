@@ -4,7 +4,10 @@
   >
     {{ { id: board.id, ...board } }}
   </h1>
-  <h1 v-if="!(board.ownerID == user.data.uid || user.data.uid == ADMIN_ID)">Not authenticated</h1>
+
+  <h1 v-if="board && !(board.ownerID == user.data.uid || user.data.uid == ADMIN_ID)">
+    Not authenticated
+  </h1>
 </template>
 <script setup>
 import { ref } from 'vue'

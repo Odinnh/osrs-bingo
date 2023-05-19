@@ -8,7 +8,8 @@
         props.teamData && props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
       needVerifying: props.needVerifying,
-      allowHover: groupsData ? true : false
+      allowHover: groupsData ? true : false,
+      hidden: props.tileData?.type == 'null'
     }"
   >
     <img
@@ -174,5 +175,9 @@ const setSelectedTile = (tile) => {
 }
 .tile img {
   z-index: 1000000;
+}
+.hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 </style>
