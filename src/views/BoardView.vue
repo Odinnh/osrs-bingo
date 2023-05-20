@@ -1,4 +1,12 @@
 <template>
+  <button
+    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
+    class="btn dashboard"
+    @click.prevent="router.push({ name: 'boardOverview' })"
+  >
+    To Dashboard
+  </button>
+  <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
   <template
     v-if="
       boardData &&
@@ -76,7 +84,7 @@ const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
 const userStateStore = useUserStateStore()
-const user = userStateStore.user
+let user = ref(userStateStore.user)
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
@@ -126,6 +134,28 @@ const groupsData = computed(() => {
   return tempObject || {}
 })
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
+
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+
+const provider = new GoogleAuthProvider()
+const auth = getAuth()
+
+const popupLogin = () => {
+  signInWithPopup(auth, provider)
+    .then((response) => {
+      userStateStore.setUser({
+        loggedIn: true,
+        data: response.user
+      })
+      router.push({ name: 'overview', params: { boardUUID: boardUUID } })
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      console.error(errorCode, errorMessage)
+    })
+}
 </script>
 
 <style scoped>

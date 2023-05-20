@@ -112,6 +112,12 @@ section {
   text-align: center;
   padding-top: 3px;
 }
+.btn.dashboard {
+  display: block;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+}
 
 .btn:active {
   border-bottom: 0px solid #0b0b0b;

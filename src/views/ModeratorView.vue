@@ -1,10 +1,18 @@
 <template>
+  <button
+    v-if="user && user.data.uid != 0"
+    class="btn dashboard"
+    @click.prevent="router.push({ name: 'boardOverview' })"
+  >
+    To Dashboard
+  </button>
   <section>{{ boardData.name }}</section>
   <section
     v-if="
       user &&
       user.data.uid != 0 &&
       (user.data.uid == boardData.ownerID ||
+        user.data.uid == ADMIN_ID ||
         boardData.moderators.includes(user.data.uid) ||
         boardData.editors.includes(user.data.uid))
     "
@@ -28,8 +36,8 @@
 // import ModeratorBoard from '@/components/moderatorBoard.vue'
 import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
 //vue modules
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useBoardStore } from '@/stores/board'
 import { useUserStateStore } from '../stores/userState'
 //external modules
@@ -40,8 +48,10 @@ const user = userStateStore.user
 import { doc, collection } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 import BingoBoard from '@/components/BingoBoard.vue'
+const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const route = useRoute()
+const router = useRouter()
 const boardUUID = computed(() => route.params.boardUUID)
 const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))

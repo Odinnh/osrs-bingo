@@ -1,11 +1,18 @@
 <template>
+  <button
+    v-if="user && user.data.uid != 0"
+    class="btn dashboard"
+    @click.prevent="router.push({ name: 'boardOverview' })"
+  >
+    To Dashboard
+  </button>
   <template
     v-if="
       boardData &&
       user.data.ui != 0 &&
       (user.data.uid == boardData.ownerID ||
         user.data.uid == ADMIN_ID ||
-        boardData.editors.include(user.data.uid))
+        boardData.editors.includes(user.data.uid))
     "
   >
     <section>
@@ -69,7 +76,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useFirestore, useDocument } from 'vuefire'
 //external modules
 import { collection, doc } from 'firebase/firestore'
@@ -85,6 +92,7 @@ const boardStore = useBoardStore()
 const userStateStore = useUserStateStore()
 const user = userStateStore.user
 const route = useRoute()
+const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 const boardUUID = boardStore.boardUUID
 
