@@ -31,6 +31,22 @@
         name="type"
         id="addtiletitle"
       /><br />
+      hidden:
+      <input
+        v-if="boardStore.selectedTile?.hidden !== undefined"
+        type="checkbox"
+        v-model="boardStore.selectedTile.hidden"
+        name="type"
+        id="addtiletitle"
+      /><br />
+      type:
+      <input
+        v-if="boardStore.selectedTile?.type !== undefined"
+        type="checkbox"
+        v-model="boardStore.selectedTile.type"
+        name="type"
+        id="addtiletitle"
+      /><br />
       <button type="submit">Update Tile</button>
     </form>
   </div>
@@ -51,7 +67,9 @@ const addTileToDB = async () => {
     description: tempTile.description,
     img: tempTile.img,
     title: tempTile.title,
-    points: parseInt(tempTile.points)
+    points: parseInt(tempTile.points),
+    hidden: tempTile?.hidden !== undefined ? tempTile.hidden : false,
+    type: tempTile?.type !== undefined ? tempTile.type : 'drop'
   })
   boardStore.setSelectedTile(tempTile)
 }

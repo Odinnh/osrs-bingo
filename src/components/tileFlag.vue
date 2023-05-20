@@ -32,8 +32,8 @@ const props = defineProps({
   z-index: 150;
 }
 .inverted {
-  color: var(--color-secondairy);
-  background-color: var(--color-primary);
+  color: var(--color-secondairy) !important ;
+  background-color: var(--color-primary) !important;
   --groupColor: var(--color-primary) !important;
 }
 </style>

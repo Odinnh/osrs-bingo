@@ -89,6 +89,7 @@ const tiles = computed(() => {
       title: '<title of tile>',
       points: 0,
       type: 'drop',
+      hidden: 'false',
       description: 'description',
       coordinates: coords,
       img: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'

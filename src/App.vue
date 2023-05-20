@@ -15,9 +15,9 @@ const route = useRoute()
   --color-verifying: rgb(249, 191, 83, 10%);
   --color-collected: rgb(83, 249, 93, 10%);
   --color-primary: #d9d9d9;
-  --color-secondairy: #242424;
-  --color-tertiary: #1e1e1e;
-  --color-accent: #d365ff;
+  --color-secondairy: #212529;
+  --color-tertiary: #171a1c;
+  --color-accent: #fab005;
   --border-radius: 5px;
   --border: 1px solid var(--color-primary);
 

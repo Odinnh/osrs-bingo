@@ -8,6 +8,7 @@
       :groupsData="props.groupsData"
       :teamData="props.teamData"
       :selected="selectedTile == tileData.id"
+      :isEditor="props.isEditor"
     />
   </main>
 </template>
@@ -41,6 +42,11 @@ const props = defineProps({
     type: Object,
     required: true,
     default: () => {}
+  },
+  isEditor: {
+    type: Boolean,
+    required: false,
+    default: false
   }
 })
 </script>

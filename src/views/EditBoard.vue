@@ -24,6 +24,7 @@
         :groupsData="groupsData"
         :tilesData="tilesData"
         :key="'bingo-board-' + boardStore.boardUUID"
+        :isEditor="true"
       />
       <aside v-if="boardStore.selectedTile != ''">
         <div style="justify-content: end; display: flex">

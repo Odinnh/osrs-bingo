@@ -9,7 +9,7 @@
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
       needVerifying: props.needVerifying,
       allowHover: groupsData ? true : false,
-      hidden: props.tileData?.type == 'null'
+      hidden: props?.isEditor == false && (props.tileData?.hidden || props.tileData?.type == 'null')
     }"
   >
     <img
@@ -60,6 +60,10 @@ const props = defineProps({
   needVerifying: {
     type: Boolean,
     required: false
+  },
+  isEditor: {
+    type: Boolean,
+    required: false
   }
 })
 const setSelectedTile = (tile) => {
@@ -74,6 +78,7 @@ const setSelectedTile = (tile) => {
   box-sizing: border-box;
   border: var(--border);
   border-radius: var(--border-radius);
+  background-color: var(--color-tertiary);
   position: relative;
   overflow: clip;
   aspect-ratio: 1;
@@ -81,14 +86,16 @@ const setSelectedTile = (tile) => {
 }
 
 .tile.isSelected {
-  border-color: rgb(252, 229, 55);
+  --color-primary: var(--color-accent);
+  border-color: var(--color-accent);
   border-width: 3px;
   border-collapse: separate;
 }
 
 .tile.allowHover:hover {
+  --color-primary: var(--color-accent);
   scale: 1.05;
-  border-color: rgb(252, 229, 55);
+  border-color: var(--color-accent);
   background-color: #3c3c3c;
 }
 

@@ -67,7 +67,7 @@ import { useFirestore, useDocument } from 'vuefire'
 import { collection, doc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 //project modules
-import BingoBoard from '@/components/BingoBoard.vue'
+import BingoBoard from '../components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
@@ -80,8 +80,9 @@ const user = userStateStore.user
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
+boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
-const teamCode = ref(route.params.teamCode || 'all')
+const teamCode = ref(route.params.teamCode)
 const scoreOpen = ref(false)
 const goToTeam = async () => {
   if (teamCode.value !== '') {
