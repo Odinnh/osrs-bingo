@@ -1,14 +1,18 @@
 <template>
-  <template v-if="user.loggedIn && user.data.uid != 0">
-    <h1
-      class="board-title"
-      ref="titleElement"
-      contenteditable
-      spellcheck="false"
-      @keydown.enter="validate"
-      @blur="validate"
-    >
-      {{ board.name }}
+  <template v-if="user.loggedIn && user.data.uid != 0 && userData.count < 5">
+    <h1 class="title-wrap" @click.prevent="selectEl()">
+      <span
+        class="board-title"
+        ref="titleElement"
+        contenteditable
+        spellcheck="false"
+        @keydown.enter="validate"
+        @blur="validate"
+        >{{ board.name }}</span
+      >
+      <span class="pen">
+        <font-awesome-icon :icon="['fas', 'pen']" />
+      </span>
     </h1>
     <div>
       name: width:
@@ -32,6 +36,7 @@
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
   <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
+  <template v-if="userData.count >= 5"><h1>You've exceded the 5 board limit</h1></template>
 </template>
 
 <script setup>
@@ -41,7 +46,7 @@ import EditTileSidePanel from '../components/editTileSidePanel.vue'
 import { useCreateStore } from '../stores/boardCreation'
 import { useUserStateStore } from '../stores/userState'
 import { setDoc, doc, collection } from 'firebase/firestore'
-import { useFirestore } from 'vuefire'
+import { useDocument, useFirestore } from 'vuefire'
 
 import { firebaseApp } from '@/firebaseSettings'
 import { useRouter } from 'vue-router'
@@ -50,7 +55,6 @@ const db = useFirestore(firebaseApp)
 const createStore = useCreateStore()
 const userStateStore = useUserStateStore()
 const router = useRouter()
-
 const board = ref({
   name: '<name of bingo board>',
 
@@ -61,11 +65,19 @@ const board = ref({
   }
 })
 const user = userStateStore.user
+const userData = useDocument(doc(db, 'Users', `${user.data.uid}`))
 const titleElement = ref(null)
-
+const selectEl = () => {
+  titleElement.value.focus()
+}
 const validate = (event) => {
   event.target.blur()
-  board.value.name = titleElement.value.innerText.trim()
+  if (titleElement.value.innerText.trim() == '') {
+    board.value.name = 'Enter title here'
+    titleElement.value.innerText = 'Enter title here'
+  } else {
+    board.value.name = titleElement.value.innerText.trim()
+  }
 }
 
 const tiles = computed(() => {
@@ -100,6 +112,8 @@ const addBoardThenRoute = async () => {
       })
     })
     .then(() => {
+      console.log(userData.value.count)
+      setDoc(doc(db, 'Users', `${user.data.uid}`), { count: userData.value.count + 1 })
       router.push({
         name: 'editBoard',
         params: {
@@ -124,21 +138,12 @@ const addBoardThenRoute = async () => {
   gap: 5px;
   padding: 20px;
 }
-.board-title::after {
-  content: '|';
-  animation: blink 0.6s infinite alternate;
+
+.title-wrap:focus-within .pen,
+.title-wrap:focus .pen {
+  display: none;
 }
-.board-title:focus::after {
-  animation-play-state: paused;
-  opacity: 0 !important;
-  animation: none;
-}
-@keyframes blink {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+.title-wrap {
+  width: max-content;
 }
 </style>
