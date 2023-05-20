@@ -15,38 +15,35 @@
         type="text"
         v-model="boardStore.selectedTile.description"
         name="description"
-        id="addtiletitle"
+        id="addtiledescription"
       /><br />
       points:
       <input
         type="text"
         v-model="boardStore.selectedTile.points"
-        name="type"
-        id="addtiletitle"
+        name="points"
+        id="addtilepoints"
       /><br />
       img:
-      <input
-        type="text"
-        v-model="boardStore.selectedTile.img"
-        name="type"
-        id="addtiletitle"
-      /><br />
+      <input type="text" v-model="boardStore.selectedTile.img" name="img" id="addtileimg" /><br />
       hidden:
       <input
         v-if="boardStore.selectedTile?.hidden !== undefined"
         type="checkbox"
         v-model="boardStore.selectedTile.hidden"
-        name="type"
-        id="addtiletitle"
+        name="hidden"
+        id="addtilehidden"
       /><br />
-      type:
-      <input
+      type: {{ boardStore?.selectedTile?.type }}<br />
+      <select
         v-if="boardStore.selectedTile?.type !== undefined"
-        type="checkbox"
         v-model="boardStore.selectedTile.type"
-        name="type"
-        id="addtiletitle"
-      /><br />
+      >
+        <option disabled value="">Please select one</option>
+        <option>drop</option>
+        <option>null</option>
+        <option>exp</option>
+      </select>
       <button type="submit">Update Tile</button>
     </form>
   </div>

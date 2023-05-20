@@ -57,7 +57,7 @@ const router = createRouter({
       component: StatsScreen
     },
     {
-      path: '/b/:boardUUID/m/:teamCode',
+      path: '/m/:boardUUID',
       name: 'moderator',
       props: true,
       component: ModeratorView

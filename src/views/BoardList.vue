@@ -1,7 +1,12 @@
 <template>
-  <template v-if="user.loggedIn">
-    <h1>boardList:</h1>
-    <ul>
+  <template v-if="user && user?.loggedIn && boards">
+    <h2>User:</h2>
+    Total boards: {{ userData?.count }}<br />
+    user ID: <span class="UID">{{ user.data.uid }}</span
+    ><br />
+    share you user ID with people to have them add you as moderator / editor.
+    <h2>your boards:</h2>
+    <ul v-if="boards">
       <li v-for="board in boards" :key="board">
         <span>{{ board.name }}</span>
         <span class="iconSpan">
@@ -15,15 +20,60 @@
             class="ico"
             :icon="['fas', 'eye']"
           />
+          <font-awesome-icon
+            @click="toBoard('moderator', board.id)"
+            class="ico"
+            :icon="['fas', 'shield']"
+          />
         </span>
       </li>
       <router-link v-if="userData?.count < 5" :to="{ name: 'newBoard' }" class="btn"
         >+ create board</router-link
       >
-      {{}}
+    </ul>
+    <h2>boards you can edit:</h2>
+    <ul v-if="editBoards">
+      <li v-for="board in editBoards" :key="board">
+        <span>{{ board.name }}</span>
+        <span class="iconSpan">
+          <font-awesome-icon
+            @click="toBoard('editBoard', board.id)"
+            class="ico"
+            :icon="['fas', 'pen-to-square']"
+          />
+          <font-awesome-icon
+            @click="toBoard('overview', board.id)"
+            class="ico"
+            :icon="['fas', 'eye']"
+          />
+          <font-awesome-icon
+            @click="toBoard('moderator', board.id)"
+            class="ico"
+            :icon="['fas', 'shield']"
+          />
+        </span>
+      </li>
+    </ul>
+    <h2>boards you can moderate:</h2>
+    <ul v-if="modBoards">
+      <li v-for="board in modBoards" :key="board">
+        <span>{{ board.name }}</span>
+        <span class="iconSpan">
+          <font-awesome-icon
+            @click="toBoard('overview', board.id)"
+            class="ico"
+            :icon="['fas', 'eye']"
+          />
+          <font-awesome-icon
+            @click="toBoard('moderator', board.id)"
+            class="ico"
+            :icon="['fas', 'shield']"
+          />
+        </span>
+      </li>
     </ul>
   </template>
-  <h1 v-if="!user.loggedIn">Not Authenticated</h1>
+  <h1 v-else>Not Authenticated</h1>
 </template>
 <script setup>
 import { useRouter } from 'vue-router'
@@ -33,10 +83,10 @@ import { doc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 import { useUserStateStore } from '../stores/userState'
+const userStateStore = useUserStateStore()
 
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
-const userStateStore = useUserStateStore()
 const user = userStateStore.user
 const db = useFirestore(firebaseApp)
 
@@ -60,6 +110,10 @@ const queryID = computed(() => {
   return tempID
 })
 const boards = useDocument(query(boardsRef, where('ownerID', queryMethod.value, queryID.value)))
+const modBoards = useDocument(
+  query(boardsRef, where('moderators', 'array-contains', user.data.uid))
+)
+const editBoards = useDocument(query(boardsRef, where('editors', 'array-contains', user.data.uid)))
 
 const router = useRouter()
 const toBoard = (route, boardUUID) => {
@@ -98,5 +152,8 @@ li {
 }
 .ico {
   cursor: pointer;
+}
+.UID {
+  color: var(--color-accent);
 }
 </style>

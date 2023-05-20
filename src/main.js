@@ -20,12 +20,14 @@ import {
   faRocket,
   faSpaghettiMonsterFlying,
   faSpoon,
-  faPen
+  faPen,
+  faShield
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faRocket)
 library.add(faPen)
+library.add(faShield)
 library.add(faPenToSquare)
 library.add(faEye)
 library.add(faSpaghettiMonsterFlying)

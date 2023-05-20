@@ -1,14 +1,14 @@
 <template>
-  <section>
-    <BingoBoard
-      v-if="teamData && teamData.name == 'moderator'"
-      :boardData="boardData"
-      :groupsData="groupsData"
-      :teamData="teamData"
-      :tilesData="tilesData"
-    />
+  <section>{{ boardData.name }}</section>
+  <section
+    v-if="
+      user &&
+      user.data.uid != 0 &&
+      (user.data.uid == boardData.ownerID || boardData.moderators.includes(user.data.uid))
+    "
+  >
+    <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />
     <aside>
-      <p v-if="teamData">{{ teamData.name }}</p>
       <moderatorSidePannel
         :tileData="store.selectedTile"
         :key="store.selectedTile.id"
@@ -18,6 +18,7 @@
       />
     </aside>
   </section>
+  <section v-else>please log in or return to the [board]</section>
 </template>
 
 <script setup>
@@ -28,24 +29,22 @@ import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useBoardStore } from '@/stores/board'
+import { useUserStateStore } from '../stores/userState'
 //external modules
 const store = useBoardStore()
 import { useFirestore, useDocument } from 'vuefire'
-
+const userStateStore = useUserStateStore()
+const user = userStateStore.user
 import { doc, collection } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 import BingoBoard from '@/components/BingoBoard.vue'
 
 const route = useRoute()
-const teamCode = computed(() => route.params.teamCode)
 const boardUUID = computed(() => route.params.boardUUID)
 const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
-const { data: teamData } = useDocument(
-  doc(db, `Boards/${boardUUID.value}/Groups/${teamCode.value}/`)
-)
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {

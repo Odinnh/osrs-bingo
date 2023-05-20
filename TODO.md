@@ -3,19 +3,23 @@
 - [x] user signup
 - [x] limit users to 5 boards
 - [x] board editor
-- [ ] null tiles
+- [x] null tiles
 
         these are empty borderless tiles that exist for layout
 
-- [ ] create the ability to hide tiles
-- [ ] add moderator link in board List
-- [ ] add moderators for a board
-- [ ] user profiles
+- [x] create the ability to hide tiles
+
+- [x] user profiles
 
         here it could show the UID, boards etc..
 
 
         basically what the boardList is but expanded
+
+- [ ] add moderator link in board List
+- [ ] refactor the way moderation works
+- [ ] add the ability to add moderators to a board.
+- [ ] add the ability to add editors to a board.
 
 - [ ] hide dotenv from build
 - [ ] dynamic board preview generator

@@ -1,6 +1,11 @@
 <template>
   <template
-    v-if="user.data.ui != 0 && (user.data.uid == boardData.ownerID || user.data.uid == ADMIN_ID)"
+    v-if="
+      user.data.ui != 0 &&
+      (user.data.uid == boardData.ownerID ||
+        user.data.uid == ADMIN_ID ||
+        boardData?.editors.include(user.data.uid))
+    "
   >
     <section>
       <h1 class="title-wrap" @click.prevent="selectEl()">
@@ -43,7 +48,18 @@
         <sidePannel v-if="boardStore.selectedTile != ''" />
       </aside>
     </section>
-    <section></section>
+    <section>
+      <div>
+        <h2>Moderators:</h2>
+        <div class="moderators"><input type="text" /></div>
+        <button>Save</button>
+      </div>
+      <div>
+        <h2>Editors:</h2>
+        <div class="moderators"><input type="text" /></div>
+        <button>Save</button>
+      </div>
+    </section>
   </template>
   <template v-else>
     <h1>Not authenticated</h1>

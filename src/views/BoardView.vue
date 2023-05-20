@@ -82,7 +82,7 @@ const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
-const teamCode = ref(route.params.teamCode)
+const teamCode = ref(route.params.teamCode || 'all')
 const scoreOpen = ref(false)
 const goToTeam = async () => {
   if (teamCode.value !== '') {
