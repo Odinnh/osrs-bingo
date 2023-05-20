@@ -1,10 +1,11 @@
 <template>
   <template
     v-if="
+      boardData &&
       user.data.ui != 0 &&
       (user.data.uid == boardData.ownerID ||
         user.data.uid == ADMIN_ID ||
-        boardData?.editors.include(user.data.uid))
+        boardData.editors.include(user.data.uid))
     "
   >
     <section>
