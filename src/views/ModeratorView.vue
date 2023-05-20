@@ -4,7 +4,9 @@
     v-if="
       user &&
       user.data.uid != 0 &&
-      (user.data.uid == boardData.ownerID || boardData.moderators.includes(user.data.uid))
+      (user.data.uid == boardData.ownerID ||
+        boardData.moderators.includes(user.data.uid) ||
+        boardData.editors.includes(user.data.uid))
     "
   >
     <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />

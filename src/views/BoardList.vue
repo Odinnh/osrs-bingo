@@ -4,7 +4,7 @@
     Total boards: {{ userData?.count }}<br />
     user ID: <span class="UID">{{ user.data.uid }}</span
     ><br />
-    share you user ID with people to have them add you as moderator / editor.
+    share your user ID with people to have them add you as moderator / editor.
     <h2>your boards:</h2>
     <ul v-if="boards">
       <li v-for="board in boards" :key="board">
