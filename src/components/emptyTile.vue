@@ -1,20 +1,15 @@
 <template>
-  <div class="tile" @click="setSelectedTile()">
+  <div class="tile">
     {{ props.tile.coordinates }}
   </div>
 </template>
 
 <script setup>
-import { useCreateStore } from '../stores/boardCreation'
 const props = defineProps({
   tile: {
     type: Object
   }
 })
-const createStore = useCreateStore()
-const setSelectedTile = () => {
-  createStore.selectedTile = { coordinates: props.tile.coordinates }
-}
 </script>
 
 <style scoped>
@@ -27,102 +22,5 @@ const setSelectedTile = () => {
   overflow: clip;
   aspect-ratio: 1;
   box-sizing: border-box;
-}
-
-.tile.isSelected {
-  border-color: rgb(252, 229, 55);
-  border-width: 3px;
-  border-collapse: separate;
-}
-
-.tile.allowHover:hover {
-  scale: 1.05;
-  border-color: rgb(252, 229, 55);
-  background-color: #3c3c3c;
-}
-
-.tile img {
-  box-sizing: border-box;
-  --size: 75%;
-  position: absolute;
-  inset: 50%;
-  margin-left: calc(-1 * (var(--size) / 2));
-  margin-top: calc(-1 * (var(--size) / 2));
-  width: var(--size);
-  height: var(--size);
-  object-fit: contain;
-}
-
-.isVerify,
-.needVerifying {
-  background-color: var(--color-verifying);
-}
-
-.isCollected {
-  position: relative;
-  background-color: var(--color-collected);
-}
-
-.tileFlag {
-  --width: 24px;
-  display: block;
-  position: relative;
-  width: var(--width);
-  height: calc(var(--width) / 2);
-  z-index: 100;
-}
-
-.tileFlag:after {
-  display: block;
-  width: 100%;
-  height: 200%;
-  position: absolute;
-  aspect-ratio: 1;
-  top: calc(var(--width) / 2);
-  left: 0;
-  z-index: 50;
-  content: ' ';
-  background-color: var(--color-primary);
-}
-
-.flag-end-round:after {
-  border-bottom-left-radius: 50%;
-  border-bottom-right-radius: 50%;
-}
-
-.flag-end-split:after {
-  background-color: unset;
-  border-width: calc(var(--width) / 2);
-  border-style: solid;
-  height: 0;
-  width: 0px;
-  border-left-color: var(--color-primary);
-  border-right-color: var(--color-primary);
-  border-top-color: var(--color-primary);
-  border-bottom-color: transparent;
-}
-
-.flag-end-point:after {
-  background-color: unset;
-  border-width: calc(var(--width) / 2);
-  border-top-width: var(--width);
-  width: 0px;
-  aspect-ratio: 1;
-  border-style: solid;
-  height: 0;
-  border-left-color: transparent;
-  border-right-color: transparent;
-  border-top-color: var(--color-primary);
-  border-bottom-color: transparent;
-}
-
-.boardTileFlags {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  z-index: -1;
-}
-.tile img {
-  z-index: 1000000;
 }
 </style>

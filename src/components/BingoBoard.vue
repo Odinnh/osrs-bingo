@@ -32,7 +32,8 @@ const props = defineProps({
     required: false,
     default: () => {
       return {
-        name: 'all'
+        name: 'all',
+        collected: {}
       }
     }
   },

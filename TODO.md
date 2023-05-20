@@ -1,8 +1,8 @@
 # todo
 
-- [ ] user signup
-- [ ] limit users to 5 boards
-- [ ] board editor
+- [x] user signup
+- [x] limit users to 5 boards
+- [x] board editor
 - [ ] null tiles
 
         these are empty borderless tiles that exist for layout
@@ -14,3 +14,4 @@
         here it could show the UID, boards etc..
 
 - [ ] hide dotenv from build
+- [ ] dynamic board preview generator

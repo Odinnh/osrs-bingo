@@ -8,7 +8,19 @@
   >
     <section>{{ boardData.name }}</section>
     <section class="main-section">
-      <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
+      <template v-if="scoreOpen">
+        <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
+      </template>
+      <button
+        class="btn info"
+        @click="
+          () => {
+            scoreOpen = !scoreOpen
+          }
+        "
+      >
+        i
+      </button>
       <BingoBoard
         :boardData="boardData"
         :groupsData="groupsData"
@@ -16,7 +28,7 @@
         :tilesData="tilesData"
         :key="'bingo-board-' + boardStore.boardUUID"
       />
-      <aside v-if="selectedTile != ''">
+      <aside v-if="boardStore.selectedTile != ''">
         <div style="justify-content: end; display: flex">
           <button
             class="btn close"
@@ -29,7 +41,7 @@
             ╳
           </button>
         </div>
-        <template v-if="boardData?.settings?.mode == 'teams'">
+        <template>
           <p v-if="teamData">
             <fontAwesomeIcon class="icon" :icon="['fas', teamData.icon]" /> {{ teamData.name }}
           </p>
@@ -62,7 +74,7 @@ import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
-const selectedTile = boardStore.selectedTile
+// const selectedTile = boardStore.selectedTile
 const userStateStore = useUserStateStore()
 const user = userStateStore.user
 const route = useRoute()
@@ -70,7 +82,7 @@ const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 const boardUUID = boardStore.boardUUID
 const teamCode = ref(route.params.teamCode || 'all')
-
+const scoreOpen = ref(false)
 const goToTeam = async () => {
   if (teamCode.value !== '') {
     let route = {
@@ -143,5 +155,16 @@ aside {
   gap: 5px;
   padding: 20px;
   width: 300px;
+}
+.info {
+  color: #7f79ff;
+  display: block;
+  font-weight: bolder;
+  font-size: 1.3rem;
+  line-height: 0.2rem;
+  height: 2.7rem;
+  aspect-ratio: 1/1.2;
+  text-align: center;
+  padding-top: 3px;
 }
 </style>

@@ -11,17 +11,23 @@ import {
   faCrow,
   faDisease,
   faDove,
+  faEye,
   faFeatherPointed,
   faFrog,
   faHippo,
   faPaw,
+  faPenToSquare,
   faRocket,
   faSpaghettiMonsterFlying,
-  faSpoon
+  faSpoon,
+  faPen
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faRocket)
+library.add(faPen)
+library.add(faPenToSquare)
+library.add(faEye)
 library.add(faSpaghettiMonsterFlying)
 library.add(faPaw)
 library.add(faHippo)

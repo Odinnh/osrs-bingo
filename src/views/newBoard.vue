@@ -29,10 +29,6 @@
         <emptyTile :tile="tile" />
       </template>
     </main>
-    <aside>
-      {{ createStore.selectedTile.hasOwnProperty('coordinates') }}
-      <EditTileSidePanel v-if="createStore.selectedTile.hasOwnProperty('coordinates')" />
-    </aside>
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
   <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
@@ -42,7 +38,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import emptyTile from '../components/emptyTile.vue'
-import EditTileSidePanel from '../components/editTileSidePanel.vue'
 import { useCreateStore } from '../stores/boardCreation'
 import { useUserStateStore } from '../stores/userState'
 import { setDoc, doc, collection } from 'firebase/firestore'
@@ -88,7 +83,7 @@ const tiles = computed(() => {
     i++
   ) {
     let coords =
-      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 100 +
+      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 10 +
       ((i % parseInt(board.value.settings.width)) + 1)
     tempObject.push({
       title: '<title of tile>',
@@ -114,6 +109,7 @@ const addBoardThenRoute = async () => {
     .then(() => {
       console.log(userData.value.count)
       setDoc(doc(db, 'Users', `${user.data.uid}`), { count: userData.value.count + 1 })
+      createStore.setSelectedTile('')
       router.push({
         name: 'editBoard',
         params: {
