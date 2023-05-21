@@ -2,6 +2,9 @@
   <div>
     id:
     {{ boardStore.selectedTile.id }}<br />
+    <div class="tile">
+      <img :src="boardStore.selectedTile.img" alt="" />
+    </div>
     <form @submit.prevent="addTileToDB">
       title:
       <input
@@ -98,5 +101,30 @@ const addTileToDB = async () => {
 
 .open {
   display: block;
+}
+
+.tile {
+  font-family: 'Roboto', sans-serif;
+  user-select: none;
+  box-sizing: border-box;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-tertiary);
+  position: relative;
+  overflow: clip;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+}
+
+.tile img {
+  box-sizing: border-box;
+  --size: 75%;
+  position: absolute;
+  inset: 50%;
+  margin-left: calc(-1 * (var(--size) / 2));
+  margin-top: calc(-1 * (var(--size) / 2));
+  width: var(--size);
+  height: var(--size);
+  object-fit: contain;
 }
 </style>

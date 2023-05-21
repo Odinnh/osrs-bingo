@@ -135,7 +135,7 @@ section {
 input[type='text'] {
   display: inline-block;
   padding: 0.5rem;
-  background-color: #7b7b7b;
+  background-color: #343434;
   border: none;
   border-top: 2px solid #0b0b0b;
   border-radius: var(--border-radius);

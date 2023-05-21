@@ -18,11 +18,10 @@
 
 - [x] add moderator link in board List
 - [x] refactor the way moderation works
-- [ ] add the ability to add moderators to a board.
-- [ ] add the ability to add editors to a board.
+- [x] add the ability to add moderators to a board.
+- [x] add the ability to add editors to a board.
 
 - [ ] hide dotenv from build
-- [ ] dynamic board preview generator
 - [ ] change the method of editing a board.
 
   - should be able to inline edit the tile details
@@ -34,3 +33,5 @@
 - [ ] add tile progress for teams
 
 - [ ] group creation
+
+- [ ] dynamic board preview generator

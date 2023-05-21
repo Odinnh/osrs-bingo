@@ -53,7 +53,6 @@
           </button>
         </div>
         <editTile :tile="boardStore.selectedTile" />
-        <sidePannel v-if="boardStore.selectedTile != ''" />
       </aside>
     </section>
     <section>
@@ -103,11 +102,10 @@ import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useFirestore, useDocument } from 'vuefire'
 //external modules
-import { collection, doc } from 'firebase/firestore'
+import { collection, doc, updateDoc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 //project modules
 import BingoBoard from '@/components/BingoBoard.vue'
-import sidePannel from '@/components/sidePannel.vue'
 import editTile from '../components/editTile.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
@@ -162,6 +160,9 @@ const validate = (event) => {
     titleElement.value.innerText = 'Enter title here'
   } else {
     boardData.value.name = titleElement.value.innerText.trim()
+    updateDoc(doc(db, 'Boards', boardUUID), {
+      name: boardData.value.name
+    })
   }
 }
 
@@ -169,12 +170,14 @@ const removeMod = (mod) => {
   mod = mod.trim()
   if (moderators.indexOf(mod) !== -1) {
     moderators.splice(moderators.indexOf(mod), 1)
+    updateDoc(doc(db, 'Boards', boardUUID), { moderators: moderators })
   }
 }
 const addModerator = () => {
   newModerator.value = newModerator.value.trim()
   if (moderators.indexOf(newModerator.value) === -1) {
     moderators.push(newModerator.value)
+    updateDoc(doc(db, 'Boards', boardUUID), { moderators: moderators })
   }
 }
 
@@ -182,12 +185,14 @@ const removeEditor = (editor) => {
   editor = editor.trim()
   if (editors.indexOf(editor) !== -1) {
     editors.splice(editors.indexOf(editor), 1)
+    updateDoc(doc(db, 'Boards', boardUUID), { editors: editors })
   }
 }
 const addEditor = () => {
   newEditor.value = newEditor.value.trim()
   if (editors.indexOf(newEditor.value) === -1) {
     editors.push(newEditor.value)
+    updateDoc(doc(db, 'Boards', boardUUID), { editors: editors })
   }
 }
 </script>
@@ -234,6 +239,8 @@ ul {
   padding: 0;
   display: flex;
   flex-direction: column;
+  font-family: monospace;
+  font-size: 14pt;
 }
 li {
   display: flex;
