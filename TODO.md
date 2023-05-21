@@ -16,8 +16,8 @@
 
         basically what the boardList is but expanded
 
-- [ ] add moderator link in board List
-- [ ] refactor the way moderation works
+- [x] add moderator link in board List
+- [x] refactor the way moderation works
 - [ ] add the ability to add moderators to a board.
 - [ ] add the ability to add editors to a board.
 
@@ -29,7 +29,7 @@
 
   - add the ability to change the settings
 
-- [ ] in the list overview add a toggle to make a board public/private
+- [x] in the list overview add a toggle to make a board public/private
 
 - [ ] add tile progress for teams
 
