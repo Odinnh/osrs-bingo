@@ -25,6 +25,14 @@
             class="ico"
             :icon="['fas', 'shield']"
           />
+          <br />
+          Public:
+          <input
+            class="toggle"
+            type="checkbox"
+            v-bind:checked="board.settings.public"
+            @click.prevent="togglePublic(board)"
+          />
         </span>
       </li>
       <router-link v-if="userData?.count < 5" :to="{ name: 'newBoard' }" class="btn"
@@ -79,7 +87,7 @@
 import { useRouter } from 'vue-router'
 import { computed, ref } from 'vue'
 import { useFirestore, useDocument } from 'vuefire'
-import { doc } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 import { useUserStateStore } from '../stores/userState'
@@ -118,6 +126,12 @@ const editBoards = useDocument(query(boardsRef, where('editors', 'array-contains
 const router = useRouter()
 const toBoard = (route, boardUUID) => {
   router.push({ name: route, params: { boardUUID: boardUUID } })
+}
+const togglePublic = (board) => {
+  console.log(board.id)
+  let tempBoard = { ...board }
+  tempBoard.settings.public = !board.settings.public
+  updateDoc(doc(db, 'Boards', board.id), tempBoard)
 }
 </script>
 <style scoped>

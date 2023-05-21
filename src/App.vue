@@ -180,4 +180,40 @@ input[type='text'] {
   position: absolute;
   top: 20;
 }
+.toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  position: relative;
+  outline: none;
+  width: 50px;
+  height: 30px;
+  background-color: #ff3359;
+  border-radius: 50px;
+}
+
+.toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-tertiary);
+  border-radius: 50%;
+  transition: 100ms;
+}
+
+.toggle:checked {
+  background-color: #33ff58;
+}
+
+.toggle:hover::after {
+  top: 1px;
+}
+
+.toggle:checked::after {
+  left: 24px;
+  transition: 100ms;
+}
 </style>
