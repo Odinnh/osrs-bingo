@@ -108,7 +108,6 @@ const addBoardThenRoute = async () => {
       })
     })
     .then(() => {
-      console.log(userData.value.count)
       setDoc(doc(db, 'Users', `${user.data.uid}`), { count: userData.value.count + 1 })
       createStore.setSelectedTile('')
       router.push({

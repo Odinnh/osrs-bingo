@@ -30,6 +30,7 @@
       <input
         v-if="boardStore.selectedTile?.hidden !== undefined"
         type="checkbox"
+        class="toggle"
         v-model="boardStore.selectedTile.hidden"
         name="hidden"
         id="addtilehidden"

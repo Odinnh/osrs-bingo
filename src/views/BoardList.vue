@@ -39,7 +39,7 @@
         >+ create board</router-link
       >
     </ul>
-    <h2>boards you can edit:</h2>
+    <h2 v-if="editBoards">boards you can edit:</h2>
     <ul v-if="editBoards">
       <li v-for="board in editBoards" :key="board">
         <span>{{ board.name }}</span>
@@ -62,7 +62,7 @@
         </span>
       </li>
     </ul>
-    <h2>boards you can moderate:</h2>
+    <h2 v-if="modBoards">boards you can moderate:</h2>
     <ul v-if="modBoards">
       <li v-for="board in modBoards" :key="board">
         <span>{{ board.name }}</span>
@@ -128,24 +128,12 @@ const toBoard = (route, boardUUID) => {
   router.push({ name: route, params: { boardUUID: boardUUID } })
 }
 const togglePublic = (board) => {
-  console.log(board.id)
   let tempBoard = { ...board }
   tempBoard.settings.public = !board.settings.public
   updateDoc(doc(db, 'Boards', board.id), tempBoard)
 }
 </script>
 <style scoped>
-input {
-  display: inline-block;
-  padding: 0.5rem;
-  background-color: #7b7b7b;
-  border: none;
-  border-top: 2px solid #0b0b0b;
-  border-radius: var(--border-radius);
-  color: var(--color-primary);
-  text-decoration: none;
-  margin-right: 5px;
-}
 ul {
   gap: 15px;
   display: flex;

@@ -59,13 +59,37 @@
     <section>
       <div>
         <h2>Moderators:</h2>
-        <div class="moderators"><input type="text" /></div>
-        <button>Save</button>
+        <div class="moderators">
+          <ul>
+            <li v-for="mod in moderators" :key="mod">
+              {{ mod }}
+              <button class="btn" @click.prevent="removeMod(mod)">-</button>
+            </li>
+            <li>
+              <form @submit.prevent="addModerator">
+                <input type="text" v-model="newModerator" />
+                <button class="btn" type="submit">Add</button>
+              </form>
+            </li>
+          </ul>
+        </div>
       </div>
       <div>
         <h2>Editors:</h2>
-        <div class="moderators"><input type="text" /></div>
-        <button>Save</button>
+        <div class="Editors">
+          <ul>
+            <li v-for="editor in editors" :key="editor">
+              {{ editor }}
+              <button class="btn" @click.prevent="removeEditor(editor)">-</button>
+            </li>
+            <li>
+              <form @submit.prevent="addEditor">
+                <input type="text" v-model="newEditor" />
+                <button class="btn" type="submit">Add</button>
+              </form>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
   </template>
@@ -89,6 +113,8 @@ import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
+const newModerator = ref('')
+const newEditor = ref('')
 const userStateStore = useUserStateStore()
 const user = userStateStore.user
 const route = useRoute()
@@ -100,6 +126,8 @@ const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
+const moderators = boardData?.value?.moderators
+const editors = boardData?.value?.editors
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
@@ -134,6 +162,32 @@ const validate = (event) => {
     titleElement.value.innerText = 'Enter title here'
   } else {
     boardData.value.name = titleElement.value.innerText.trim()
+  }
+}
+
+const removeMod = (mod) => {
+  mod = mod.trim()
+  if (moderators.indexOf(mod) !== -1) {
+    moderators.splice(moderators.indexOf(mod), 1)
+  }
+}
+const addModerator = () => {
+  newModerator.value = newModerator.value.trim()
+  if (moderators.indexOf(newModerator.value) === -1) {
+    moderators.push(newModerator.value)
+  }
+}
+
+const removeEditor = (editor) => {
+  editor = editor.trim()
+  if (editors.indexOf(editor) !== -1) {
+    editors.splice(editors.indexOf(editor), 1)
+  }
+}
+const addEditor = () => {
+  newEditor.value = newEditor.value.trim()
+  if (editors.indexOf(newEditor.value) === -1) {
+    editors.push(newEditor.value)
   }
 }
 </script>
@@ -174,5 +228,18 @@ aside {
 }
 .title-wrap {
   width: max-content;
+}
+ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+li {
+  display: flex;
+  list-style-type: none;
+}
+li .btn {
+  flex: 0;
 }
 </style>

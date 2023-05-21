@@ -15,6 +15,7 @@
           <input
             :id="group.id + tileData.id"
             type="checkbox"
+            class="toggle"
             :key="group.id + tileData.id"
             v-bind:checked="group.collected.hasOwnProperty(props.tileData.id)"
             @click.prevent="updateToCompleted({ tile: tileData, group: group })"

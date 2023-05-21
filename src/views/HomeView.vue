@@ -15,16 +15,4 @@ const toBoard = () => {
   router.push({ name: 'overview', params: { boardUUID: boardUUID.value } })
 }
 </script>
-<style scoped>
-input {
-  display: inline-block;
-  padding: 0.5rem;
-  background-color: #7b7b7b;
-  border: none;
-  border-top: 2px solid #0b0b0b;
-  border-radius: var(--border-radius);
-  color: var(--color-primary);
-  text-decoration: none;
-  margin-right: 5px;
-}
-</style>
+<style scoped></style>
