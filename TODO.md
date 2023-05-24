@@ -35,3 +35,24 @@
 - [ ] group creation
 
 - [ ] dynamic board preview generator
+
+- [ ] add multi item tile type
+
+- [ ] add recurring tile type
+
+- [ ] any/ unique type type
+
+        list of available items, blocking if unique
+        not blocking if any
+
+- [ ] change point calculations to count from logged verifications
+
+- [ ] add a rules section
+
+- [ ] add tile collections
+
+- [ ] completed collections points
+
+- [ ] uncompleted image or default
+
+- [ ] fog of war tiles 

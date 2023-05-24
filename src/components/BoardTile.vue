@@ -13,6 +13,7 @@
     }"
   >
     <img
+      v-if="props.tileData.type != 'null'"
       :src="
         props.tileData.img ||
         'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'

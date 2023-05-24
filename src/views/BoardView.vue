@@ -111,6 +111,7 @@ const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
+boardStore.setRules(boardData.value?.rules)
 const { data: teamData } = useDocument(doc(db, `Boards/${boardUUID}/Groups/${teamCode.value}/`))
 const groupsData = computed(() => {
   let tempObject = {}

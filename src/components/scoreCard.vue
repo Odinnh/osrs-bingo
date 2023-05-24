@@ -24,6 +24,9 @@
           >Go To Graph</router-link
         >
       </li>
+      <li class="rules" v-if="boardStore.rules != undefined">
+        {{ boardStore.rules }}
+      </li>
     </ul>
   </div>
 </template>
@@ -92,5 +95,14 @@ ul {
   border-right-color: transparent;
   border-top-color: transparent;
   border-bottom-color: transparent;
+}
+.rules {
+  margin-top: 25px;
+  white-space: pre-line;
+  word-wrap: break-word;
+  max-width: 31ch;
+  background: var(--color-secondairy);
+  border-radius: var(--border-radius);
+  padding: 15px;
 }
 </style>

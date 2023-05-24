@@ -6,6 +6,7 @@
   >
     To Dashboard
   </button>
+  <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
   <template
     v-if="
       boardData &&
@@ -23,7 +24,12 @@
           contenteditable
           spellcheck="false"
           @keydown.enter="validate"
-          @blur="validate"
+          name="title"
+          @blur.prevent="
+            (event) => {
+              validate(event)
+            }
+          "
           >{{ boardData.name }}</span
         >
         <span class="pen">
@@ -56,6 +62,26 @@
       </aside>
     </section>
     <section>
+      <div>
+        <h2>Rules:</h2>
+        <div>
+          <p
+            class="rules"
+            style="white-space: pre-wrap"
+            contenteditable
+            spellcheck="false"
+            @blur.prevent="
+              (event) => {
+                validate(event)
+              }
+            "
+            @keydown.tab.prevent
+            name="rules"
+          >
+            {{ boardData?.rules }}
+          </p>
+        </div>
+      </div>
       <div>
         <h2>Moderators:</h2>
         <div class="moderators">
@@ -105,7 +131,7 @@ import { useFirestore, useDocument } from 'vuefire'
 import { collection, doc, updateDoc } from 'firebase/firestore'
 import { firebaseApp } from '@/firebaseSettings'
 //project modules
-import BingoBoard from '@/components/BingoBoard.vue'
+import BingoBoard from '../components/BingoBoard.vue'
 import editTile from '../components/editTile.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
@@ -113,11 +139,12 @@ const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
-const userStateStore = useUserStateStore()
-const user = userStateStore.user
+let userStateStore = useUserStateStore()
+let user = userStateStore.user
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
+boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
 
 const db = useFirestore(firebaseApp)
@@ -155,14 +182,15 @@ const selectEl = () => {
 }
 const validate = (event) => {
   event.target.blur()
-  if (titleElement.value.innerText.trim() == '') {
-    boardData.value.name = 'Enter title here'
-    titleElement.value.innerText = 'Enter title here'
+  let target = event.target.getAttribute('name')
+
+  if (event.target.innerText.trim() != '') {
+    boardData.value[target] = event.target.innerText
   } else {
-    boardData.value.name = titleElement.value.innerText.trim()
-    updateDoc(doc(db, 'Boards', boardUUID), {
-      name: boardData.value.name
-    })
+    boardData.value[target] = '<enter text here>'
+  }
+  if (event.target.innerText.trim() != boardData.value[target]) {
+    updateDoc(doc(db, 'Boards', boardUUID), boardData.value)
   }
 }
 
@@ -194,6 +222,28 @@ const addEditor = () => {
     editors.push(newEditor.value)
     updateDoc(doc(db, 'Boards', boardUUID), { editors: editors })
   }
+}
+
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+
+const provider = new GoogleAuthProvider()
+const auth = getAuth()
+
+const popupLogin = () => {
+  signInWithPopup(auth, provider)
+    .then((response) => {
+      userStateStore.setUser({
+        loggedIn: true,
+        data: response.user
+      })
+      router.push({ name: 'boardOverview' })
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      console.error(errorCode, errorMessage)
+    })
 }
 </script>
 
@@ -248,5 +298,14 @@ li {
 }
 li .btn {
   flex: 0;
+}
+.rules {
+  margin-top: 25px;
+  white-space: pre-line;
+  word-wrap: break-word;
+  max-width: 30ch;
+  background: var(--color-secondairy);
+  border-radius: var(--border-radius);
+  padding: 15px;
 }
 </style>
