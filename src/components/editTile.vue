@@ -56,7 +56,11 @@
           contenteditable
           class="editable"
           spellcheck="false"
-          @keydown.enter="validate"
+          @keydown.prevent.enter="
+            (event) => {
+              validate(event)
+            }
+          "
           @blur.prevent="
             (event) => {
               validate(event)
@@ -77,7 +81,11 @@
           contenteditable
           class="editable"
           spellcheck="false"
-          @keydown.enter="validate"
+          @keydown.enter.prevent="
+            (event) => {
+              validate(event)
+            }
+          "
           @blur.prevent="
             (event) => {
               validate(event)

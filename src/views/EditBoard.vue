@@ -183,13 +183,17 @@ const selectEl = () => {
 const validate = (event) => {
   event.target.blur()
   let target = event.target.getAttribute('name')
+  let last = boardData.value[target]
 
   if (event.target.innerText.trim() != '') {
     boardData.value[target] = event.target.innerText
   } else {
     boardData.value[target] = '<enter text here>'
+    if (target == 'rules') {
+      boardData.value[target] = ''
+    }
   }
-  if (event.target.innerText.trim() != boardData.value[target]) {
+  if (last != boardData.value[target]) {
     updateDoc(doc(db, 'Boards', boardUUID), boardData.value)
   }
 }
@@ -304,6 +308,7 @@ li .btn {
   white-space: pre-line;
   word-wrap: break-word;
   max-width: 30ch;
+  width: 30ch;
   background: var(--color-secondairy);
   border-radius: var(--border-radius);
   padding: 15px;
