@@ -17,7 +17,7 @@
 - [x] refactor the way moderation works
 - [x] add the ability to add moderators to a board.
 - [x] add the ability to add editors to a board.
-- [ ] hide dotenv from build
+
 - [x] change the method of editing a board.
   - should be able to inline edit the tile details
   - add the ability to change the settings
@@ -41,3 +41,5 @@
 - [x] add tile alt img field
 - [ ] add tile alt img display
 - [ ] use WOM api for exp tile types
+- [ ] board Deletion
+- [ ] user deletion
