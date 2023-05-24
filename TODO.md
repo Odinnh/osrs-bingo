@@ -22,10 +22,10 @@
   - should be able to inline edit the tile details
   - add the ability to change the settings
 - [x] in the list overview add a toggle to make a board public/private
-- [ ] add tile progress for teams
 - [ ] group creation
-- [ ] dynamic board preview generator
+- [ ] add tile progress for teams
 - [ ] add multi item tile type
+- [ ] dynamic board preview generator
 - [ ] add recurring tile type
 - [ ] any/ unique type type
 
@@ -40,3 +40,4 @@
 - [ ] fog of war tiles
 - [x] add tile alt img field
 - [ ] add tile alt img display
+- [ ] use WOM api for exp tile types

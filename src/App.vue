@@ -93,6 +93,9 @@ section {
     scale: 1;
   }
 }
+.main-section {
+  align-items: flex-start;
+}
 
 .btn {
   display: inline-block;
