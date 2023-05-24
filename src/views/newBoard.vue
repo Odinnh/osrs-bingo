@@ -1,5 +1,5 @@
 <template>
-  <template v-if="user.loggedIn && user.data.uid != 0 && userData.count < 5">
+  <template v-if="user.loggedIn && user.data.uid != 0 && userData?.count < 5">
     <h1 class="title-wrap" @click.prevent="selectEl()">
       <span
         class="board-title"
@@ -32,7 +32,7 @@
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
   <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
-  <template v-if="userData.count >= 5"><h1>You've exceded the 5 board limit</h1></template>
+  <template v-if="userData?.count >= 5"><h1>You've exceded the 5 board limit</h1></template>
 </template>
 
 <script setup>

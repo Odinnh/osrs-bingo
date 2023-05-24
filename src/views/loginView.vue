@@ -8,7 +8,11 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { useUserStateStore } from '../stores/userState'
 import { useRouter } from 'vue-router'
+import { doc, getDoc, setDoc } from 'firebase/firestore'
+import { useFirestore } from 'vuefire'
+import { firebaseApp } from '@/firebaseSettings'
 
+const db = useFirestore(firebaseApp)
 const provider = new GoogleAuthProvider()
 const userStateStore = useUserStateStore()
 const auth = getAuth()
@@ -21,13 +25,21 @@ const popupLogin = () => {
         loggedIn: true,
         data: response.user
       })
+    })
+    .then(async () => {
+      const docRef = await getDoc(doc(db, 'Users', userStateStore.user.data.uid))
+      if (!docRef.exists()) {
+        setDoc(doc(db, 'Users', userStateStore.user.data.uid), {
+          count: 0
+        })
+      }
       router.push({ name: 'boardOverview' })
     })
     .catch((error) => {
       // Handle Errors here.
       const errorCode = error.code
       const errorMessage = error.message
-      console.error(errorCode, errorMessage)
+      console.error(error, errorCode, errorMessage)
     })
 }
 </script>

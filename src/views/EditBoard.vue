@@ -105,7 +105,9 @@
           <ul>
             <li v-for="editor in editors" :key="editor">
               {{ editor }}
-              <button class="btn" @click.prevent="removeEditor(editor)">-</button>
+              <button style="margin-left: 15px" class="btn" @click.prevent="removeEditor(editor)">
+                -
+              </button>
             </li>
             <li>
               <form @submit.prevent="addEditor">

@@ -1,7 +1,7 @@
 <template>
   <template v-if="user && user?.loggedIn && boards">
     <h2>User:</h2>
-    Total boards: {{ userData?.count }}<br />
+    Total boards: {{ userData?.count ? userData.count : 0 }}<br />
     user ID: <span class="UID">{{ user.data.uid }}</span
     ><br />
     share your user ID with people to have them add you as moderator / editor.
@@ -35,7 +35,8 @@
           />
         </span>
       </li>
-      <router-link v-if="userData?.count < 5" :to="{ name: 'newBoard' }" class="btn"
+
+      <router-link v-if="!userData || userData.count < 5" :to="{ name: 'newBoard' }" class="btn"
         >+ create board</router-link
       >
     </ul>
