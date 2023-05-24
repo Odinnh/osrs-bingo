@@ -22,7 +22,7 @@
 
 =======
 
-## Done:
+## Done
 
 - [x] user signup
 - [x] limit users to 5 boards
