@@ -13,14 +13,13 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useFirestore, useDocument } from 'vuefire'
+import { useDocument } from 'vuefire'
 //external modules
 import { collection, doc } from 'firebase/firestore'
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 import BarChart from '@/components/BarChart.vue'
 const route = useRoute()
 const boardUUID = computed(() => route.params.boardUUID || '')
-const db = useFirestore(firebaseApp)
 let GROUPS = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
 let TILESDATA = useDocument(collection(db, 'Boards', boardUUID.value, 'Tiles'))
 

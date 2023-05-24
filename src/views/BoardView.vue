@@ -70,10 +70,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useFirestore, useDocument } from 'vuefire'
+import { useDocument } from 'vuefire'
 //external modules
 import { collection, doc } from 'firebase/firestore'
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 //project modules
 import BingoBoard from '../components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
@@ -107,7 +107,6 @@ const goToTeam = async () => {
   }
 }
 
-const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID))

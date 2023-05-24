@@ -29,13 +29,10 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useFirestore } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 
 // import AddTile from '@/components/addTile.vue'
-
-const db = useFirestore(firebaseApp)
 
 const props = defineProps({
   tileData: { type: Object, required: true },

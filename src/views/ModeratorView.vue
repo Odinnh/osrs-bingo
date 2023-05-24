@@ -42,18 +42,17 @@ import { useBoardStore } from '@/stores/board'
 import { useUserStateStore } from '../stores/userState'
 //external modules
 const store = useBoardStore()
-import { useFirestore, useDocument } from 'vuefire'
+import { useDocument } from 'vuefire'
 const userStateStore = useUserStateStore()
 const user = userStateStore.user
 import { doc, collection } from 'firebase/firestore'
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 import BingoBoard from '@/components/BingoBoard.vue'
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const route = useRoute()
 const router = useRouter()
 const boardUUID = computed(() => route.params.boardUUID)
-const db = useFirestore(firebaseApp)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID.value))

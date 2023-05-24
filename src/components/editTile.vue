@@ -150,11 +150,9 @@
 </template>
 <script setup>
 import { setDoc, doc, updateDoc } from 'firebase/firestore'
-import { useFirestore } from 'vuefire'
 
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 import { useBoardStore } from '../stores/board'
-const db = useFirestore(firebaseApp)
 const boardStore = useBoardStore()
 const addTileToDB = async () => {
   let tempTile = boardStore.selectedTile

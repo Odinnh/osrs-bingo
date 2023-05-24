@@ -41,12 +41,11 @@ import emptyTile from '../components/emptyTile.vue'
 import { useCreateStore } from '../stores/boardCreation'
 import { useUserStateStore } from '../stores/userState'
 import { setDoc, doc, collection } from 'firebase/firestore'
-import { useDocument, useFirestore } from 'vuefire'
+import { useDocument } from 'vuefire'
 
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 import { useRouter } from 'vue-router'
 
-const db = useFirestore(firebaseApp)
 const createStore = useCreateStore()
 const userStateStore = useUserStateStore()
 const router = useRouter()

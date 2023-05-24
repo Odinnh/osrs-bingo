@@ -2,6 +2,7 @@
   <h1>Log in</h1>
   <div class="block">
     <button class="btn" @click.prevent="popupLogin">Log in with Google</button>
+    {{ users }}
   </div>
 </template>
 <script setup>
@@ -9,10 +10,8 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { useUserStateStore } from '../stores/userState'
 import { useRouter } from 'vue-router'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { useFirestore } from 'vuefire'
-import { firebaseApp } from '@/firebaseSettings'
+import { db } from '@/firebaseSettings'
 
-const db = useFirestore(firebaseApp)
 const provider = new GoogleAuthProvider()
 const userStateStore = useUserStateStore()
 const auth = getAuth()
