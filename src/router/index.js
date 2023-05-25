@@ -7,6 +7,7 @@ import BoardList from '@/views/BoardList.vue'
 import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import loginView from '../views/loginView.vue'
+import groupView from '../views/groupView.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -31,6 +32,12 @@ const router = createRouter({
       name: 'editBoard',
       props: true,
       component: EditBoard
+    },
+    {
+      path: '/groups/:boardUUID',
+      name: 'groupView',
+      props: true,
+      component: groupView
     },
     {
       path: '/b/:boardUUID',
