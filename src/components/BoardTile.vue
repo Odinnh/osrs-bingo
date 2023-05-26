@@ -9,14 +9,20 @@
       isVerify: props.teamData?.verify?.includes(props.tileData.id),
       needVerifying: props.needVerifying,
       allowHover: groupsData ? true : false,
-      hidden: props?.isEditor == false && (props.tileData?.hidden || props.tileData?.type == 'null')
+      hidden:
+        props?.isEditor == false &&
+        (props.tileData?.hidden == true || props.tileData?.type == 'null')
     }"
   >
     <img
       v-if="props.tileData.type != 'null'"
       :src="
-        props.tileData.img ||
-        'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+        props.teamData &&
+        props.tileData.altImg &&
+        props.teamData?.collected.hasOwnProperty(props.tileData.id)
+          ? props.tileData.altImg
+          : props.tileData.img ||
+            'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
     <div class="boardTileFlags">

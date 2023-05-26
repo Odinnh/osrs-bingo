@@ -95,13 +95,12 @@ import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import { useUserStateStore } from '../stores/userState'
-import { storeToRefs } from 'pinia'
 
 const userStateStore = useUserStateStore()
 
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
-const userData = storeToRefs(userStateStore.user.userData)
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const boardsRef = collection(db, 'Boards')
 
 const queryMethod = computed(() => {

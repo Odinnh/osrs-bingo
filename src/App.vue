@@ -135,7 +135,8 @@ section {
   color: black;
 }
 
-input[type='text'] {
+input[type='text'],
+input[type='number'] {
   display: inline-block;
   padding: 0.5rem;
   background-color: #343434;

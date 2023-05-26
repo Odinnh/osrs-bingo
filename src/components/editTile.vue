@@ -121,6 +121,27 @@
           <font-awesome-icon :icon="['fas', 'pen']" />
         </span>
       </p>
+      <ul v-if="['any-unique', 'multi-item'].includes(boardStore.selectedTile.type)">
+        Ellegible items:
+        <li v-for="item of boardStore.selectedTile?.items" :key="item?.item">
+          {{ item.item }} | {{ item.count }}
+          <button class="btn" @click.prevent="removeItem(item)">-</button>
+        </li>
+
+        <form @submit.prevent="addItem">
+          new <input required type="text" name="item" id="item" v-model="newItem.item" /> count:
+          <input
+            required
+            type="number"
+            name="item"
+            id="item"
+            min="1"
+            step="1"
+            v-model="newItem.count"
+          />
+          <button class="btn">Add item</button>
+        </form>
+      </ul>
       hidden:
       <input
         v-if="
@@ -141,6 +162,7 @@
       >
         <option disabled value="">Please select one</option>
         <option>drop</option>
+        <option>multi-item</option>
         <option>null</option>
         <option>exp</option>
       </select>
@@ -153,6 +175,7 @@ import { setDoc, doc, updateDoc } from 'firebase/firestore'
 
 import { db } from '@/firebaseSettings'
 import { useBoardStore } from '../stores/board'
+import { computed } from 'vue'
 const boardStore = useBoardStore()
 const addTileToDB = async () => {
   let tempTile = boardStore.selectedTile
@@ -203,6 +226,47 @@ const updateImg = (event) => {
 }
 const focusOn = (el) => {
   document.querySelector(el).focus()
+}
+
+const removeItem = (item) => {
+  if (boardStore.selectedTile.items.indexOf(item) !== -1) {
+    boardStore.selectedTile.items.splice(boardStore.selectedTile.items.indexOf(item), 1)
+    updateDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
+      items: boardStore.selectedTile.items
+    })
+  }
+}
+
+const newItem = computed((item, count) => {
+  return { item: item, count: count }
+})
+
+const addItem = () => {
+  let canUpdate = true
+  newItem.value.item = newItem.value.item.trim()
+  if (objExists(newItem.value.item) !== -1) {
+    boardStore.selectedTile.items[objExists(newItem.value.item)].count = newItem.value.count
+  }
+  if (objExists(newItem.value.item) === -1 && newItem.value.item != '') {
+    if (boardStore.selectedTile.items == undefined) {
+      boardStore.selectedTile.items = []
+    }
+    boardStore.selectedTile.items.push({ item: newItem.value.item, count: newItem.value.count })
+  }
+  if (newItem.value.item != '' && canUpdate) {
+    updateDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
+      items: boardStore.selectedTile.items
+    })
+  }
+}
+const objExists = (item) => {
+  return boardStore.selectedTile.items
+    ? boardStore.selectedTile.items
+        .map(function (e) {
+          return e.item
+        })
+        .indexOf(item)
+    : -1
 }
 </script>
 <style scoped>
@@ -279,5 +343,14 @@ const focusOn = (el) => {
 }
 .input input {
   flex-grow: 1;
+}
+ul {
+  gap: 15px;
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style-position: inside;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <button
-    v-if="user && user.data.uid != 0"
+    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
     class="btn dashboard"
     @click.prevent="router.push({ name: 'boardOverview' })"
   >
@@ -11,10 +11,10 @@
   <template
     v-if="
       boardData &&
-      user.data.ui != 0 &&
-      (user.data.uid == boardData.ownerID ||
-        user.data.uid == ADMIN_ID ||
-        boardData.editors.includes(user.data.uid))
+      userStateStore.user.data.ui != 0 &&
+      (userStateStore.user.data.uid == boardData.ownerID ||
+        userStateStore.user.data.uid == ADMIN_ID ||
+        boardData.editors.includes(userStateStore.user.data.uid))
     "
   >
     <ul v-if="GROUPS">
@@ -46,7 +46,6 @@ const auth = getAuth()
 const userStateStore = useUserStateStore()
 const router = useRouter()
 const route = useRoute()
-const user = ref(userStateStore.user)
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = ref(boardStore.boardUUID)

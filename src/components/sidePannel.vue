@@ -7,7 +7,14 @@
     {{ boardStore.selectedTile.id.split('')[0] }}, {{ boardStore.selectedTile.id.split('')[1] }}
   </h2>
   <h1>{{ boardStore.selectedTile.title }}</h1>
-  <p>{{ boardStore.selectedTile.description }}</p>
+  <p v-if="boardStore.selectedTile.description">{{ boardStore.selectedTile.description }}</p>
+  <p class="items" v-if="boardStore.selectedTile.items">
+    ellegible items:
+    <template v-for="(item, index) of boardStore.selectedTile.items">
+      {{ item.item }} : {{ item.count
+      }}{{ index !== boardStore.selectedTile.items.length - 1 ? ',' : '' }}
+    </template>
+  </p>
 </template>
 
 <script setup>
@@ -17,4 +24,9 @@ const boardStore = useBoardStore()
 import BoardTile from './BoardTile.vue'
 </script>
 
-<style scoped></style>
+<style scoped>
+.items {
+  font-style: italic;
+  font-size: 0.8rem;
+}
+</style>

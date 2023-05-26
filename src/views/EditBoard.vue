@@ -1,6 +1,6 @@
 <template>
   <button
-    v-if="user && user.data.uid != 0"
+    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
     class="btn dashboard"
     @click.prevent="router.push({ name: 'boardOverview' })"
   >
@@ -10,10 +10,10 @@
   <template
     v-if="
       boardData &&
-      user.data.ui != 0 &&
-      (user.data.uid == boardData.ownerID ||
-        user.data.uid == ADMIN_ID ||
-        boardData.editors.includes(user.data.uid))
+      userStateStore.user.data.ui != 0 &&
+      (userStateStore.user.data.uid == boardData.ownerID ||
+        userStateStore.user.data.uid == ADMIN_ID ||
+        boardData.editors.includes(userStateStore.user.data.uid))
     "
   >
     <section>
@@ -126,12 +126,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDocument } from 'vuefire'
 //external modules
-import { collection, doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
+import { collection, doc, updateDoc } from 'firebase/firestore'
 //project modules
 import BingoBoard from '../components/BingoBoard.vue'
 import editTile from '../components/editTile.vue'
@@ -142,7 +142,6 @@ const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
 let userStateStore = useUserStateStore()
-let user = userStateStore.user
 const route = useRoute()
 const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
@@ -229,7 +228,7 @@ const addEditor = () => {
   }
 }
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 
 const provider = new GoogleAuthProvider()
 const auth = getAuth()
@@ -241,7 +240,7 @@ const popupLogin = () => {
         loggedIn: true,
         data: response.user
       })
-      router.push({ name: 'boardOverview' })
+      router.push({ name: 'editBoard', params: boardUUID })
     })
     .catch((error) => {
       // Handle Errors here.
