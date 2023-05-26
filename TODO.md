@@ -2,7 +2,6 @@
 
 - [ ] group creation
 - [ ] add tile progress for teams
-- [ ] add multi item tile type
 - [ ] dynamic board preview generator
 - [ ] add recurring tile type
 - [ ] any/ unique type type
@@ -14,8 +13,10 @@
 - [ ] add tile collections
 - [ ] completed collections points
 - [ ] uncompleted image or default
+
+        add a boaard setting to chose default "hidden"
+
 - [ ] fog of war tiles
-- [ ] add tile alt img display
 - [ ] use WOM api for exp tile types
 - [ ] board Deletion
 - [ ] user deletion
@@ -24,6 +25,8 @@
 
 ## Done
 
+- [x] add multi item tile type
+- [x] add tile alt img display
 - [x] user signup
 - [x] limit users to 5 boards
 - [x] board editor
