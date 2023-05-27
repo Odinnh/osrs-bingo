@@ -22,7 +22,8 @@
       <input min="2" max="9" name="width" type="range" v-model="board.settings.width" />{{
         board.settings.width
       }}<br />
-      height: <input min="2" max="9" name="height" type="range" v-model="board.settings.height" />{{
+      height:
+      <input min="2" max="9" name="height" type="range" v-model="board.settings.height" />{{
         board.settings.height
       }}<br />
       total tiles: {{ board.settings.width * board.settings.height }}
@@ -85,7 +86,7 @@ const tiles = computed(() => {
     i++
   ) {
     let coords =
-      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 10 +
+      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 100 +
       ((i % parseInt(board.value.settings.width)) + 1)
     tempObject.push({
       title: '<title of tile>',

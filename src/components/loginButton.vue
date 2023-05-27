@@ -2,7 +2,7 @@
   <button
     v-if="userStateStore.user && userStateStore.user.data.uid != 0"
     class="btn dashboard"
-    @click.prevent="router.push({ name: 'boardOverview' })"
+    @click.prevent="router.push({ name: 'userOverview' })"
   >
     To Dashboard
   </button>

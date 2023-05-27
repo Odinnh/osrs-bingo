@@ -182,7 +182,7 @@ const addTileToDB = async () => {
   boardStore.setSelectedTile('')
   await setDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', tempTile.id), {
     description: tempTile.description,
-    altImg: tempTile.altImg,
+    altImg: tempTile.altImg ? tempTile.altImg : '',
     img: tempTile.img,
     title: tempTile.title,
     points: parseInt(tempTile.points),
