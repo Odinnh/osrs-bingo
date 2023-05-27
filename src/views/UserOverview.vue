@@ -1,8 +1,9 @@
 <template>
-  <button v-if="!userStateStore.user.loggedIn" class="btn dashboard" @click.prevent="popupLogin">
-    login
-  </button>
-  <template v-if="userStateStore.user && userStateStore.user.data.uid != '0'">
+  <template
+    v-if="
+      userStateStore.user.loggedIn && userStateStore.user && userStateStore.user.data.uid != '0'
+    "
+  >
     <h2>User:</h2>
     Total boards: {{ userData?.count ? userData.count : 0 }}<br />
     user ID: <span class="UID">{{ userStateStore.user.data.uid }}</span

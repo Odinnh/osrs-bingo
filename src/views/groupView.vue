@@ -1,12 +1,6 @@
 <template>
-  <button
-    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-    class="btn dashboard"
-    @click.prevent="router.push({ name: 'boardOverview' })"
-  >
-    To Dashboard
-  </button>
-  <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+  <loginButton :destination="{ name: 'userOverview' }" />
+
   <h1>groupview</h1>
   <template
     v-if="
@@ -30,43 +24,24 @@
 </template>
 <script setup>
 import { db } from '@/firebaseSettings'
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import { collection, doc } from 'firebase/firestore'
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
+import loginButton from '../components/loginButton.vue'
 
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const boardStore = useBoardStore()
-const provider = new GoogleAuthProvider()
-const auth = getAuth()
-const userStateStore = useUserStateStore()
-const router = useRouter()
-const route = useRoute()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
+
+const userStateStore = useUserStateStore()
+const route = useRoute()
 const boardUUID = ref(boardStore.boardUUID)
 const GROUPS = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
-
 const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
-const popupLogin = () => {
-  signInWithPopup(auth, provider)
-    .then((response) => {
-      userStateStore.setUser({
-        loggedIn: true,
-        data: response.user
-      })
-      router.push({ name: 'boardOverview' })
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
-    })
-}
 </script>
 <style scoped></style>

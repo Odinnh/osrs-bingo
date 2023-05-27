@@ -1,5 +1,6 @@
 <template>
   <div>
+    <LoginButton :destination="{ name: 'overview', params: { boardUUID: boardUUID } }" />
     <router-link class="btn" :to="{ name: 'overview', params: { boardUUID: boardUUID } }">
       Go to Bingo Board Overview
     </router-link>
@@ -14,10 +15,10 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
-//external modules
 import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import BarChart from '@/components/BarChart.vue'
+import LoginButton from '../components/loginButton.vue'
 const route = useRoute()
 const boardUUID = computed(() => route.params.boardUUID || '')
 let GROUPS = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))

@@ -1,4 +1,4 @@
-<template>
+<template v-if="chartData">
   <Line id="my-chart-id" :options="chartOptions" :data="chartData" />
 </template>
 

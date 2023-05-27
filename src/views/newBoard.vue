@@ -1,5 +1,8 @@
 <template>
-  <template v-if="user.loggedIn && user.data.uid != 0 && userData?.count < 5">
+  <LoginButton :destination="{ name: 'userOverview' }" />
+  <template
+    v-if="userStateStore.user.loggedIn && userStateStore.user.data.uid != 0 && userData?.count < 5"
+  >
     <h1 class="title-wrap" @click.prevent="selectEl()">
       <span
         class="board-title"
@@ -31,7 +34,7 @@
     </main>
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
-  <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
+  <template v-if="!userStateStore.user.loggedIn"><h1>not authenticated</h1></template>
   <template v-if="userData?.count >= 5"><h1>You've exceded the 5 board limit</h1></template>
 </template>
 
@@ -45,6 +48,7 @@ import { useDocument } from 'vuefire'
 
 import { db } from '@/firebaseSettings'
 import { useRouter } from 'vue-router'
+import LoginButton from '../components/loginButton.vue'
 
 const createStore = useCreateStore()
 const userStateStore = useUserStateStore()
@@ -58,8 +62,7 @@ const board = ref({
     public: false
   }
 })
-const user = userStateStore.user
-const userData = useDocument(doc(db, 'Users', `${user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const titleElement = ref(null)
 const selectEl = () => {
   titleElement.value.focus()
@@ -99,7 +102,7 @@ const tiles = computed(() => {
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
   const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
-  await setDoc(newBoard, { ...board.value, ownerID: user.data.uid })
+  await setDoc(newBoard, { ...board.value, ownerID: userStateStore.user.data.uid })
     .then(() => {
       tiles.value.forEach((tile) => {
         setDoc(doc(db, 'Boards', newBoard.id, 'Tiles', `${tile.coordinates}`), {
@@ -114,7 +117,9 @@ const addBoardThenRoute = async () => {
         verify: {},
         icon: 'frog'
       })
-      setDoc(doc(db, 'Users', `${user.data.uid}`), { count: userData.value.count + 1 })
+      setDoc(doc(db, 'Users', `${userStateStore.user.data.uid}`), {
+        count: userData.value.count + 1
+      })
       createStore.setSelectedTile('')
       router.push({
         name: 'editBoard',

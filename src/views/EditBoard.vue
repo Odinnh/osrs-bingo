@@ -1,13 +1,7 @@
 <template>
   <div class="container">
-    <button
-      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-      class="btn dashboard"
-      @click.prevent="router.push({ name: 'boardOverview' })"
-    >
-      To Dashboard
-    </button>
-    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <loginButton :destination="{ name: 'editBoard', params: boardUUID }" />
+
     <template
       v-if="
         boardData &&
@@ -129,23 +123,22 @@
 
 <script setup>
 import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
-//external modules
 import { db } from '@/firebaseSettings'
 import { collection, doc, updateDoc } from 'firebase/firestore'
-//project modules
 import BingoBoard from '../components/BingoBoard.vue'
 import editTile from '../components/editTile.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
+import loginButton from '../components/loginButton.vue'
+
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
 let userStateStore = useUserStateStore()
 const route = useRoute()
-const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
@@ -228,28 +221,6 @@ const addEditor = () => {
     editors.push(newEditor.value)
     updateDoc(doc(db, 'Boards', boardUUID), { editors: editors })
   }
-}
-
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
-
-const provider = new GoogleAuthProvider()
-const auth = getAuth()
-
-const popupLogin = () => {
-  signInWithPopup(auth, provider)
-    .then((response) => {
-      userStateStore.setUser({
-        loggedIn: true,
-        data: response.user
-      })
-      router.push({ name: 'editBoard', params: boardUUID })
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
-    })
 }
 </script>
 

@@ -1,15 +1,8 @@
 <template>
   <div class="container">
-    <button
-      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-      class="btn dashboard"
-      @click.prevent="router.push({ name: 'boardOverview' })"
-    >
-      To Dashboard
-    </button>
-    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <loginButton :destination="{ name: 'moderator', params: boardUUID }" />
     <section>
-      <h1>{{ boardData.name }}</h1>
+      <h1 v-if="boardData?.name != undefined">{{ boardData.name }}</h1>
     </section>
     <section
       v-if="
@@ -41,21 +34,17 @@ import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
 import BingoBoard from '@/components/BingoBoard.vue'
 import { db } from '@/firebaseSettings'
 import { useBoardStore } from '@/stores/board'
-import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import { collection, doc } from 'firebase/firestore'
 import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
 import { useUserStateStore } from '../stores/userState'
-
+import loginButton from '../components/loginButton.vue'
 const store = useBoardStore()
 const userStateStore = useUserStateStore()
-const provider = new GoogleAuthProvider()
-const auth = getAuth()
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const route = useRoute()
-const router = useRouter()
 const boardUUID = computed(() => route.params.boardUUID)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
 
@@ -83,22 +72,6 @@ const groupsData = computed(() => {
 })
 
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID.value}/Tiles`))
-const popupLogin = () => {
-  signInWithPopup(auth, provider)
-    .then((response) => {
-      userStateStore.setUser({
-        loggedIn: true,
-        data: response.user
-      })
-      router.push({ name: 'moderator', params: boardUUID })
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
-    })
-}
 </script>
 
 <style scoped>

@@ -1,20 +1,13 @@
 <template>
   <div class="container">
-    <button
-      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-      class="btn dashboard"
-      @click.prevent="router.push({ name: 'boardOverview' })"
-    >
-      To Dashboard
-    </button>
-    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <loginButton :destination="{ name: 'overview', params: { boardUUID: boardUUID } }" />
     <template
       v-if="
         boardData &&
         tilesData &&
         (boardData.settings.public ||
-          user.data.uid == boardData.ownerID ||
-          user.data.uid == ADMIN_ID)
+          userStateStore.user.data.uid == boardData.ownerID ||
+          userStateStore.user.data.uid == ADMIN_ID)
       "
     >
       <section>
@@ -66,7 +59,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
 import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
@@ -76,17 +69,13 @@ import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import loginButton from '../components/loginButton.vue'
 
-const provider = new GoogleAuthProvider()
-const auth = getAuth()
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
 const userStateStore = useUserStateStore()
-let user = ref(userStateStore.user)
 const route = useRoute()
-const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
@@ -105,23 +94,6 @@ const groupsData = computed(() => {
   return tempObject || {}
 })
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
-
-const popupLogin = () => {
-  signInWithPopup(auth, provider)
-    .then((response) => {
-      userStateStore.setUser({
-        loggedIn: true,
-        data: response.user
-      })
-      router.push({ name: 'overview', params: { boardUUID: boardUUID } })
-    })
-    .catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code
-      const errorMessage = error.message
-      console.error(errorCode, errorMessage)
-    })
-}
 </script>
 
 <style scoped>
