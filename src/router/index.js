@@ -8,8 +8,8 @@ import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import loginView from '../views/loginView.vue'
 import GroupView from '../views/GroupView.vue'
-// const prePath = ''
-const prePath = '/osrs-bingo'
+const prePath = ''
+// const prePath = '/osrs-bingo'
 const router = createRouter({
   history: createWebHistory(),
   // mode: 'hash',
