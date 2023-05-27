@@ -19,7 +19,7 @@
             contenteditable
             spellcheck="false"
             @keydown.enter="validate"
-            name="title"
+            name="name"
             @blur.prevent="
               (event) => {
                 validate(event)

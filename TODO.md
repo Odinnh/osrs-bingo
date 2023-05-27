@@ -1,6 +1,7 @@
 # Todo
 
 - [ ] group creation
+- [ ] hidden tile indicator on edit view
 - [ ] add tile progress for teams
 - [ ] dynamic board preview generator
 - [ ] add recurring tile type
@@ -20,6 +21,11 @@
 - [ ] use WOM api for exp tile types
 - [ ] board Deletion
 - [ ] user deletion
+- [ ] restyle the board
+
+        have the infobox scroll with the view.
+
+- [ ] hover over a score bar to highligh all the "collected" tiles for that team
 
 =======
 

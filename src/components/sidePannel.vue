@@ -8,6 +8,7 @@
   </h2>
   <h1>{{ boardStore.selectedTile.title }}</h1>
   <p v-if="boardStore.selectedTile.description">{{ boardStore.selectedTile.description }}</p>
+  <!-- <p v-if="boardStore.selectedTile.score <=0">{{ boardStore.selectedTile.score }}</p> -->
   <p class="items" v-if="boardStore.selectedTile.items">
     ellegible items:
     <template v-for="(item, index) of boardStore.selectedTile.items">
