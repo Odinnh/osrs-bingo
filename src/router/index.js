@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import BoardView from '@/views/BoardView.vue'
 import ModeratorView from '@/views/ModeratorView.vue'
 import HomeView from '@/views/HomeView.vue'
@@ -7,64 +7,66 @@ import BoardList from '@/views/BoardList.vue'
 import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import loginView from '../views/loginView.vue'
-import groupView from '../views/groupView.vue'
+import GroupView from '../views/GroupView.vue'
+// const prePath = ''
+const prePath = '/osrs-bingo'
 const router = createRouter({
-  history: createWebHashHistory(),
-  mode: 'hash',
+  history: createWebHistory(),
+  // mode: 'hash',
   routes: [
     {
-      path: '/',
+      path: prePath + '/',
       name: 'Home',
       component: HomeView
     },
     {
-      path: '/new',
+      path: prePath + '/new',
       name: 'newBoard',
       component: newBoard
     },
     {
-      path: '/login',
+      path: prePath + '/login',
       name: 'loginView',
       component: loginView
     },
     {
-      path: '/edit/:boardUUID',
+      path: prePath + '/edit/:boardUUID',
       name: 'editBoard',
       props: true,
       component: EditBoard
     },
     {
-      path: '/groups/:boardUUID',
+      path: prePath + '/groups/:boardUUID',
       name: 'groupView',
       props: true,
-      component: groupView
+      component: GroupView
     },
     {
-      path: '/b/:boardUUID',
+      path: prePath + '/b/:boardUUID',
       name: 'overview',
       props: true,
       component: BoardView
     },
     {
-      path: '/boards/',
+      path: prePath + '/boards/',
       name: 'boardOverview',
       props: true,
       component: BoardList
     },
+    // {
+    //   path: prePath + '/b/:boardUUID/team/:teamCode',
+    //   name: 'private-board',
+    //   props: true,
+    //   component: BoardView
+    // },
     {
-      path: '/b/:boardUUID/team/:teamCode',
-      name: 'private-board',
-      props: true,
-      component: BoardView
-    },
-    {
-      path: '/b/:boardUUID/stats/',
+      path: prePath + '/b/:boardUUID/stats/',
       name: 'stats-graph',
       props: true,
       component: StatsScreen
     },
     {
-      path: '/m/:boardUUID',
+      path: prePath + '/m/:boardUUID',
       name: 'moderator',
       props: true,
       component: ModeratorView

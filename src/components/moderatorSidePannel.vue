@@ -7,10 +7,10 @@
       <li
         v-for="group in props.groupsData"
         :key="group.id + tileData.id"
-        :class="{ checkThis: group.verify.includes(tileData.id) }"
+        :class="{ checkThis: group.verify.hasOwnProperty(props.tileData.id) }"
       >
         <label :for="group.id + tileData.id">
-          {{ group.name }} : {{ group.verify.includes(tileData.id) }}<br />
+          {{ group.name }} : {{ group.verify.hasOwnProperty(props.tileData.id) }}<br />
           collected:
           <input
             :id="group.id + tileData.id"
@@ -55,7 +55,7 @@ const updateToCompleted = ({ tile, group }) => {
     updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
       points: group.points + tile.points
     })
-    if (group.verify.includes(tile.id)) {
+    if (Object.hasOwn(group.verify, tile.id)) {
       updateDoc(doc(db, 'Boards', props.boardUUID, 'Groups', group.id), {
         verify: group.verify.filter((item) => item != tile.id)
       })

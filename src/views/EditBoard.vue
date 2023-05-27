@@ -1,128 +1,130 @@
 <template>
-  <button
-    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-    class="btn dashboard"
-    @click.prevent="router.push({ name: 'boardOverview' })"
-  >
-    To Dashboard
-  </button>
-  <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
-  <template
-    v-if="
-      boardData &&
-      userStateStore.user.data.ui != 0 &&
-      (userStateStore.user.data.uid == boardData.ownerID ||
-        userStateStore.user.data.uid == ADMIN_ID ||
-        boardData.editors.includes(userStateStore.user.data.uid))
-    "
-  >
-    <section>
-      <h1 class="title-wrap" @click.prevent="selectEl()">
-        <span
-          class="board-title"
-          ref="titleElement"
-          contenteditable
-          spellcheck="false"
-          @keydown.enter="validate"
-          name="title"
-          @blur.prevent="
-            (event) => {
-              validate(event)
-            }
-          "
-          >{{ boardData.name }}</span
-        >
-        <span class="pen">
-          <font-awesome-icon :icon="['fas', 'pen']" />
-        </span>
-      </h1>
-    </section>
-    <section class="main-section">
-      <BingoBoard
-        :boardData="boardData"
-        :groupsData="groupsData"
-        :tilesData="tilesData"
-        :key="'bingo-board-' + boardStore.boardUUID"
-        :isEditor="true"
-      />
-      <aside v-if="boardStore.selectedTile != ''">
-        <div style="justify-content: end; display: flex">
-          <button
-            class="btn close"
-            @click="
-              () => {
-                boardStore.setSelectedTile('')
-              }
-            "
-          >
-            ╳
-          </button>
-        </div>
-        <editTile :tile="boardStore.selectedTile" />
-      </aside>
-    </section>
-    <section>
-      <div>
-        <h2>Rules:</h2>
-        <div>
-          <p
-            class="rules"
-            style="white-space: pre-wrap"
+  <div class="container">
+    <button
+      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
+      class="btn dashboard"
+      @click.prevent="router.push({ name: 'boardOverview' })"
+    >
+      To Dashboard
+    </button>
+    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <template
+      v-if="
+        boardData &&
+        userStateStore.user.data.ui != 0 &&
+        (userStateStore.user.data.uid == boardData.ownerID ||
+          userStateStore.user.data.uid == ADMIN_ID ||
+          boardData?.editors?.includes(userStateStore.user.data.uid))
+      "
+    >
+      <section>
+        <h1 class="title-wrap" @click.prevent="selectEl()">
+          <span
+            class="board-title"
+            ref="titleElement"
             contenteditable
             spellcheck="false"
+            @keydown.enter="validate"
+            name="title"
             @blur.prevent="
               (event) => {
                 validate(event)
               }
             "
-            @keydown.tab.prevent
-            name="rules"
+            >{{ boardData.name }}</span
           >
-            {{ boardData?.rules }}
-          </p>
+          <span class="pen">
+            <font-awesome-icon :icon="['fas', 'pen']" />
+          </span>
+        </h1>
+      </section>
+      <section class="main-section">
+        <BingoBoard
+          :boardData="boardData"
+          :groupsData="groupsData"
+          :tilesData="tilesData"
+          :key="'bingo-board-' + boardStore.boardUUID"
+          :isEditor="true"
+        />
+        <aside v-if="boardStore.selectedTile != ''">
+          <div style="justify-content: end; display: flex">
+            <button
+              class="btn close"
+              @click="
+                () => {
+                  boardStore.setSelectedTile('')
+                }
+              "
+            >
+              ╳
+            </button>
+          </div>
+          <editTile :tile="boardStore.selectedTile" />
+        </aside>
+      </section>
+      <section>
+        <div>
+          <h2>Rules:</h2>
+          <div>
+            <p
+              class="rules"
+              style="white-space: pre-wrap"
+              contenteditable
+              spellcheck="false"
+              @blur.prevent="
+                (event) => {
+                  validate(event)
+                }
+              "
+              @keydown.tab.prevent
+              name="rules"
+            >
+              {{ boardData?.rules }}
+            </p>
+          </div>
         </div>
-      </div>
-      <div>
-        <h2>Moderators:</h2>
-        <div class="moderators">
-          <ul>
-            <li v-for="mod in moderators" :key="mod">
-              {{ mod }}
-              <button class="btn" @click.prevent="removeMod(mod)">-</button>
-            </li>
-            <li>
-              <form @submit.prevent="addModerator">
-                <input type="text" v-model="newModerator" />
-                <button class="btn" type="submit">Add</button>
-              </form>
-            </li>
-          </ul>
+        <div>
+          <h2>Moderators:</h2>
+          <div class="moderators">
+            <ul>
+              <li v-for="mod in moderators" :key="mod">
+                {{ mod }}
+                <button class="btn" @click.prevent="removeMod(mod)">-</button>
+              </li>
+              <li>
+                <form @submit.prevent="addModerator">
+                  <input type="text" v-model="newModerator" />
+                  <button class="btn" type="submit">Add</button>
+                </form>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-      <div>
-        <h2>Editors:</h2>
-        <div class="Editors">
-          <ul>
-            <li v-for="editor in editors" :key="editor">
-              {{ editor }}
-              <button style="margin-left: 15px" class="btn" @click.prevent="removeEditor(editor)">
-                -
-              </button>
-            </li>
-            <li>
-              <form @submit.prevent="addEditor">
-                <input type="text" v-model="newEditor" />
-                <button class="btn" type="submit">Add</button>
-              </form>
-            </li>
-          </ul>
+        <div>
+          <h2>Editors:</h2>
+          <div class="Editors">
+            <ul>
+              <li v-for="editor in editors" :key="editor">
+                {{ editor }}
+                <button style="margin-left: 15px" class="btn" @click.prevent="removeEditor(editor)">
+                  -
+                </button>
+              </li>
+              <li>
+                <form @submit.prevent="addEditor">
+                  <input type="text" v-model="newEditor" />
+                  <button class="btn" type="submit">Add</button>
+                </form>
+              </li>
+            </ul>
+          </div>
         </div>
-      </div>
-    </section>
-  </template>
-  <template v-else>
-    <h1>Not authenticated</h1>
-  </template>
+      </section>
+    </template>
+    <template v-else>
+      <h1>Not authenticated</h1>
+    </template>
+  </div>
 </template>
 
 <script setup>

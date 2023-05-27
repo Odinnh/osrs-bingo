@@ -1,53 +1,57 @@
 <template>
-  <button
-    v-if="user && user.data.uid != 0"
-    class="btn dashboard"
-    @click.prevent="router.push({ name: 'boardOverview' })"
-  >
-    To Dashboard
-  </button>
-  <section>{{ boardData.name }}</section>
-  <section
-    v-if="
-      user &&
-      user.data.uid != 0 &&
-      (user.data.uid == boardData.ownerID ||
-        user.data.uid == ADMIN_ID ||
-        boardData.moderators.includes(user.data.uid) ||
-        boardData.editors.includes(user.data.uid))
-    "
-  >
-    <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />
-    <aside>
-      <moderatorSidePannel
-        :tileData="store.selectedTile"
-        :key="store.selectedTile.id"
-        :boardUUID="boardUUID"
-        :groupsData="groupsData"
-        :boardData="boardData"
-      />
-    </aside>
-  </section>
-  <section v-else>please log in or return to the [board]</section>
+  <div class="container">
+    <button
+      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
+      class="btn dashboard"
+      @click.prevent="router.push({ name: 'boardOverview' })"
+    >
+      To Dashboard
+    </button>
+    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <section>
+      <h1>{{ boardData.name }}</h1>
+    </section>
+    <section
+      v-if="
+        userStateStore.user &&
+        userStateStore.user.data.uid != 0 &&
+        (userStateStore.user.data.uid == boardData.ownerID ||
+          userStateStore.user.data.uid == ADMIN_ID ||
+          boardData.moderators.includes(userStateStore.user.data.uid) ||
+          boardData.editors.includes(userStateStore.user.data.uid))
+      "
+    >
+      <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />
+      <aside>
+        <moderatorSidePannel
+          :tileData="store.selectedTile"
+          :key="store.selectedTile.id"
+          :boardUUID="boardUUID"
+          :groupsData="groupsData"
+          :boardData="boardData"
+        />
+      </aside>
+    </section>
+    <section v-else>please log in or return to the [board]</section>
+  </div>
 </template>
 
 <script setup>
-//project modules
-// import ModeratorBoard from '@/components/moderatorBoard.vue'
 import moderatorSidePannel from '@/components/moderatorSidePannel.vue'
-//vue modules
+import BingoBoard from '@/components/BingoBoard.vue'
+import { db } from '@/firebaseSettings'
+import { useBoardStore } from '@/stores/board'
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
+import { collection, doc } from 'firebase/firestore'
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useBoardStore } from '@/stores/board'
-import { useUserStateStore } from '../stores/userState'
-//external modules
-const store = useBoardStore()
 import { useDocument } from 'vuefire'
+import { useUserStateStore } from '../stores/userState'
+
+const store = useBoardStore()
 const userStateStore = useUserStateStore()
-const user = userStateStore.user
-import { doc, collection } from 'firebase/firestore'
-import { db } from '@/firebaseSettings'
-import BingoBoard from '@/components/BingoBoard.vue'
+const provider = new GoogleAuthProvider()
+const auth = getAuth()
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const route = useRoute()
@@ -79,6 +83,22 @@ const groupsData = computed(() => {
 })
 
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID.value}/Tiles`))
+const popupLogin = () => {
+  signInWithPopup(auth, provider)
+    .then((response) => {
+      userStateStore.setUser({
+        loggedIn: true,
+        data: response.user
+      })
+      router.push({ name: 'moderator', params: boardUUID })
+    })
+    .catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code
+      const errorMessage = error.message
+      console.error(errorCode, errorMessage)
+    })
+}
 </script>
 
 <style scoped>

@@ -98,6 +98,7 @@ const tiles = computed(() => {
 })
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
+  const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
   await setDoc(newBoard, { ...board.value, ownerID: user.data.uid })
     .then(() => {
       tiles.value.forEach((tile) => {
@@ -107,6 +108,12 @@ const addBoardThenRoute = async () => {
       })
     })
     .then(() => {
+      setDoc(doc(db, newGroup.path), {
+        name: 'all',
+        collected: {},
+        verify: {},
+        icon: 'frog'
+      })
       setDoc(doc(db, 'Users', `${user.data.uid}`), { count: userData.value.count + 1 })
       createStore.setSelectedTile('')
       router.push({

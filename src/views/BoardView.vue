@@ -1,85 +1,85 @@
 <template>
-  <button
-    v-if="userStateStore.user && userStateStore.user.data.uid != 0"
-    class="btn dashboard"
-    @click.prevent="router.push({ name: 'boardOverview' })"
-  >
-    To Dashboard
-  </button>
-  <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
-  <template
-    v-if="
-      boardData &&
-      tilesData &&
-      (boardData.settings.public || user.data.uid == boardData.ownerID || user.data.uid == ADMIN_ID)
-    "
-  >
-    <section>{{ boardData.name }}</section>
-    <section class="main-section">
-      <template v-if="scoreOpen">
-        <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
-      </template>
-      <button
-        class="btn info"
-        @click="
-          () => {
-            scoreOpen = !scoreOpen
-          }
-        "
-      >
-        i
-      </button>
-      <BingoBoard
-        :boardData="boardData"
-        :groupsData="groupsData"
-        :teamData="teamData"
-        :tilesData="tilesData"
-        :key="'bingo-board-' + boardStore.boardUUID"
-      />
-      <aside v-if="boardStore.selectedTile != ''">
-        <div style="justify-content: end; display: flex">
-          <button
-            class="btn close"
-            @click="
-              () => {
-                boardStore.setSelectedTile('')
-              }
-            "
-          >
-            ╳
-          </button>
-        </div>
-        <template>
-          <p v-if="teamData">
-            <fontAwesomeIcon class="icon" :icon="['fas', teamData.icon]" /> {{ teamData.name }}
-          </p>
-          <form v-if="!teamData" @submit.prevent="goToTeam">
-            team code: <input type="text" name="teamId" v-model="teamCode" />
-          </form>
+  <div class="container">
+    <button
+      v-if="userStateStore.user && userStateStore.user.data.uid != 0"
+      class="btn dashboard"
+      @click.prevent="router.push({ name: 'boardOverview' })"
+    >
+      To Dashboard
+    </button>
+    <button v-else class="btn dashboard" @click.prevent="popupLogin">login</button>
+    <template
+      v-if="
+        boardData &&
+        tilesData &&
+        (boardData.settings.public ||
+          user.data.uid == boardData.ownerID ||
+          user.data.uid == ADMIN_ID)
+      "
+    >
+      <section>
+        <h1>{{ boardData.name }}</h1>
+      </section>
+      <section class="main-section">
+        <template v-if="scoreOpen">
+          <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
         </template>
-        <sidePannel v-if="boardStore.selectedTile != ''" />
-      </aside>
-    </section>
-    <section></section>
-  </template>
-  <template v-else>
-    <h1>Not authenticated</h1>
-  </template>
+        <button
+          class="btn info"
+          @click="
+            () => {
+              scoreOpen = !scoreOpen
+            }
+          "
+        >
+          i
+        </button>
+        <BingoBoard
+          :boardData="boardData"
+          :groupsData="groupsData"
+          :tilesData="tilesData"
+          :key="'bingo-board-' + boardStore.boardUUID"
+        />
+        <aside v-if="boardStore.selectedTile != ''">
+          <div style="justify-content: end; display: flex">
+            <button
+              class="btn close"
+              @click="
+                () => {
+                  boardStore.setSelectedTile('')
+                }
+              "
+            >
+              ╳
+            </button>
+          </div>
+          <sidePannel v-if="boardStore.selectedTile != ''" />
+        </aside>
+      </section>
+      <section></section>
+    </template>
+    <template v-else>
+      <h1>Not authenticated</h1>
+    </template>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDocument } from 'vuefire'
-//external modules
 import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
-//project modules
 import BingoBoard from '../components/BingoBoard.vue'
 import scoreCard from '@/components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
+
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+
+const provider = new GoogleAuthProvider()
+const auth = getAuth()
 const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
@@ -90,55 +90,21 @@ const router = useRouter()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
-const teamCode = ref(route.params.teamCode || 'all')
 const scoreOpen = ref(false)
-const goToTeam = async () => {
-  if (teamCode.value !== '') {
-    let route = {
-      name: 'private-board',
-      params: { boardUUID: boardUUID, teamCode: teamCode.value }
-    }
-
-    const { data: modCheck } = useDocument(doc(db, 'Boards', boardUUID, 'Groups', teamCode.value))
-    if (modCheck && modCheck?.value?.name == 'moderator') {
-      route.name = 'moderator'
-    }
-    router.push(route)
-  }
-}
 
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
-
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)
-const { data: teamData } = useDocument(doc(db, `Boards/${boardUUID}/Groups/${teamCode.value}/`))
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
-    GROUPS?.value?.forEach((group) => {
-      if (group.name != 'moderator') {
-        tempObject[group.id] = {
-          id: group.id,
-          name: group.name,
-          member: group.members,
-          icon: group.icon,
-          color: group.color,
-          points: group.points,
-          flagEnd: group.flagEnd,
-          collected: group.collected,
-          verify: group.verify
-        }
-      }
+    GROUPS?.value?.forEach(async (group) => {
+      tempObject[group.id] = { ...group }
     })
   }
   return tempObject || {}
 })
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
-
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-
-const provider = new GoogleAuthProvider()
-const auth = getAuth()
 
 const popupLogin = () => {
   signInWithPopup(auth, provider)
