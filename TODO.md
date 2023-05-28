@@ -33,13 +33,15 @@
         - contestants: b
         - captains: b t
 
-e: editor view
-b: board view
-m: moderator view
-g: group view
-t: team moderation
+===
 
-=======
+        e: editor view
+        b: board view
+        m: moderator view
+        g: group view
+        t: team moderation
+
+- [ ] input validation for team color field
 
 ## Done
 
