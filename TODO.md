@@ -26,6 +26,18 @@
         have the infobox scroll with the view.
 
 - [ ] hover over a score bar to highligh all the "collected" tiles for that team
+- [ ] expand navigation menu in top bar
+
+        - editors: e b m g
+        - moderators: b m
+        - contestants: b
+        - captains: b t
+
+e: editor view
+b: board view
+m: moderator view
+g: group view
+t: team moderation
 
 =======
 
