@@ -21,7 +21,8 @@ import {
   faSpaghettiMonsterFlying,
   faSpoon,
   faPen,
-  faShield
+  faShield,
+  faEyeLowVision
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -39,6 +40,7 @@ library.add(faFeatherPointed)
 library.add(faDisease)
 library.add(faDove)
 library.add(faSpoon)
+library.add(faEyeLowVision)
 
 const app = createApp(App)
 

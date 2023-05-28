@@ -3,10 +3,11 @@
     :tileData="boardStore.selectedTile"
     :key="'side-pannel-tile-' + boardStore.selectedTile"
   />
-  <h2>
-    {{ boardStore.selectedTile.id.split('')[0] }}, {{ boardStore.selectedTile.id.split('')[1] }}
-  </h2>
-  <h1>{{ boardStore.selectedTile.title }}</h1>
+  <h2>{ {{ boardStore.selectedTile.id }} }</h2>
+  <h1>
+    {{ boardStore.selectedTile.title
+    }}{{ boardStore.selectedTile.points != 0 ? `, ${boardStore.selectedTile.points} points` : '' }}
+  </h1>
   <p v-if="boardStore.selectedTile.description">{{ boardStore.selectedTile.description }}</p>
   <!-- <p v-if="boardStore.selectedTile.score <=0">{{ boardStore.selectedTile.score }}</p> -->
   <p class="items" v-if="boardStore.selectedTile.items">

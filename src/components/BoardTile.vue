@@ -14,6 +14,9 @@
         (props.tileData?.hidden == true || props.tileData?.type == 'null')
     }"
   >
+    <div v-if="props?.isEditor == true && props.tileData?.hidden == true" class="hidden-indicator">
+      <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
+    </div>
     <img
       v-if="props.tileData.type != 'null'"
       :src="
@@ -51,6 +54,7 @@
 </template>
 
 <script setup>
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import tileFlag from './tileFlag.vue'
 import { useBoardStore } from '@/stores/board.js'
 const boardStore = useBoardStore()
@@ -196,5 +200,9 @@ const setSelectedTile = (tile) => {
 .hidden {
   opacity: 0;
   pointer-events: none;
+}
+.hidden-indicator {
+  color: var(--color-primary);
+  margin: 3px;
 }
 </style>
