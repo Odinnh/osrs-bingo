@@ -107,6 +107,14 @@ section {
   color: var(--color-primary);
   text-decoration: none;
 }
+.btn.danger {
+  background-color: #ff3359;
+  border: none;
+  border-bottom: 2px solid #0b0b0b;
+  border-radius: var(--border-radius);
+  color: var(--color-primary);
+  text-decoration: none;
+}
 .btn.close {
   color: #ff3359;
   font-weight: bolder;
@@ -145,7 +153,17 @@ input[type='number'] {
   border-radius: var(--border-radius);
   color: var(--color-primary);
   text-decoration: none;
-  margin-right: 5px;
+}
+input[type='text'].danger,
+input[type='number'].danger {
+  border: var(--border);
+  border-color: #ff3359;
+  color: #ff3359;
+  font-weight: bold;
+}
+span.danger {
+  color: #ff3359;
+  font-weight: bold;
 }
 /* TODO: change this soit */
 /* img {

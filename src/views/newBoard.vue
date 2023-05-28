@@ -116,7 +116,8 @@ const addBoardThenRoute = async () => {
         name: 'all',
         collected: {},
         verify: {},
-        icon: 'frog'
+        icon: 'frog',
+        color: '#8a038f'
       })
       setDoc(doc(db, 'Users', `${userStateStore.user.data.uid}`), {
         count: userData.value.count + 1

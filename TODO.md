@@ -1,7 +1,7 @@
 # Todo
 
 - [ ] group creation
-- [ ] hidden tile indicator on edit view
+- [x] hidden tile indicator on edit view
 - [ ] add tile progress for teams
 - [ ] dynamic board preview generator
 - [ ] add recurring tile type

@@ -29,6 +29,11 @@
             class="ico"
             :icon="['fas', 'shield']"
           />
+          <font-awesome-icon
+            @click="toBoard('groupView', board.id)"
+            class="ico"
+            :icon="['fas', 'user-group']"
+          />
           <br />
           Public:
           <input
