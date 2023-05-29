@@ -20,9 +20,9 @@
         score: {{ group.points }}<br /><br />
       </li>
       <li>
-        <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: UUID } }"
+        <!-- <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: boardStore.boardUUID } }"
           >Go To Graph</router-link
-        >
+        > -->
       </li>
       <li class="rules" v-if="boardStore.rules != undefined">
         {{ boardStore.rules }}
@@ -34,8 +34,9 @@
 // import { storeToRefs } from 'pinia'
 import tileFlag from './tileFlag.vue'
 import { useBoardStore } from '@/stores/board'
+// import { route } from 'vue-router'
 const boardStore = useBoardStore()
-const UUID = boardStore.boardUUID
+// boardStore.setBoardUUID(route.params.boardUUID)
 const props = defineProps({
   groupsData: {
     type: Object,

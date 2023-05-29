@@ -110,7 +110,7 @@ const setSelectedTile = (tile) => {
   --color-primary: var(--color-accent);
   scale: 1.05;
   border-color: var(--color-accent);
-  background-color: #3c3c3c;
+  background-color: var(--color-tertiary);
 }
 
 .tile img {
@@ -123,6 +123,7 @@ const setSelectedTile = (tile) => {
   width: var(--size);
   height: var(--size);
   object-fit: contain;
+  filter: brightness(70%) contrast(118%) saturate(0%) hue-rotate(-46deg);
 }
 
 .isVerify,
@@ -133,6 +134,7 @@ const setSelectedTile = (tile) => {
 .isCollected {
   position: relative;
   background-color: var(--color-collected);
+  filter: unset;
 }
 
 .tileFlag {

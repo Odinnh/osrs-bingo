@@ -14,10 +14,10 @@
         <h1>{{ boardData.name }}</h1>
       </section>
       <section class="main-section">
-        <template v-if="scoreOpen">
+        <template v-if="scoreOpen == scoreOpen">
           <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
         </template>
-        <button
+        <!-- <button
           class="btn info"
           @click="
             () => {
@@ -26,7 +26,7 @@
           "
         >
           i
-        </button>
+        </button> -->
         <BingoBoard
           :boardData="boardData"
           :groupsData="groupsData"
@@ -64,7 +64,7 @@ import { useDocument } from 'vuefire'
 import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import BingoBoard from '../components/BingoBoard.vue'
-import scoreCard from '@/components/scoreCard.vue'
+import scoreCard from '../components/scoreCard.vue'
 import sidePannel from '@/components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'

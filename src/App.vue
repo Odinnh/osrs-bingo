@@ -11,7 +11,7 @@ const route = useRoute()
 </template>
 
 <style>
-:root {
+/* :root {
   --color-verifying: rgb(249, 191, 83, 10%);
   --color-collected: rgb(83, 249, 93, 10%);
   --color-primary: #d9d9d9;
@@ -20,6 +20,23 @@ const route = useRoute()
   --color-accent: #fab005;
   --border-radius: 5px;
   --border: 1px solid #d9d9d940;
+
+  --text-color: var(--color-primary);
+  --text-alt: var(--color-accent);
+
+  --background-color: var(--color-secondairy);
+} */
+
+:root {
+  --color-verifying: rgba(0, 0, 0, 0.1);
+  --color-collected: rgba(0, 0, 0, 0.1);
+  --color-primary: var(--red);
+  --color-secondairy: #0b0b0b;
+  --color-tertiary: #0b0b0b;
+  --color-accent: var(--red);
+  --border-radius: 5px;
+  --border: 1px solid #00000040;
+  --red: #f51717;
   /* --border: none; */
 
   --text-color: var(--color-primary);
@@ -51,8 +68,8 @@ body {
 .tooltip .tooltiptext {
   visibility: hidden;
   width: 249px;
-  background-color: #555;
-  color: #fff;
+  background-color: var(--color-tertiary);
+  color: var(--color-primary);
   text-align: center;
   border-radius: var(--border-radius);
   padding: 5px 0;
@@ -100,7 +117,7 @@ section {
 .btn {
   display: inline-block;
   padding: 0.5rem;
-  background-color: #343434;
+  background-color: var(--color-tertiary);
   border: none;
   border-bottom: 2px solid #0b0b0b;
   border-radius: var(--border-radius);
@@ -108,7 +125,7 @@ section {
   text-decoration: none;
 }
 .btn.danger {
-  background-color: #ff3359;
+  background-color: var(--red);
   border: none;
   border-bottom: 2px solid #0b0b0b;
   border-radius: var(--border-radius);
@@ -116,7 +133,7 @@ section {
   text-decoration: none;
 }
 .btn.close {
-  color: #ff3359;
+  color: var(--red);
   font-weight: bolder;
   font-size: 1.3rem;
   line-height: 0.2rem;
@@ -157,12 +174,12 @@ input[type='number'] {
 input[type='text'].danger,
 input[type='number'].danger {
   border: var(--border);
-  border-color: #ff3359;
-  color: #ff3359;
+  border-color: var(--red);
+  color: var(--red);
   font-weight: bold;
 }
 span.danger {
-  color: #ff3359;
+  color: var(--red);
   font-weight: bold;
 }
 /* TODO: change this soit */
@@ -211,7 +228,7 @@ span.danger {
   outline: none;
   width: 50px;
   height: 30px;
-  background-color: #ff3359;
+  background-color: var(--red);
   border-radius: 50px;
 }
 
