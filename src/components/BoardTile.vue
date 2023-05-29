@@ -18,7 +18,7 @@
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
     </div>
     <img
-      v-if="props.tileData.type != 'null'"
+      v-if="props.tileData.type != 'null' && props.tileData.hidden !== true"
       :src="
         props.teamData &&
         props.tileData.altImg &&
