@@ -9,7 +9,7 @@
         userStateStore.user &&
         userStateStore.user.data.uid != 0 &&
         (userStateStore.user.data.uid == boardData.ownerID ||
-          userStateStore.user.data.uid == ADMIN_ID ||
+          userData?.type == 'admin' ||
           boardData.moderators.includes(userStateStore.user.data.uid) ||
           boardData.editors.includes(userStateStore.user.data.uid))
       "
@@ -35,19 +35,18 @@ import BingoBoard from '@/components/BingoBoard.vue'
 import { db } from '@/firebaseSettings'
 import { useBoardStore } from '@/stores/board'
 import { collection, doc } from 'firebase/firestore'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDocument } from 'vuefire'
 import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
 const store = useBoardStore()
 const userStateStore = useUserStateStore()
-const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 
 const route = useRoute()
 const boardUUID = computed(() => route.params.boardUUID)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
-
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
 const groupsData = computed(() => {
   let tempObject = {}

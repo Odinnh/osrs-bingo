@@ -8,7 +8,7 @@
 <script setup>
 const props = defineProps({
   groupIcon: {
-    required: true,
+    required: false,
     type: String
   },
   fasIcon: {

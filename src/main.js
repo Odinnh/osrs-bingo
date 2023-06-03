@@ -31,7 +31,16 @@ import {
   faHatCowboy,
   faTree,
   faFire,
-  faCat
+  faCat,
+  faListUl,
+  faRightToBracket,
+  faRightFromBracket,
+  faUsersRectangle,
+  faSquareCheck,
+  faTableCellsLarge,
+  faShapes,
+  faUsersLine,
+  faUsersGear
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -41,6 +50,15 @@ library.add(faPen)
 library.add(faPenToSquare)
 library.add(faEye)
 library.add(faEyeLowVision)
+library.add(faListUl)
+library.add(faRightToBracket)
+library.add(faRightFromBracket)
+library.add(faUsersRectangle)
+library.add(faSquareCheck)
+library.add(faTableCellsLarge)
+library.add(faShapes)
+library.add(faUsersLine)
+library.add(faUsersGear)
 
 //icons for teams customisation
 library.add(faShield)

@@ -24,7 +24,7 @@
           >Go To Graph</router-link
         > -->
       </li>
-      <li class="rules" v-if="boardStore.rules != undefined">
+      <li class="rules" v-if="boardStore?.rules != undefined">
         {{ boardStore.rules }}
       </li>
     </ul>

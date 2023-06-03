@@ -4,11 +4,10 @@
 
     <template
       v-if="
-        boardData &&
-        userStateStore.user.data.ui != 0 &&
-        (userStateStore.user.data.uid == boardData.ownerID ||
-          userStateStore.user.data.uid == ADMIN_ID ||
-          boardData?.editors?.includes(userStateStore.user.data.uid))
+        (boardData &&
+          userStateStore.user.data.ui != 0 &&
+          (userStateStore.user.data.uid == boardData.ownerID || userData?.type == 'admin')) ||
+        boardData?.editors?.includes(userStateStore.user.data.uid)
       "
     >
       <section>
@@ -133,7 +132,6 @@ import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
 
-const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
@@ -142,7 +140,7 @@ const route = useRoute()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
-
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
 const boardData = useDocument(doc(db, 'Boards', boardUUID))

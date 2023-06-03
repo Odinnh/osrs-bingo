@@ -19,11 +19,11 @@
     </h1>
     <div>
       name: width:
-      <input min="2" max="9" name="width" type="range" v-model="board.settings.width" />{{
+      <input min="1" max="9" name="width" type="range" v-model="board.settings.width" />{{
         board.settings.width
       }}<br />
       height:
-      <input min="2" max="9" name="height" type="range" v-model="board.settings.height" />{{
+      <input min="1" max="9" name="height" type="range" v-model="board.settings.height" />{{
         board.settings.height
       }}<br />
       total tiles: {{ board.settings.width * board.settings.height }}
@@ -58,8 +58,8 @@ const board = ref({
   name: '<name of bingo board>',
 
   settings: {
-    width: 2,
-    height: 2,
+    width: 1,
+    height: 1,
     public: false
   }
 })
@@ -117,7 +117,8 @@ const addBoardThenRoute = async () => {
         collected: {},
         verify: {},
         icon: 'frog',
-        color: '#8a038f'
+        color: '#8a038f',
+        points: 0
       })
       setDoc(doc(db, 'Users', `${userStateStore.user.data.uid}`), {
         count: userData.value.count + 1

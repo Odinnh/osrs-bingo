@@ -7,7 +7,7 @@
         boardData &&
         userStateStore.user.data.ui != 0 &&
         (userStateStore.user.data.uid == boardData.ownerID ||
-          userStateStore.user.data.uid == ADMIN_ID ||
+          userData?.type == 'admin' ||
           boardData.editors?.includes(userStateStore.user.data.uid))
       "
     >
@@ -204,12 +204,11 @@ import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
 import iconButton from '../components/buttons/iconButton.vue'
 
-const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const route = useRoute()
 const userStateStore = useUserStateStore()
 const boardStore = useBoardStore()
 boardStore.setBoardUUID(route.params.boardUUID)
-
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 boardStore.setSelectedTile('')
 
 const { data: GROUPS } = useDocument(collection(db, 'Boards', route.params.boardUUID, 'Groups'))

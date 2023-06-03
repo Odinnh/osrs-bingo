@@ -7,7 +7,7 @@
         tilesData &&
         (boardData.settings.public ||
           userStateStore.user.data.uid == boardData.ownerID ||
-          userStateStore.user.data.uid == ADMIN_ID)
+          userData?.type == 'admin')
       "
     >
       <section>
@@ -53,6 +53,11 @@
     </template>
     <template v-else>
       <h1>Not authenticated</h1>
+      <p>you do not need to log in to view a published board.</p>
+      <p>
+        if the board you are looking for is private, you need to be the owner, a moderator, or
+        editor to view this board.
+      </p>
     </template>
   </div>
 </template>
@@ -65,13 +70,12 @@ import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import BingoBoard from '../components/BingoBoard.vue'
 import scoreCard from '../components/scoreCard.vue'
-import sidePannel from '@/components/sidePannel.vue'
+import sidePannel from '../components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 
 import loginButton from '../components/loginButton.vue'
 
-const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
 const userStateStore = useUserStateStore()
@@ -80,7 +84,7 @@ boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
 const scoreOpen = ref(false)
-
+const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)

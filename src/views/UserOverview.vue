@@ -27,12 +27,12 @@
           <font-awesome-icon
             @click="toBoard('moderator', board.id)"
             class="ico"
-            :icon="['fas', 'shield']"
+            :icon="['fas', 'square-check']"
           />
           <font-awesome-icon
             @click="toBoard('groupView', board.id)"
             class="ico"
-            :icon="['fas', 'user-group']"
+            :icon="['fas', 'users-gear']"
           />
           <br />
           Public:
@@ -45,7 +45,10 @@
         </span>
       </li>
 
-      <router-link v-if="!userData || userData.count < 5" :to="{ name: 'newBoard' }" class="btn"
+      <router-link
+        v-if="!userData || userData.count < 5"
+        :to="{ name: 'newBoard' }"
+        class="btn highlight"
         >+ create board</router-link
       >
     </ul>
@@ -67,7 +70,7 @@
           <font-awesome-icon
             @click="toBoard('moderator', board.id)"
             class="ico"
-            :icon="['fas', 'shield']"
+            :icon="['fas', 'square-check']"
           />
         </span>
       </li>
@@ -85,7 +88,7 @@
           <font-awesome-icon
             @click="toBoard('moderator', board.id)"
             class="ico"
-            :icon="['fas', 'shield']"
+            :icon="['fas', 'square-check']"
           />
         </span>
       </li>
@@ -95,7 +98,7 @@
 </template>
 <script setup>
 import { useRouter } from 'vue-router'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useDocument } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
@@ -104,21 +107,19 @@ import { useUserStateStore } from '../stores/userState'
 
 const userStateStore = useUserStateStore()
 
-const ADMIN_ID = ref(import.meta.env['VITE_ADMIN_ID'])
-
 const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const boardsRef = collection(db, 'Boards')
 
 const queryMethod = computed(() => {
   let tempMethod = '=='
-  if (userStateStore.user.data.uid == ADMIN_ID.value) {
+  if (userData?.value?.type == 'admin') {
     tempMethod = '!='
   }
   return tempMethod
 })
 const queryID = computed(() => {
   let tempID = '=='
-  if (userStateStore.user.data.uid == ADMIN_ID.value) {
+  if (userData?.value?.type == 'admin') {
     tempID = '0'
   } else {
     tempID = userStateStore.user.data.uid

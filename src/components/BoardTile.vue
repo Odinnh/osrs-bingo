@@ -18,7 +18,11 @@
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
     </div>
     <img
-      v-if="props.tileData.type != 'null' && props.tileData.hidden !== true"
+      v-if="
+        (props?.isEditor == true && props.tileData?.type != 'null' && !props.tileData?.hidden) ||
+        props.tileData?.hidden ||
+        (props.isEditor != true && props.tileData.type != 'null' && !props.tileData?.hidden)
+      "
       :src="
         props.teamData &&
         props.tileData.altImg &&
@@ -123,7 +127,7 @@ const setSelectedTile = (tile) => {
   width: var(--size);
   height: var(--size);
   object-fit: contain;
-  filter: brightness(70%) contrast(118%) saturate(0%) hue-rotate(-46deg);
+  /* filter: brightness(70%) contrast(118%) saturate(0%) hue-rotate(-46deg); */
 }
 
 .isVerify,

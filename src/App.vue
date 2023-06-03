@@ -11,7 +11,8 @@ const route = useRoute()
 </template>
 
 <style>
-/* :root {
+:root {
+  --red: #f51717;
   --color-verifying: rgb(249, 191, 83, 10%);
   --color-collected: rgb(83, 249, 93, 10%);
   --color-primary: #d9d9d9;
@@ -25,9 +26,9 @@ const route = useRoute()
   --text-alt: var(--color-accent);
 
   --background-color: var(--color-secondairy);
-} */
+}
 
-:root {
+/* :root {
   --color-verifying: rgba(0, 0, 0, 0.1);
   --color-collected: rgba(0, 0, 0, 0.1);
   --color-primary: var(--red);
@@ -36,14 +37,13 @@ const route = useRoute()
   --color-accent: var(--red);
   --border-radius: 5px;
   --border: 1px solid #00000040;
-  --red: #f51717;
-  /* --border: none; */
+  -border: none;
 
   --text-color: var(--color-primary);
   --text-alt: var(--color-accent);
 
   --background-color: var(--color-secondairy);
-}
+} */
 body {
   background: var(--color-tertiary);
   color: var(--color-primary);
@@ -127,10 +127,12 @@ section {
 .btn.danger {
   background-color: var(--red);
   border: none;
-  border-bottom: 2px solid #0b0b0b;
-  border-radius: var(--border-radius);
   color: var(--color-primary);
   text-decoration: none;
+}
+.btn.highlight {
+  background-color: var(--color-accent);
+  color: var(--color-tertiary);
 }
 .btn.close {
   color: var(--red);
@@ -141,7 +143,7 @@ section {
   text-align: center;
   padding-top: 3px;
 }
-.btn.dashboard {
+.dashboard {
   display: block;
   position: absolute;
   top: 25px;
