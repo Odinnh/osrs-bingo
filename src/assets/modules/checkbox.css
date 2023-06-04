@@ -1,0 +1,38 @@
+input[type='checkbox'] {
+  cursor: pointer;
+  --_scale: 30px;
+  --_spacing: calc(var(--_scale) / 10);
+  -webkit-appearance: none;
+  appearance: none;
+  border-radius: 0;
+  position: relative;
+  outline: none;
+  width: calc(var(--_scale) / 3 * 5);
+  height: var(--_scale);
+  background-color: var(--color-error);
+  border-radius: calc(var(--_scale) / 3 * 5);
+}
+
+input[type='checkbox']::after {
+  content: '';
+  position: absolute;
+  top: var(--_spacing);
+  left: var(--_spacing);
+  width: calc(var(--_scale) - (var(--_spacing) * 2));
+  height: calc(var(--_scale) - (var(--_spacing) * 2));
+  background-color: var(--color-tertiary);
+  border-radius: 50%;
+  transition: 100ms;
+}
+
+input[type='checkbox']:checked {
+  background-color: var(--color-correct);
+}
+
+input[type='checkbox']:hover::after {
+  top: 1px;
+}
+
+input[type='checkbox']:checked::after {
+  left: calc(var(--_scale) - (var(--_spacing) * 2));
+}

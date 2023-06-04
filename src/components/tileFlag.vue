@@ -23,17 +23,4 @@ const props = defineProps({
 })
 </script>
 
-<style scoped>
-.flag {
-  padding: 2px;
-}
-.icon {
-  position: relative;
-  z-index: 150;
-}
-.inverted {
-  color: var(--color-secondairy) !important ;
-  background-color: var(--color-primary) !important;
-  --groupColor: var(--color-primary) !important;
-}
-</style>
+<style scoped></style>

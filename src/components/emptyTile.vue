@@ -12,15 +12,4 @@ const props = defineProps({
 })
 </script>
 
-<style scoped>
-.tile {
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-  border: var(--border);
-  border-radius: var(--border-radius);
-  position: relative;
-  overflow: clip;
-  aspect-ratio: 1;
-  box-sizing: border-box;
-}
-</style>
+<style scoped></style>

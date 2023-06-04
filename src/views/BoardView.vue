@@ -100,44 +100,4 @@ const groupsData = computed(() => {
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
 </script>
 
-<style scoped>
-textarea {
-  border: 1px solid var(--color-primary);
-  background-color: var(--background-color);
-  color: var(--color-primary);
-  font-size: 1.1rem;
-  padding: 15px;
-}
-
-.heading h2 {
-  display: inline;
-  margin-right: 15px;
-}
-.main-section {
-  display: flex;
-  justify-content: center;
-}
-aside {
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-  background-color: var(--color-secondairy);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  padding: 20px;
-  width: 300px;
-}
-.info {
-  color: #7f79ff;
-  display: block;
-  font-weight: bolder;
-  font-size: 1.3rem;
-  line-height: 0.2rem;
-  height: 2.7rem;
-  aspect-ratio: 1/1.2;
-  text-align: center;
-  padding-top: 3px;
-}
-</style>
+<style scoped></style>

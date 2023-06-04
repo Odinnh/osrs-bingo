@@ -19,19 +19,4 @@ const userStateStore = useUserStateStore()
 
 const router = useRouter()
 </script>
-<style scoped>
-.block {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-  gap: 20px;
-  margin: 0 auto;
-}
-.block input {
-  width: 200px;
-}
-
-.btn {
-  width: 200px;
-}
-</style>
+<style scoped></style>

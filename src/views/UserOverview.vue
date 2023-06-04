@@ -4,95 +4,88 @@
       userStateStore.user.loggedIn && userStateStore.user && userStateStore.user.data.uid != '0'
     "
   >
-    <h2>User:</h2>
-    Total boards: {{ userData?.count ? userData.count : 0 }}<br />
-    user ID: <span class="UID">{{ userStateStore.user.data.uid }}</span
-    ><br />
-    share your user ID with people to have them add you as moderator / editor.
-    <h2>your boards:</h2>
-    <ul v-if="boards">
-      <li v-for="board in boards" :key="board">
-        <span>{{ board.name }}</span>
-        <span class="iconSpan">
-          <font-awesome-icon
-            @click="toBoard('editBoard', board.id)"
-            class="ico"
-            :icon="['fas', 'pen-to-square']"
-          />
-          <font-awesome-icon
-            @click="toBoard('overview', board.id)"
-            class="ico"
-            :icon="['fas', 'eye']"
-          />
-          <font-awesome-icon
-            @click="toBoard('moderator', board.id)"
-            class="ico"
-            :icon="['fas', 'square-check']"
-          />
-          <font-awesome-icon
-            @click="toBoard('groupView', board.id)"
-            class="ico"
-            :icon="['fas', 'users-gear']"
-          />
-          <br />
-          Public:
-          <input
-            class="toggle"
-            type="checkbox"
-            v-bind:checked="board.settings.public"
-            @click.prevent="togglePublic(board)"
-          />
-        </span>
-      </li>
+    <!-- {{ getFirstDoc('ZwSoQzIrYs5Y1L5M1VA9') }} -->
+    <h1>User Settings and overview</h1>
+    <section class="user-details">
+      <h2>User details</h2>
+      <p>
+        Total boards: {{ userData?.count ? userData.count : 0 }}<br />
+        User ID: <span class="highlight">{{ userStateStore.user.data.uid }}</span
+        ><br />
+        Share your user ID with people to have them add you as moderator and-or editor.
+      </p>
+    </section>
+    <section>
+      <h2>Your boards</h2>
+      <div class="board-list">
+        <div class="_item" v-for="board in boards" :key="board">
+          <h3>{{ board.name }}</h3>
 
-      <router-link
-        v-if="!userData || userData.count < 5"
-        :to="{ name: 'newBoard' }"
-        class="btn highlight"
-        >+ create board</router-link
-      >
-    </ul>
-    <h2 v-if="editBoards">boards you can edit:</h2>
-    <ul v-if="editBoards">
-      <li v-for="board in editBoards" :key="board">
-        <span>{{ board.name }}</span>
-        <span class="iconSpan">
-          <font-awesome-icon
-            @click="toBoard('editBoard', board.id)"
-            class="ico"
-            :icon="['fas', 'pen-to-square']"
-          />
-          <font-awesome-icon
-            @click="toBoard('overview', board.id)"
-            class="ico"
-            :icon="['fas', 'eye']"
-          />
-          <font-awesome-icon
-            @click="toBoard('moderator', board.id)"
-            class="ico"
-            :icon="['fas', 'square-check']"
-          />
-        </span>
-      </li>
-    </ul>
-    <h2 v-if="modBoards">boards you can moderate:</h2>
-    <ul v-if="modBoards">
-      <li v-for="board in modBoards" :key="board">
-        <span>{{ board.name }}</span>
-        <span class="iconSpan">
-          <font-awesome-icon
-            @click="toBoard('overview', board.id)"
-            class="ico"
-            :icon="['fas', 'eye']"
-          />
-          <font-awesome-icon
-            @click="toBoard('moderator', board.id)"
-            class="ico"
-            :icon="['fas', 'square-check']"
-          />
-        </span>
-      </li>
-    </ul>
+          <p>
+            Board id: <span class="highlight">{{ board.id }}</span>
+          </p>
+          <p @click="toBoard('editBoard', board.id)">
+            Edit board: <iconButton class="iconBtn" :fasIcon="'pen-to-square'" />
+          </p>
+          <p @click="toBoard('overview', board.id)">
+            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+          </p>
+          <p @click="toBoard('moderator', board.id)">
+            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+          </p>
+          <p @click="toBoard('groupView', board.id)">
+            Manage groups: <iconButton class="iconBtn" :fasIcon="'users-gear'" />
+          </p>
+          <p>
+            Public:
+            <input
+              class="toggle"
+              type="checkbox"
+              v-bind:checked="board.settings.public"
+              @click.prevent="togglePublic(board)"
+            />
+          </p>
+        </div>
+        <button
+          v-if="!userData || userData.count < 6"
+          class="btn highlight"
+          @click.prevent="router.push({ name: 'newBoard' })"
+        >
+          Create new board
+        </button>
+      </div>
+    </section>
+    <section v-if="!isEmpty(editBoards)">
+      <h2>Boards you can edit</h2>
+      <div class="board-list" v-if="editBoards">
+        <div class="_item" v-for="board in editBoards" :key="board">
+          <h3>{{ board.name }}</h3>
+          <p @click="toBoard('editBoard', board.id)">
+            Edit board: <iconButton class="iconBtn" :fasIcon="'pen-to-square'" />
+          </p>
+          <p @click="toBoard('overview', board.id)">
+            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+          </p>
+          <p @click="toBoard('moderator', board.id)">
+            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+          </p>
+        </div>
+      </div>
+    </section>
+    <section v-if="!isEmpty(modBoards)">
+      <h2>Boards you can moderate</h2>
+      <div class="board-list">
+        <div class="_item" v-for="board in modBoards" :key="board">
+          <h3>{{ board.name }}</h3>
+          <p @click="toBoard('overview', board.id)">
+            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+          </p>
+          <p @click="toBoard('moderator', board.id)">
+            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+          </p>
+        </div>
+      </div>
+    </section>
   </template>
   <h1 v-else>Not Authenticated</h1>
 </template>
@@ -104,6 +97,7 @@ import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import { useUserStateStore } from '../stores/userState'
+import iconButton from '../components/buttons/iconButton.vue'
 
 const userStateStore = useUserStateStore()
 
@@ -147,30 +141,38 @@ const togglePublic = (board) => {
 if (!userStateStore.user.loggedIn) {
   router.push({ name: 'loginView' })
 }
+const isEmpty = (obj) => {
+  for (var prop in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, prop)) {
+      return false
+    }
+  }
+
+  return true
+}
 </script>
 <style scoped>
-ul {
+section {
+  padding: 15px;
+  background-color: var(--color-tertiary);
+  border-radius: var(--border-radius);
+  margin-bottom: 15px;
+}
+
+.board-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
+}
+.board-list ._item {
   display: flex;
   flex-direction: column;
+
+  border-radius: var(--border-radius);
+  padding: 15px;
+  background-color: var(--color-secondairy);
+}
+.board-list ._item > * {
   width: max-content;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-}
-li {
-  display: flex;
-  gap: 25px;
-  justify-content: space-between;
-}
-.iconSpan {
-  display: flex;
-  gap: 10px;
-}
-.ico {
-  cursor: pointer;
-}
-.UID {
-  color: var(--color-accent);
 }
 </style>

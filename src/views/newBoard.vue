@@ -1,5 +1,4 @@
 <template>
-  <LoginButton :destination="{ name: 'userOverview' }" />
   <template
     v-if="userStateStore.user.loggedIn && userStateStore.user.data.uid != 0 && userData?.count < 5"
   >
@@ -36,7 +35,7 @@
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
   <template v-if="!userStateStore.user.loggedIn"><h1>not authenticated</h1></template>
-  <template v-if="userData?.count >= 5"><h1>You've exceded the 5 board limit</h1></template>
+  <template v-if="userData?.count >= 6"><h1>You've exceded the 5 board limit</h1></template>
 </template>
 
 <script setup>
@@ -49,7 +48,6 @@ import { useDocument } from 'vuefire'
 
 import { db } from '@/firebaseSettings'
 import { useRouter } from 'vue-router'
-import LoginButton from '../components/loginButton.vue'
 
 const createStore = useCreateStore()
 const userStateStore = useUserStateStore()
@@ -132,28 +130,9 @@ const addBoardThenRoute = async () => {
       })
     })
 }
+if (!userStateStore.user.loggedIn) {
+  router.push({ name: 'loginView' })
+}
 </script>
 
-<style scoped>
-.bingo-board {
-  font-family: 'Roboto', sans-serif;
-  box-sizing: border-box;
-  max-width: min(70vh, 70vw);
-  background-color: var(--color-secondairy);
-  border: var(--border);
-  border-radius: var(--border-radius);
-  display: grid;
-  grid-template-columns: repeat(v-bind('board.settings.width'), 1fr);
-  grid-template-rows: repeat(v-bind('board.settings.height'), 1fr);
-  gap: 5px;
-  padding: 20px;
-}
-
-.title-wrap:focus-within .pen,
-.title-wrap:focus .pen {
-  display: none;
-}
-.title-wrap {
-  width: max-content;
-}
-</style>
+<style scoped></style>

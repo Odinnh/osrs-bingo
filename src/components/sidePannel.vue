@@ -26,9 +26,4 @@ const boardStore = useBoardStore()
 import BoardTile from './BoardTile.vue'
 </script>
 
-<style scoped>
-.items {
-  font-style: italic;
-  font-size: 0.8rem;
-}
-</style>
+<style scoped></style>

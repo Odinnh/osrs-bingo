@@ -5,6 +5,7 @@
 
       <template
         v-if="
+          boardData &&
           userStateStore.user &&
           userStateStore.user.data.uid != 0 &&
           (userStateStore.user.data.uid == boardData.ownerID ||
@@ -31,6 +32,7 @@
 
       <template
         v-if="
+          boardData &&
           userStateStore.user &&
           userStateStore.user.data.uid != 0 &&
           (userStateStore.user.data.uid == boardData.ownerID ||
@@ -75,9 +77,8 @@
 <script setup>
 import { useUserStateStore } from '../stores/userState'
 import { useRoute, useRouter } from 'vue-router'
-import { computed } from 'vue'
 import { popupLogin } from '../views/popupLogin'
-import IconButton from './buttons/iconButton.vue'
+import iconButton from './buttons/iconButton.vue'
 import { useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
@@ -95,26 +96,10 @@ const userStateStore = useUserStateStore()
 const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const router = useRouter()
 
-const boardUUID = computed(() => route.params.boardUUID)
-
-const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
+const boardData = useDocument(doc(db, 'Boards', route.params.boardUUID))
 
 const toBoard = (route, boardUUID) => {
   router.push({ name: route, params: { boardUUID: boardUUID } })
 }
 </script>
-<style scoped>
-.dashboard {
-  gap: 15px;
-  display: flex;
-}
-.current-page {
-  border-color: var(--color-accent);
-  color: var(--color-tertiary);
-  background-color: var(--color-accent);
-}
-.iconBtn:hover {
-  border-color: var(--color-accent);
-  cursor: pointer;
-}
-</style>
+<style scoped></style>

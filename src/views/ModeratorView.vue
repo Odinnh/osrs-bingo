@@ -73,17 +73,4 @@ const groupsData = computed(() => {
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID.value}/Tiles`))
 </script>
 
-<style scoped>
-textarea {
-  border: 1px solid var(--color-primary);
-  background-color: #343434;
-  color: var(--color-primary);
-  font-size: 1.1rem;
-  padding: 15px;
-}
-
-.heading h2 {
-  display: inline;
-  margin-right: 15px;
-}
-</style>
+<style scoped></style>

@@ -74,9 +74,4 @@ const updateToCompleted = ({ tile, group }) => {
   }
 }
 </script>
-<style scoped>
-.checkThis {
-  color: green;
-  font-weight: bold;
-}
-</style>
+<style scoped></style>

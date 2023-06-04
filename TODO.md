@@ -1,7 +1,5 @@
 # Todo
 
-- [x] group creation
-- [x] hidden tile indicator on edit view
 - [ ] add tile progress for teams
 - [ ] dynamic board preview generator
 - [ ] add recurring tile type
@@ -68,5 +66,9 @@
 - [x] in the list overview add a toggle to make a board public/private
 - [x] add a rules section
 - [x] change the method of editing a board.
+
   - should be able to inline edit the tile details
   - add the ability to change the settings
+
+- [x] group creation
+- [x] hidden tile indicator on edit view

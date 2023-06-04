@@ -1,0 +1,22 @@
+.btn {
+  cursor: pointer;
+  padding: 5px;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  border-color: var(--border-color);
+  color: var(--color-primary);
+  background-color: var(--color-secondairy);
+  text-align: center;
+  text-decoration: none;
+}
+.btn.highlight {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-secondairy);
+}
+
+.btn:hover {
+  color: var(--color-secondairy);
+  border-color: var(--color-primary);
+  background-color: var(--color-primary);
+}
