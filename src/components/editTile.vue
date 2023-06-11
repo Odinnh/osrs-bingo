@@ -2,17 +2,15 @@
   <div>
     id:
     {{ boardStore.selectedTile.id }}<br />
-    <!-- <div v-if="boardStore.selectedTile.type != 'null'" class="tile"> -->
-    <div class="tile">
+    <div v-if="boardStore.selectedTile.type != 'null'" class="tile">
       <img :src="boardStore.selectedTile.img" alt="" />
 
       <div v-if="boardStore.selectedTile.altImg" class="sub-tile">
         <img :src="boardStore.selectedTile.altImg" alt="" />
       </div>
     </div>
-    <div>
+    <div v-if="boardStore.selectedTile.type != 'null'">
       Default img:
-      <!-- v-if="boardStore.selectedTile.type != 'null'" -->
       <input
         type="text"
         v-model="boardStore.selectedTile.img"
@@ -30,11 +28,10 @@
         "
       />
     </div>
-    <div>
+    <div v-if="boardStore.selectedTile.type != 'null'">
       Image on completed tile:
       <input
         type="text"
-        v-if="boardStore.selectedTile.type != 'null'"
         v-model="boardStore.selectedTile.altImg"
         name="altImg"
         id="addtileimg"
@@ -263,5 +260,30 @@ const objExists = (item) => {
 .tile img {
   max-width: 100%;
   z-index: 2 !important;
+}
+
+.tile {
+  font-family: 'Roboto', sans-serif;
+  user-select: none;
+  box-sizing: border-box;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-tertiary);
+  position: relative;
+  overflow: clip;
+  aspect-ratio: 1;
+  box-sizing: border-box;
+}
+.tile img {
+  box-sizing: border-box;
+  --size: 75%;
+  position: absolute;
+  inset: 50%;
+  margin-left: calc(-1 * (var(--size) / 2));
+  margin-top: calc(-1 * (var(--size) / 2));
+  width: var(--size);
+  height: var(--size);
+  object-fit: contain;
+  /* filter: brightness(70%) contrast(118%) saturate(0%) hue-rotate(-46deg); */
 }
 </style>

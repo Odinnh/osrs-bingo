@@ -18,11 +18,11 @@
         </span>
         score: {{ group.points ? group.points : '0' }}<br /><br />
       </li>
-      <li>
-        <!-- <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: boardStore.boardUUID } }"
+      <!-- <li>
+        <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: boardStore.boardUUID } }"
           >Go To Graph</router-link
-        > -->
-      </li>
+        >
+      </li> -->
       <li class="rules" v-if="boardStore?.rules != undefined">
         {{ boardStore.rules }}
       </li>
@@ -43,4 +43,11 @@ const props = defineProps({
   }
 })
 </script>
-<style scoped></style>
+<style scoped>
+ul {
+  list-style-type: none;
+}
+.tileFlag {
+  width: var(--width);
+}
+</style>

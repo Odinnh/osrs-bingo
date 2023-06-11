@@ -54,7 +54,7 @@
           <editTile :tile="boardStore.selectedTile" />
         </aside>
       </section>
-      <section>
+      <section class="board-settings">
         <h2>Board Settings</h2>
         <div>
           <h3>Rules:</h3>
@@ -236,9 +236,9 @@ const addEditor = () => {
 <style scoped>
 .main-section {
   display: grid;
-  grid-template-columns: 0.3fr 1fr 0.3fr;
+  grid-template-columns: 1fr 0.3fr;
   gap: calc(3 * var(--border-radius));
-  grid-template-areas: 'score board detail';
+  grid-template-areas: ' board detail';
   /* position: relative; */
 }
 .detail-pane {
@@ -263,8 +263,11 @@ const addEditor = () => {
 }
 @media screen and (max-width: 900px) {
   .main-section {
-    grid-template-columns: 0.4fr 0.6fr;
-    grid-template-areas: 'board board' 'score detail';
+    grid-template-columns: 1fr;
+    grid-template-areas: 'board' 'detail';
+  }
+  .board-settings {
+    grid-area: score;
   }
 }
 ul {
