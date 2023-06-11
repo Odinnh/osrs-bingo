@@ -1,0 +1,15 @@
+input[type='text'],
+select,
+.input {
+  padding: 10px;
+  border: var(--border);
+  border-radius: var(--border-radius);
+  background-color: var(--color-tertiary);
+  margin-block-end: 15px;
+  color: white;
+  position: relative;
+}
+
+option:checked {
+  background-color: red;
+}

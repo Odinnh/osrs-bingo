@@ -51,4 +51,16 @@ const props = defineProps({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+main {
+  background-color: var(--color-tertiary);
+  padding: 15px;
+  width: 100%;
+  border-radius: var(--border-radius);
+  display: grid;
+  grid-template-columns: repeat(v-bind('boardData.settings.width'), 1fr);
+  grid-template-rows: repeat(v-bind('boardData.settings.height'), 1fr);
+  gap: min(2vw, calc(var(--border-radius) * 3));
+  height: min-content;
+}
+</style>

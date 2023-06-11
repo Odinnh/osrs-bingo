@@ -1,16 +1,19 @@
 input[type='checkbox'] {
   cursor: pointer;
-  --_scale: 30px;
+  --_scale: 24px;
   --_spacing: calc(var(--_scale) / 10);
   -webkit-appearance: none;
   appearance: none;
   border-radius: 0;
+  border: none;
+  padding: 0;
   position: relative;
   outline: none;
   width: calc(var(--_scale) / 3 * 5);
   height: var(--_scale);
   background-color: var(--color-error);
   border-radius: calc(var(--_scale) / 3 * 5);
+  margin-block-end: 0;
 }
 
 input[type='checkbox']::after {

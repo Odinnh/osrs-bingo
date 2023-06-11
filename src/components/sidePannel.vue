@@ -4,6 +4,7 @@
     }}{{ boardStore.selectedTile.points != 0 ? `, ${boardStore.selectedTile.points} points` : '' }}
   </h2>
   <BoardTile
+    class="board-tile"
     :tileData="boardStore.selectedTile"
     :key="'side-pannel-tile-' + boardStore.selectedTile"
   />
@@ -26,4 +27,13 @@ const boardStore = useBoardStore()
 import BoardTile from './BoardTile.vue'
 </script>
 
-<style scoped></style>
+<style scoped>
+.board-tile {
+  margin-bottom: 15px;
+}
+.items {
+  font-size: 0.8rem;
+  line-height: 0.8rem;
+  font-style: italic;
+}
+</style>

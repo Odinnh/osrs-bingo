@@ -1,5 +1,6 @@
-@import url(./modules/checkbox.css);
+@import url(./modules/input.css);
 @import url(./modules/btn.css);
+@import url(./modules/checkbox.css);
 * {
   box-sizing: border-box;
   margin: 0;
@@ -39,4 +40,11 @@ h3,
 h4,
 h5 {
   padding-bottom: 15px;
+}
+.UID {
+  font-family: monospace;
+  font-size: 1rem;
+  background: var(--color-secondairy);
+  padding: 5px;
+  color: var(--color-accent);
 }

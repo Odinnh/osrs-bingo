@@ -15,41 +15,30 @@
       </section>
       <section class="main-section">
         <template v-if="scoreOpen == scoreOpen">
-          <scoreCard v-if="groupsData" class="scoreCard" :groupsData="groupsData" />
+          <scoreCard v-if="groupsData" class="score-card" :groupsData="groupsData" />
         </template>
-        <!-- <button
-          class="btn info"
-          @click="
-            () => {
-              scoreOpen = !scoreOpen
-            }
-          "
-        >
-          i
-        </button> -->
         <BingoBoard
+          class="bingo-board"
           :boardData="boardData"
           :groupsData="groupsData"
           :tilesData="tilesData"
           :key="'bingo-board-' + boardStore.boardUUID"
         />
-        <aside v-if="boardStore.selectedTile != ''">
+        <aside class="detail-pane" v-if="boardStore.selectedTile != ''">
           <div style="justify-content: end; display: flex">
-            <button
-              class="btn close"
+            <iconButton
               @click="
                 () => {
                   boardStore.setSelectedTile('')
                 }
               "
-            >
-              ╳
-            </button>
+              class="iconBtn btn close"
+              :fasIcon="'xmark'"
+            />
           </div>
           <sidePannel v-if="boardStore.selectedTile != ''" />
         </aside>
       </section>
-      <section></section>
     </template>
     <template v-else>
       <h1>Not authenticated</h1>
@@ -74,6 +63,7 @@ import sidePannel from '../components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 
+import iconButton from '../components/buttons/iconButton.vue'
 import loginButton from '../components/loginButton.vue'
 
 const boardStore = useBoardStore()
@@ -100,4 +90,33 @@ const groupsData = computed(() => {
 const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tiles`))
 </script>
 
-<style scoped></style>
+<style scoped>
+.main-section {
+  display: grid;
+  grid-template-columns: 0.4fr 1fr 0.4fr;
+  gap: calc(3 * var(--border-radius));
+}
+.detail-pane {
+  background-color: var(--color-tertiary);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  height: max-content;
+  position: sticky;
+  top: 15px;
+}
+@media screen and (max-width: 900px) {
+  .main-section {
+    grid-template-columns: 0.4fr 0.6fr;
+    grid-template-areas: 'board board' 'score detail';
+  }
+  .bingo-board {
+    grid-area: board;
+  }
+  .score-card {
+    grid-area: score;
+  }
+  .detail-pane {
+    grid-area: detail;
+  }
+}
+</style>

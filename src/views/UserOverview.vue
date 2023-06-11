@@ -10,7 +10,7 @@
       <h2>User details</h2>
       <p>
         Total boards: {{ userData?.count ? userData.count : 0 }}<br />
-        User ID: <span class="highlight">{{ userStateStore.user.data.uid }}</span
+        User ID: <span class="highlight UID">{{ userStateStore.user.data.uid }}</span
         ><br />
         Share your user ID with people to have them add you as moderator and-or editor.
       </p>
@@ -18,23 +18,23 @@
     <section>
       <h2>Your boards</h2>
       <div class="board-list">
-        <div class="_item" v-for="board in boards" :key="board">
+        <div class="_item" v-for="board in boards" :key="board.id + board.name">
           <h3>{{ board.name }}</h3>
 
           <p>
-            Board id: <span class="highlight">{{ board.id }}</span>
+            Board id: <span class="highlight UID">{{ board.id }}</span>
           </p>
           <p @click="toBoard('editBoard', board.id)">
-            Edit board: <iconButton class="iconBtn" :fasIcon="'pen-to-square'" />
+            <iconButton class="iconBtn" :label="'Edit board: '" :fasIcon="'pen-to-square'" />
           </p>
           <p @click="toBoard('overview', board.id)">
-            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+            <iconButton class="iconBtn" :label="'Preview board: '" :fasIcon="'eye'" />
           </p>
           <p @click="toBoard('moderator', board.id)">
-            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+            <iconButton class="iconBtn" :label="'Verify tiles: '" :fasIcon="'square-check'" />
           </p>
           <p @click="toBoard('groupView', board.id)">
-            Manage groups: <iconButton class="iconBtn" :fasIcon="'users-gear'" />
+            <iconButton class="iconBtn" :label="'Manage groups: '" :fasIcon="'users-gear'" />
           </p>
           <p>
             Public:
@@ -42,32 +42,36 @@
               class="toggle"
               type="checkbox"
               v-bind:checked="board.settings.public"
-              @click.prevent="togglePublic(board)"
+              @click="togglePublic(board)"
             />
           </p>
         </div>
-        <button
-          v-if="!userData || userData.count < 6"
-          class="btn highlight"
-          @click.prevent="router.push({ name: 'newBoard' })"
-        >
-          Create new board
-        </button>
+        <div class="_item">
+          <h3>New Board</h3>
+          <p>Create a new Bingo event</p>
+          <button
+            v-if="!userData || userData.count < 6"
+            class="btn highlight new-board"
+            @click.prevent="router.push({ name: 'newBoard' })"
+          >
+            Create new board
+          </button>
+        </div>
       </div>
     </section>
-    <section v-if="!isEmpty(editBoards)">
+    <section v-if="!isEmpty(editBoards)" :key="editBoards">
       <h2>Boards you can edit</h2>
       <div class="board-list" v-if="editBoards">
         <div class="_item" v-for="board in editBoards" :key="board">
           <h3>{{ board.name }}</h3>
           <p @click="toBoard('editBoard', board.id)">
-            Edit board: <iconButton class="iconBtn" :fasIcon="'pen-to-square'" />
+            <iconButton class="iconBtn" :label="'Edit board: '" :fasIcon="'pen-to-square'" />
           </p>
           <p @click="toBoard('overview', board.id)">
-            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+            <iconButton class="iconBtn" :label="'Preview board: '" :fasIcon="'eye'" />
           </p>
           <p @click="toBoard('moderator', board.id)">
-            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+            <iconButton class="iconBtn" :label="'Verify tiles: '" :fasIcon="'square-check'" />
           </p>
         </div>
       </div>
@@ -78,10 +82,10 @@
         <div class="_item" v-for="board in modBoards" :key="board">
           <h3>{{ board.name }}</h3>
           <p @click="toBoard('overview', board.id)">
-            Preview board: <iconButton class="iconBtn" :fasIcon="'eye'" />
+            <iconButton class="iconBtn" :label="'Preview board: '" :fasIcon="'eye'" />
           </p>
           <p @click="toBoard('moderator', board.id)">
-            Verify tiles: <iconButton class="iconBtn" :fasIcon="'square-check'" />
+            <iconButton class="iconBtn" :label="'Verify tiles: '" :fasIcon="'square-check'" />
           </p>
         </div>
       </div>
@@ -106,17 +110,15 @@ const boardsRef = collection(db, 'Boards')
 
 const queryMethod = computed(() => {
   let tempMethod = '=='
-  if (userData?.value?.type == 'admin') {
+  if (userData.value?.type == 'admin') {
     tempMethod = '!='
   }
   return tempMethod
 })
 const queryID = computed(() => {
-  let tempID = '=='
-  if (userData?.value?.type == 'admin') {
+  let tempID = userStateStore.user.data.uid
+  if (userData.value?.type == 'admin') {
     tempID = '0'
-  } else {
-    tempID = userStateStore.user.data.uid
   }
   return tempID
 })
@@ -161,18 +163,23 @@ section {
 
 .board-list {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 15px;
 }
 .board-list ._item {
   display: flex;
   flex-direction: column;
-
+  width: 100%;
   border-radius: var(--border-radius);
   padding: 15px;
   background-color: var(--color-secondairy);
 }
 .board-list ._item > * {
   width: max-content;
+}
+.new-board {
+  width: 100% !important;
+  align-self: flex-end;
+  margin-top: auto;
 }
 </style>

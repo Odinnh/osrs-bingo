@@ -1,14 +1,19 @@
 <template>
   <div class="dashboard">
     <template v-if="userStateStore.user && userStateStore.user.data.uid != 0">
-      <iconButton class="iconBtn" @click="toBoard('userOverview')" :fasIcon="'list-ul'" />
+      <iconButton
+        class="iconBtn"
+        :label="'Dashboard'"
+        @click="toBoard('userOverview')"
+        :fasIcon="'list-ul'"
+      />
 
       <template
         v-if="
           boardData &&
           userStateStore.user &&
           userStateStore.user.data.uid != 0 &&
-          (userStateStore.user.data.uid == boardData.ownerID ||
+          (userStateStore.user.data.uid == boardData?.ownerID ||
             userData?.type == 'admin' ||
             boardData?.editors?.includes(userStateStore.user.data.uid))
         "
@@ -16,6 +21,7 @@
         <iconButton
           :class="{ 'current-page': route.name == 'editBoard' }"
           class="iconBtn"
+          :label="'Edit board'"
           @click="toBoard('editBoard', boardID)"
           :fasIcon="'pen-to-square'"
         />
@@ -24,6 +30,7 @@
       <template v-if="true">
         <iconButton
           class="iconBtn"
+          :label="'Preview board'"
           :class="{ 'current-page': route.name == 'overview' }"
           @click="toBoard('overview', boardID)"
           :fasIcon="'eye'"
@@ -35,7 +42,7 @@
           boardData &&
           userStateStore.user &&
           userStateStore.user.data.uid != 0 &&
-          (userStateStore.user.data.uid == boardData.ownerID ||
+          (userStateStore.user.data.uid == boardData?.ownerID ||
             userData?.type == 'admin' ||
             boardData?.moderators?.includes(userStateStore.user.data.uid) ||
             boardData?.editors?.includes(userStateStore.user.data.uid))
@@ -44,6 +51,7 @@
         <iconButton
           :class="{ 'current-page': route.name == 'moderator' }"
           class="iconBtn"
+          :label="'Verify tiles'"
           @click="toBoard('moderator', boardID)"
           :fasIcon="'square-check'"
         />
@@ -53,12 +61,13 @@
         v-if="
           userStateStore.user &&
           userStateStore.user.data.uid != 0 &&
-          (userStateStore.user.data.uid == boardData.ownerID || userData?.type == 'admin')
+          (userStateStore.user.data.uid == boardData?.ownerID || userData?.type == 'admin')
         "
       >
         <iconButton
           :class="{ 'current-page': route.name == 'groupView' }"
           class="iconBtn"
+          :label="'Magage groups'"
           @click="toBoard('groupView', boardID)"
           :fasIcon="'users-gear'"
         />
@@ -102,4 +111,10 @@ const toBoard = (route, boardUUID) => {
   router.push({ name: route, params: { boardUUID: boardUUID } })
 }
 </script>
-<style scoped></style>
+<style scoped>
+.dashboard {
+  position: sticky;
+  top: 0;
+  z-index: 1000000;
+}
+</style>

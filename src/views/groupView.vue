@@ -256,7 +256,8 @@ const addNewTeam = () => {
     collected: {},
     verify: {},
     icon: 'frog',
-    color: '#53FF1b'
+    color: '#53FF1b',
+    points: 0
   })
 }
 </script>

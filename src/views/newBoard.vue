@@ -93,7 +93,7 @@ const tiles = computed(() => {
       hidden: 'false',
       description: 'description',
       coordinates: coords,
-      img: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+      img: ' '
     })
   }
   return tempObject

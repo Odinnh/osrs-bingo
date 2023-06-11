@@ -40,7 +40,9 @@ import {
   faTableCellsLarge,
   faShapes,
   faUsersLine,
-  faUsersGear
+  faUsersGear,
+  faXmark,
+  faCaretRight
 } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
@@ -59,6 +61,8 @@ library.add(faTableCellsLarge)
 library.add(faShapes)
 library.add(faUsersLine)
 library.add(faUsersGear)
+library.add(faXmark)
+library.add(faCaretRight)
 
 //icons for teams customisation
 library.add(faShield)

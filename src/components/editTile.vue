@@ -2,22 +2,23 @@
   <div>
     id:
     {{ boardStore.selectedTile.id }}<br />
-    <div v-if="boardStore.selectedTile.type != 'null'" class="tile">
+    <!-- <div v-if="boardStore.selectedTile.type != 'null'" class="tile"> -->
+    <div class="tile">
       <img :src="boardStore.selectedTile.img" alt="" />
 
       <div v-if="boardStore.selectedTile.altImg" class="sub-tile">
         <img :src="boardStore.selectedTile.altImg" alt="" />
       </div>
     </div>
-    <div class="input">
+    <div>
       Default img:
+      <!-- v-if="boardStore.selectedTile.type != 'null'" -->
       <input
-        v-if="boardStore.selectedTile.type != 'null'"
         type="text"
         v-model="boardStore.selectedTile.img"
         name="img"
         id="addtileimg"
-        @blur.prevent="
+        @blur="
           (event) => {
             updateImg(event)
           }
@@ -29,7 +30,7 @@
         "
       />
     </div>
-    <div class="input">
+    <div>
       Image on completed tile:
       <input
         type="text"
@@ -141,17 +142,20 @@
         <button class="btn">Add item</button>
       </form>
     </ul>
-    hidden:
-    <input
+    <div
       v-if="boardStore.selectedTile?.hidden !== undefined && boardStore.selectedTile.type != 'null'"
-      type="checkbox"
-      class="toggle"
-      v-model="boardStore.selectedTile.hidden"
-      ref="refs.hidden"
-      name="hidden"
-      id="addtilehidden"
-      @change="updateHidden"
-    /><br />
+    >
+      hidden:
+      <input
+        type="checkbox"
+        class="toggle"
+        v-model="boardStore.selectedTile.hidden"
+        ref="refs.hidden"
+        name="hidden"
+        id="addtilehidden"
+        @change="updateHidden"
+      />
+    </div>
     type:
     <select
       v-if="boardStore.selectedTile?.type !== undefined"
@@ -193,16 +197,12 @@ const updateImg = (event) => {
   if (event.target.value.trim() != '' || [event.target.getAttribute('name')] == 'altImg') {
     boardStore.selectedTile[event.target.getAttribute('name')] = event.target.value.trim()
   } else {
-    boardStore.selectedTile[event.target.getAttribute('name')] =
-      'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+    boardStore.selectedTile[event.target.getAttribute('name')] = ''
   }
-  if (event.target.value.trim() != boardStore.selectedTile[event.target.getAttribute('name')]) {
-    updateDoc(
-      doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id),
-      boardStore.selectedTile
-    )
-    console.log('written')
-  }
+  updateDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
+    ...boardStore.selectedTile
+  })
+  console.log('written')
 }
 const focusOn = (el) => {
   document.querySelector(el).focus()
@@ -259,4 +259,9 @@ const objExists = (item) => {
     : -1
 }
 </script>
-<style scoped></style>
+<style scoped>
+.tile img {
+  max-width: 100%;
+  z-index: 2 !important;
+}
+</style>

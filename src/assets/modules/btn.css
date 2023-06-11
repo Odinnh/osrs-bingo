@@ -20,3 +20,23 @@
   border-color: var(--color-primary);
   background-color: var(--color-primary);
 }
+.btn.danger {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-secondairy);
+  font-weight: 900;
+}
+.btn.danger:hover {
+  background-color: unset;
+  color: var(--color-error);
+}
+.btn.close {
+  border-color: var(--color-error);
+  background-color: unset;
+  color: var(--color-error);
+}
+.btn.close:hover {
+  background-color: var(--color-error);
+  color: var(--color-secondairy);
+  font-weight: 900;
+}

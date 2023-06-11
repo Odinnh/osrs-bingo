@@ -1,9 +1,11 @@
 <template>
-  <font-awesome-icon
-    class="icon-button btn"
-    :class="{ outline: props.fasIcon == props.groupIcon }"
-    :icon="['fa', props.fasIcon]"
-  />
+  <button class="icon-button btn">
+    {{ props.label }}
+    <font-awesome-icon
+      :class="{ outline: props.fasIcon == props.groupIcon }"
+      :icon="['fa', props.fasIcon]"
+    />
+  </button>
 </template>
 <script setup>
 const props = defineProps({
@@ -13,6 +15,10 @@ const props = defineProps({
   },
   fasIcon: {
     required: true,
+    type: String
+  },
+  label: {
+    required: false,
     type: String
   }
 })

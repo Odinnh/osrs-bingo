@@ -6,7 +6,6 @@
           :color="group.color"
           class="tileFlag"
           :class="'flag-end-' + group.flagEnd"
-          :inverted="group.name == `Ahka's Cum Balls`"
           :icon="group.icon"
           :style="{
             '--groupColor': group.color,
@@ -17,7 +16,7 @@
         <span class="tooltiptext">
           <span v-for="member in group.member" :key="member">{{ member }}<br /></span>
         </span>
-        score: {{ group.points }}<br /><br />
+        score: {{ group.points ? group.points : '0' }}<br /><br />
       </li>
       <li>
         <!-- <router-link class="btn" :to="{ name: 'stats-graph', params: { boardUUID: boardStore.boardUUID } }"

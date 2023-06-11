@@ -39,28 +39,28 @@
           :key="'bingo-board-' + boardStore.boardUUID"
           :isEditor="true"
         />
-        <aside v-if="boardStore.selectedTile != ''">
+        <aside class="detail-pane" v-if="boardStore.selectedTile != ''">
           <div style="justify-content: end; display: flex">
-            <button
-              class="btn close"
+            <iconButton
               @click="
                 () => {
                   boardStore.setSelectedTile('')
                 }
               "
-            >
-              ╳
-            </button>
+              class="iconBtn btn close"
+              :fasIcon="'xmark'"
+            />
           </div>
           <editTile :tile="boardStore.selectedTile" />
         </aside>
       </section>
       <section>
+        <h2>Board Settings</h2>
         <div>
-          <h2>Rules:</h2>
+          <h3>Rules:</h3>
           <div>
             <p
-              class="rules"
+              class="rules input"
               style="white-space: pre-wrap"
               contenteditable
               spellcheck="false"
@@ -76,12 +76,23 @@
             </p>
           </div>
         </div>
+        <!-- <section>
+          <input
+            :id="group.id + tileData.id"
+            type="checkbox"
+            class="toggle"
+            :key="group.id + tileData.id"
+            v-bind:checked="group.collected.hasOwnProperty(props.tileData.id)"
+            @click.prevent="updateToCompleted({ tile: tileData, group: group })"
+          />
+        </section> -->
         <div>
-          <h2>Moderators:</h2>
+          <h3>Moderators:</h3>
+
           <div class="moderators">
             <ul>
               <li v-for="mod in moderators" :key="mod">
-                {{ mod }}
+                <FontAwesomeIcon :icon="['fas', 'caret-right']" /><span class="UID">{{ mod }}</span>
                 <button class="btn" @click.prevent="removeMod(mod)">-</button>
               </li>
               <li>
@@ -94,14 +105,13 @@
           </div>
         </div>
         <div>
-          <h2>Editors:</h2>
+          <h3>Editors:</h3>
           <div class="Editors">
             <ul>
               <li v-for="editor in editors" :key="editor">
-                {{ editor }}
-                <button style="margin-left: 15px" class="btn" @click.prevent="removeEditor(editor)">
-                  -
-                </button>
+                <FontAwesomeIcon :icon="['fas', 'caret-right']" />
+                <span class="UID">{{ editor }}</span>
+                <button class="btn" @click.prevent="removeEditor(editor)">remove</button>
               </li>
               <li>
                 <form @submit.prevent="addEditor">
@@ -131,7 +141,8 @@ import editTile from '../components/editTile.vue'
 import { useBoardStore } from '../stores/board.js'
 import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
-
+import iconButton from '../components/buttons/iconButton.vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
@@ -222,4 +233,44 @@ const addEditor = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.main-section {
+  display: grid;
+  grid-template-columns: 0.3fr 1fr 0.3fr;
+  gap: calc(3 * var(--border-radius));
+  grid-template-areas: 'score board detail';
+  /* position: relative; */
+}
+.detail-pane {
+  background-color: var(--color-tertiary);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  height: max-content;
+  position: sticky;
+  top: 15px;
+}
+.bingo-board {
+  grid-area: board;
+}
+.score-card {
+  grid-area: score;
+}
+.detail-pane {
+  grid-area: detail;
+}
+.btn {
+  padding: 10px;
+}
+@media screen and (max-width: 900px) {
+  .main-section {
+    grid-template-columns: 0.4fr 0.6fr;
+    grid-template-areas: 'board board' 'score detail';
+  }
+}
+ul {
+  list-style-type: none;
+}
+.UID {
+  background: var(--color-tertiary);
+}
+</style>
