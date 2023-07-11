@@ -96,7 +96,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
-import { useDocument } from 'vuefire'
+import { useCurrentUser, useDocument } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
@@ -104,8 +104,8 @@ import { useUserStateStore } from '../stores/userState'
 import iconButton from '../components/buttons/iconButton.vue'
 
 const userStateStore = useUserStateStore()
-
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const currentUser = useCurrentUser()
+const userData = useDocument(doc(db, 'Users', `${currentUser.uid}`))
 const boardsRef = collection(db, 'Boards')
 
 const queryMethod = computed(() => {

@@ -91,7 +91,7 @@ import iconButton from './buttons/iconButton.vue'
 import { useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
-
+// import { c}
 const props = defineProps({
   destination: {
     type: Object,
