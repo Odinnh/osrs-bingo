@@ -1,22 +1,18 @@
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
+import { useCurrentUser, useFirebaseAuth } from 'vuefire'
 
 const provider = new GoogleAuthProvider()
-const auth = getAuth()
+const auth = useFirebaseAuth()
 
-export const popupLogin = async (destination, router, userStateStore) => {
+export const popupLogin = async (destination, router) => {
   signInWithPopup(auth, provider)
-    .then((response) => {
-      userStateStore.setUser({
-        loggedIn: true,
-        data: response.user
-      })
-    })
-    .then(async () => {
-      const docRef = await getDoc(doc(db, 'Users', userStateStore.user.data.uid))
+    .then(async (response) => {
+      const user = response.user
+      const docRef = await getDoc(doc(db, 'Users', user.uid))
       if (!docRef.exists()) {
-        setDoc(doc(db, 'Users', userStateStore.user.data.uid), {
+        setDoc(doc(db, 'Users', user.uid), {
           count: 0
         })
       }

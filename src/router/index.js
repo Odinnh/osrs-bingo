@@ -7,10 +7,9 @@ import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import LoginView from '../views/loginView.vue'
 import GroupView from '../views/GroupView.vue'
-import { useUserStateStore } from '../stores/userState'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
-
+import { getCurrentUser } from 'vuefire'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -65,33 +64,10 @@ const router = createRouter({
   ]
 })
 router.beforeEach(async (to, from, next) => {
-  const userStateStore = useUserStateStore()
-  //mee sturen
-  //to.params?.boardUUID
-  //to.meta
-  // if (to.params.boardUUID) {
-  //   CheckIfAuthorised({ to: to, from: from, next: next })
-  //     .then((boardData) => {
-  //       console.log(userStateStore.user.data.uid)
-  //       console.log(boardData?.ownerID)
-  //       console.log(boardData?.settings.public)
-  //       console.log(to.params?.boardUUID)
-  //     })
-  //     .catch((error) => {
-  //       console.log(error)
-  //     })
-  // }
-  const canAccess = canUserAccess(to, userStateStore)
-  if (to.name !== 'Login' && !canAccess) next({ name: 'Login' })
-  else next()
+  const user = await getCurrentUser()
+  if (!user) next({ name: 'loginView' })
+
+  next()
 })
 
-const canUserAccess = async ({ to, from, next }) => {
-  const docSnap = await getDoc(doc(db, 'Boards', to.params?.boardUUID))
-  if (docSnap.exists()) {
-    return true
-  } else {
-    return false
-  }
-}
 export default router

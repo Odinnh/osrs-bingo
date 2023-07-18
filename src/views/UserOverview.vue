@@ -1,16 +1,12 @@
 <template>
-  <template
-    v-if="
-      userStateStore.user.loggedIn && userStateStore.user && userStateStore.user.data.uid != '0'
-    "
-  >
+  <template v-if="user">
     <!-- {{ getFirstDoc('ZwSoQzIrYs5Y1L5M1VA9') }} -->
     <h1>User Settings and overview</h1>
     <section class="user-details">
       <h2>User details</h2>
       <p>
         Total boards: {{ userData?.count ? userData.count : 0 }}<br />
-        User ID: <span class="highlight UID">{{ userStateStore.user.data.uid }}</span
+        User ID: <span class="highlight UID">{{ user.uid }}</span
         ><br />
         Share your user ID with people to have them add you as moderator and-or editor.
       </p>
@@ -96,16 +92,14 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
-import { useCurrentUser, useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
-import { useUserStateStore } from '../stores/userState'
 import iconButton from '../components/buttons/iconButton.vue'
 
-const userStateStore = useUserStateStore()
-const currentUser = useCurrentUser()
-const userData = useDocument(doc(db, 'Users', `${currentUser.uid}`))
+const user = await getCurrentUser()
+const userData = useDocument(doc(db, 'Users', user.uid))
 const boardsRef = collection(db, 'Boards')
 
 const queryMethod = computed(() => {
@@ -116,19 +110,15 @@ const queryMethod = computed(() => {
   return tempMethod
 })
 const queryID = computed(() => {
-  let tempID = userStateStore.user.data.uid
+  let tempID = user.uid
   if (userData.value?.type == 'admin') {
     tempID = '0'
   }
   return tempID
 })
 const boards = useDocument(query(boardsRef, where('ownerID', queryMethod.value, queryID.value)))
-const modBoards = useDocument(
-  query(boardsRef, where('moderators', 'array-contains', userStateStore.user.data.uid))
-)
-const editBoards = useDocument(
-  query(boardsRef, where('editors', 'array-contains', userStateStore.user.data.uid))
-)
+const modBoards = useDocument(query(boardsRef, where('moderators', 'array-contains', user.uid)))
+const editBoards = useDocument(query(boardsRef, where('editors', 'array-contains', user.uid)))
 
 const router = useRouter()
 const toBoard = (route, boardUUID) => {
@@ -140,7 +130,7 @@ const togglePublic = (board) => {
   updateDoc(doc(db, 'Boards', board.id), tempBoard)
 }
 
-if (!userStateStore.user.loggedIn) {
+if (!user) {
   router.push({ name: 'loginView' })
 }
 const isEmpty = (obj) => {

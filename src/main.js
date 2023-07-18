@@ -1,7 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import { VueFire, VueFireAuth } from 'vuefire'
-import { onAuthStateChanged, getAuth } from 'firebase/auth'
 
 import App from './App.vue'
 import router from './router'
@@ -86,15 +85,9 @@ library.add(faHatCowboy)
 library.add(faTree)
 library.add(faFire)
 
-const auth = getAuth(firebaseApp)
-let app
-onAuthStateChanged(auth, (user) => {
-  if (!app) {
-    app = createApp(App)
-    app.use(createPinia())
-    app.use(VueFire, { firebaseApp, modules: [VueFireAuth()] })
-    app.use(router)
-    app.component('FontAwesomeIcon', FontAwesomeIcon)
-    app.mount('#app')
-  }
-})
+const app = createApp(App)
+app.use(createPinia())
+app.use(VueFire, { firebaseApp, modules: [VueFireAuth()] })
+app.use(router)
+app.component('FontAwesomeIcon', FontAwesomeIcon)
+app.mount('#app')

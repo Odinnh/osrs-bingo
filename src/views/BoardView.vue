@@ -5,9 +5,7 @@
       v-if="
         boardData &&
         tilesData &&
-        (boardData.settings.public ||
-          userStateStore.user.data.uid == boardData.ownerID ||
-          userData?.type == 'admin')
+        (boardData.settings.public || user.uid == boardData.ownerID || userData?.type == 'admin')
       "
     >
       <section>
@@ -54,27 +52,28 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { collection, doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import BingoBoard from '../components/BingoBoard.vue'
 import scoreCard from '../components/scoreCard.vue'
 import sidePannel from '../components/sidePannel.vue'
 import { useBoardStore } from '../stores/board.js'
-import { useUserStateStore } from '../stores/userState'
 
 import iconButton from '../components/buttons/iconButton.vue'
 import loginButton from '../components/loginButton.vue'
 
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
-const userStateStore = useUserStateStore()
+
+const user = await getCurrentUser()
+
 const route = useRoute()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
 const scoreOpen = ref(false)
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', user?.uid))
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)
