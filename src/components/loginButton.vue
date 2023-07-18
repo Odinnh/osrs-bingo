@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard">
-    <template v-if="userStateStore.user && userStateStore.user.data.uid != 0">
+    <template v-if="user">
       <iconButton
         class="iconBtn"
         :label="'Dashboard'"
@@ -59,8 +59,8 @@
 
       <template
         v-if="
-          userStateStore.user &&
-          userStateStore.user.data.uid != 0 &&
+          user &&
+          user.uid != 0 &&
           (userStateStore.user.data.uid == boardData?.ownerID || userData?.type == 'admin')
         "
       >
@@ -71,12 +71,17 @@
           @click="toBoard('groupView', boardID)"
           :fasIcon="'users-gear'"
         />
+        <iconButton
+          class="iconBtn"
+          @click="popupLogin(props.destination, router)"
+          :fasIcon="'right-to-bracket'"
+        />
       </template>
     </template>
     <template v-else>
       <iconButton
         class="iconBtn"
-        @click="popupLogin(props.destination, router, userStateStore)"
+        @click="popupLogin(props.destination, router)"
         :fasIcon="'right-to-bracket'"
       />
     </template>
@@ -88,7 +93,7 @@ import { useUserStateStore } from '../stores/userState'
 import { useRoute, useRouter } from 'vue-router'
 import { popupLogin } from '../views/popupLogin'
 import iconButton from './buttons/iconButton.vue'
-import { useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 // import { c}
@@ -102,6 +107,7 @@ const route = useRoute()
 const boardID = route.params.boardUUID
 const userStateStore = useUserStateStore()
 
+const user = await getCurrentUser()
 const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
 const router = useRouter()
 
