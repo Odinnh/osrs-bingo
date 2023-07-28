@@ -6,19 +6,18 @@
     </section>
     <section
       v-if="
-        userStateStore.user &&
-        userStateStore.user.data.uid != 0 &&
-        (userStateStore.user.data.uid == boardData.ownerID ||
+        user &&
+        (user.uid == boardData?.ownerID ||
           userData?.type == 'admin' ||
-          boardData.moderators.includes(userStateStore.user.data.uid) ||
-          boardData.editors.includes(userStateStore.user.data.uid))
+          boardData?.moderators.includes(user.uid) ||
+          boardData?.editors.includes(user.uid))
       "
     >
       <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />
       <aside>
         <moderatorSidePannel
-          :tileData="store.selectedTile"
-          :key="store.selectedTile.id"
+          :tileData="boardStore.selectedTile"
+          :key="boardStore.selectedTile.id"
           :boardUUID="boardUUID"
           :groupsData="groupsData"
           :boardData="boardData"
@@ -37,17 +36,29 @@ import { useBoardStore } from '@/stores/board'
 import { collection, doc } from 'firebase/firestore'
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDocument } from 'vuefire'
-import { useUserStateStore } from '../stores/userState'
+import { getCurrentUser, useDocument } from 'vuefire'
 import loginButton from '../components/loginButton.vue'
-const store = useBoardStore()
-const userStateStore = useUserStateStore()
+const boardStore = useBoardStore()
+const user = await getCurrentUser()
 
 const route = useRoute()
 const boardUUID = computed(() => route.params.boardUUID)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID.value, 'Groups'))
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
-const boardData = useDocument(doc(db, 'Boards', boardUUID.value))
+
+const { data: userData, promise: userDataPromise } = useDocument(doc(db, 'Users', `${user.uid}`))
+await userDataPromise.value
+
+const { data: boardData, promise: boardDataPromise } = useDocument(
+  doc(db, 'Boards', boardUUID.value)
+)
+await boardDataPromise.value.then((boardData) => {
+  if (!boardData.moderators) {
+    boardData.moderators = []
+  }
+  if (!boardData.editors) {
+    boardData.editors = []
+  }
+})
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {

@@ -4,10 +4,8 @@
 
     <template
       v-if="
-        (boardData &&
-          userStateStore.user.data.ui != 0 &&
-          (userStateStore.user.data.uid == boardData.ownerID || userData?.type == 'admin')) ||
-        boardData?.editors?.includes(userStateStore.user.data.uid)
+        (boardData && user && (user.uid == boardData.ownerID || userData?.type == 'admin')) ||
+        boardData?.editors?.includes(user.uid)
       "
     >
       <section>
@@ -133,30 +131,33 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { db } from '@/firebaseSettings'
 import { collection, doc, updateDoc } from 'firebase/firestore'
 import BingoBoard from '../components/BingoBoard.vue'
 import editTile from '../components/editTile.vue'
 import { useBoardStore } from '../stores/board.js'
-import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
 import iconButton from '../components/buttons/iconButton.vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const user = await getCurrentUser()
 const boardStore = useBoardStore()
 const newModerator = ref('')
 const newEditor = ref('')
-let userStateStore = useUserStateStore()
+
 const route = useRoute()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', user.uid))
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 
-const boardData = useDocument(doc(db, 'Boards', boardUUID))
+const { data: boardData, promise: boardDataPromise } = useDocument(doc(db, 'Boards', boardUUID))
+await boardDataPromise.value
 const moderators = boardData?.value?.moderators
 const editors = boardData?.value?.editors
+console.log(typeof moderators)
+console.log(typeof editors)
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
@@ -210,6 +211,7 @@ const removeMod = (mod) => {
   }
 }
 const addModerator = () => {
+  console.log(typeof moderators)
   newModerator.value = newModerator.value.trim()
   if (moderators.indexOf(newModerator.value) === -1) {
     moderators.push(newModerator.value)

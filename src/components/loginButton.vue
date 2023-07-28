@@ -1,6 +1,14 @@
 <template>
   <div class="dashboard">
-    <template v-if="user">
+    <template v-if="!user">
+      <iconButton
+        class="iconBtn"
+        @click="popupLogin(props.destination, router)"
+        :fasIcon="'right-to-bracket'"
+      />
+    </template>
+
+    <template v-else>
       <iconButton
         class="iconBtn"
         :label="'Dashboard'"
@@ -12,10 +20,10 @@
         v-if="
           boardData &&
           userStateStore.user &&
-          userStateStore.user.data.uid != 0 &&
-          (userStateStore.user.data.uid == boardData?.ownerID ||
+          user &&
+          (user.uid == boardData?.ownerID ||
             userData?.type == 'admin' ||
-            boardData?.editors?.includes(userStateStore.user.data.uid))
+            boardData?.editors?.includes(user.uid))
         "
       >
         <iconButton
@@ -41,11 +49,11 @@
         v-if="
           boardData &&
           userStateStore.user &&
-          userStateStore.user.data.uid != 0 &&
-          (userStateStore.user.data.uid == boardData?.ownerID ||
+          user &&
+          (user.uid == boardData?.ownerID ||
             userData?.type == 'admin' ||
-            boardData?.moderators?.includes(userStateStore.user.data.uid) ||
-            boardData?.editors?.includes(userStateStore.user.data.uid))
+            boardData?.moderators?.includes(user.uid) ||
+            boardData?.editors?.includes(user.uid))
         "
       >
         <iconButton
@@ -58,11 +66,7 @@
       </template>
 
       <template
-        v-if="
-          user &&
-          user.uid != 0 &&
-          (userStateStore.user.data.uid == boardData?.ownerID || userData?.type == 'admin')
-        "
+        v-if="user && user && (user.uid == boardData?.ownerID || userData?.type == 'admin')"
       >
         <iconButton
           :class="{ 'current-page': route.name == 'groupView' }"
@@ -73,17 +77,11 @@
         />
         <iconButton
           class="iconBtn"
-          @click="popupLogin(props.destination, router)"
-          :fasIcon="'right-to-bracket'"
+          @click="signOutFromApp(router)"
+          :fasIcon="'right-from-bracket'"
+          :label="'Log out'"
         />
       </template>
-    </template>
-    <template v-else>
-      <iconButton
-        class="iconBtn"
-        @click="popupLogin(props.destination, router)"
-        :fasIcon="'right-to-bracket'"
-      />
     </template>
   </div>
 </template>
@@ -91,7 +89,7 @@
 <script setup>
 import { useUserStateStore } from '../stores/userState'
 import { useRoute, useRouter } from 'vue-router'
-import { popupLogin } from '../views/popupLogin'
+import { popupLogin, signOutFromApp } from '../views/popupLogin'
 import iconButton from './buttons/iconButton.vue'
 import { getCurrentUser, useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
@@ -108,13 +106,17 @@ const boardID = route.params.boardUUID
 const userStateStore = useUserStateStore()
 
 const user = await getCurrentUser()
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', user.uid))
 const router = useRouter()
 
 const boardData = useDocument(doc(db, 'Boards', route.params.boardUUID))
 
 const toBoard = (route, boardUUID) => {
-  router.push({ name: route, params: { boardUUID: boardUUID } })
+  if (boardUUID) {
+    router.push({ name: route, params: { boardUUID: boardUUID } })
+  } else {
+    router.push({ name: route })
+  }
 }
 </script>
 <style scoped>

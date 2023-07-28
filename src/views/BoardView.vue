@@ -5,7 +5,7 @@
       v-if="
         boardData &&
         tilesData &&
-        (boardData.settings.public || user.uid == boardData.ownerID || userData?.type == 'admin')
+        (boardData.settings.public || user?.uid == boardData.ownerID || userData?.type == 'admin')
       "
     >
       <section>
@@ -65,15 +65,18 @@ import loginButton from '../components/loginButton.vue'
 
 const boardStore = useBoardStore()
 // const selectedTile = boardStore.selectedTile
-
+let userData
 const user = await getCurrentUser()
+
+if (user) {
+  userData = useDocument(doc(db, 'Users', user.uid))
+}
 
 const route = useRoute()
 boardStore.setBoardUUID(route.params.boardUUID)
 boardStore.setSelectedTile('')
 const boardUUID = boardStore.boardUUID
 const scoreOpen = ref(false)
-const userData = useDocument(doc(db, 'Users', user?.uid))
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)

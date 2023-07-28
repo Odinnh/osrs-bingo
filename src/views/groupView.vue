@@ -5,10 +5,10 @@
     <template
       v-if="
         boardData &&
-        userStateStore.user.data.ui != 0 &&
-        (userStateStore.user.data.uid == boardData.ownerID ||
+        user &&
+        (user.uid == boardData.ownerID ||
           userData?.type == 'admin' ||
-          boardData.editors?.includes(userStateStore.user.data.uid))
+          boardData.editors?.includes(user.uid))
       "
     >
       <section v-if="teamToDelete?.name != undefined" class="delete-popup">
@@ -198,17 +198,16 @@ import { db } from '@/firebaseSettings'
 import { collection, doc, setDoc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { useBoardStore } from '../stores/board.js'
-import { useUserStateStore } from '../stores/userState'
 import loginButton from '../components/loginButton.vue'
 import iconButton from '../components/buttons/iconButton.vue'
 
 const route = useRoute()
-const userStateStore = useUserStateStore()
+const user = await getCurrentUser()
 const boardStore = useBoardStore()
 boardStore.setBoardUUID(route.params.boardUUID)
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', user.uid))
 boardStore.setSelectedTile('')
 
 const { data: GROUPS } = useDocument(collection(db, 'Boards', route.params.boardUUID, 'Groups'))

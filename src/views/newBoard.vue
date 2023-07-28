@@ -1,7 +1,5 @@
 <template>
-  <template
-    v-if="userStateStore.user.loggedIn && userStateStore.user.data.uid != 0 && userData?.count < 5"
-  >
+  <template v-if="user && userData?.count < 5">
     <h1 class="title-wrap" @click.prevent="selectEl()">
       <span
         class="board-title"
@@ -34,7 +32,7 @@
     </main>
     <button class="btn" @click.prevent="addBoardThenRoute">Save Settings</button>
   </template>
-  <template v-if="!userStateStore.user.loggedIn"><h1>not authenticated</h1></template>
+  <template v-if="!user.loggedIn"><h1>not authenticated</h1></template>
   <template v-if="userData?.count >= 6"><h1>You've exceded the 5 board limit</h1></template>
 </template>
 
@@ -42,15 +40,14 @@
 import { ref, computed } from 'vue'
 import emptyTile from '../components/emptyTile.vue'
 import { useCreateStore } from '../stores/boardCreation'
-import { useUserStateStore } from '../stores/userState'
 import { setDoc, doc, collection } from 'firebase/firestore'
-import { useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 
 import { db } from '@/firebaseSettings'
 import { useRouter } from 'vue-router'
 
 const createStore = useCreateStore()
-const userStateStore = useUserStateStore()
+const user = await getCurrentUser()
 const router = useRouter()
 const board = ref({
   name: '<name of bingo board>',
@@ -61,7 +58,7 @@ const board = ref({
     public: false
   }
 })
-const userData = useDocument(doc(db, 'Users', `${userStateStore.user.data.uid}`))
+const userData = useDocument(doc(db, 'Users', user.uid))
 const titleElement = ref(null)
 const selectEl = () => {
   titleElement.value.focus()
@@ -101,7 +98,7 @@ const tiles = computed(() => {
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
   const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
-  await setDoc(newBoard, { ...board.value, ownerID: userStateStore.user.data.uid })
+  await setDoc(newBoard, { ...board.value, ownerID: user.uid })
     .then(() => {
       tiles.value.forEach((tile) => {
         setDoc(doc(db, 'Boards', newBoard.id, 'Tiles', `${tile.coordinates}`), {
@@ -118,7 +115,7 @@ const addBoardThenRoute = async () => {
         color: '#8a038f',
         points: 0
       })
-      setDoc(doc(db, 'Users', `${userStateStore.user.data.uid}`), {
+      setDoc(doc(db, 'Users', user.uid), {
         count: userData.value.count + 1
       })
       createStore.setSelectedTile('')
@@ -130,7 +127,7 @@ const addBoardThenRoute = async () => {
       })
     })
 }
-if (!userStateStore.user.loggedIn) {
+if (!user) {
   router.push({ name: 'loginView' })
 }
 </script>

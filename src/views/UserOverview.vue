@@ -1,6 +1,5 @@
 <template>
   <template v-if="user">
-    <!-- {{ getFirstDoc('ZwSoQzIrYs5Y1L5M1VA9') }} -->
     <h1>User Settings and overview</h1>
     <section class="user-details">
       <h2>User details</h2>
@@ -91,7 +90,7 @@
 </template>
 <script setup>
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { ref } from 'vue'
 import { getCurrentUser, useDocument } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
 import { collection, query, where } from 'firebase/firestore'
@@ -99,23 +98,21 @@ import { db } from '@/firebaseSettings'
 import iconButton from '../components/buttons/iconButton.vue'
 
 const user = await getCurrentUser()
-const userData = useDocument(doc(db, 'Users', user.uid))
-const boardsRef = collection(db, 'Boards')
+if (!user) router.push({ name: 'loginView' })
 
-const queryMethod = computed(() => {
-  let tempMethod = '=='
-  if (userData.value?.type == 'admin') {
-    tempMethod = '!='
-  }
-  return tempMethod
-})
-const queryID = computed(() => {
-  let tempID = user.uid
-  if (userData.value?.type == 'admin') {
-    tempID = '0'
-  }
-  return tempID
-})
+const boardsRef = collection(db, 'Boards')
+const queryID = ref(user.uid)
+const queryMethod = ref('==')
+const { data: userData, promise: userDataPromise } = useDocument(doc(db, 'Users', user.uid))
+await userDataPromise.value
+  .then(() => {
+    if (userData.value.type == 'admin') queryMethod.value = '!='
+    if (userData.value.type == 'admin') queryID.value = '0'
+  })
+  .catch((error) => {
+    console.error(error.error)
+  })
+
 const boards = useDocument(query(boardsRef, where('ownerID', queryMethod.value, queryID.value)))
 const modBoards = useDocument(query(boardsRef, where('moderators', 'array-contains', user.uid)))
 const editBoards = useDocument(query(boardsRef, where('editors', 'array-contains', user.uid)))
@@ -130,9 +127,6 @@ const togglePublic = (board) => {
   updateDoc(doc(db, 'Boards', board.id), tempBoard)
 }
 
-if (!user) {
-  router.push({ name: 'loginView' })
-}
 const isEmpty = (obj) => {
   for (var prop in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, prop)) {

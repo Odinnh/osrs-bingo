@@ -199,7 +199,6 @@ const updateImg = (event) => {
   updateDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
     ...boardStore.selectedTile
   })
-  console.log('written')
 }
 const focusOn = (el) => {
   document.querySelector(el).focus()
@@ -237,7 +236,6 @@ const addItem = () => {
     boardStore.selectedTile.items.push({ item: newItem.value.item, count: newItem.value.count })
   }
   if (newItem.value.item != '' && canUpdate) {
-    console.log('item Updated')
     setDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
       ...boardStore.selectedTile,
       items: boardStore.selectedTile.items

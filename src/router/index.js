@@ -7,9 +7,9 @@ import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import LoginView from '../views/loginView.vue'
 import GroupView from '../views/GroupView.vue'
-import { doc, getDoc } from 'firebase/firestore'
+import { doc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
-import { getCurrentUser } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -65,8 +65,18 @@ const router = createRouter({
 })
 router.beforeEach(async (to, from, next) => {
   const user = await getCurrentUser()
-  if (!user) next({ name: 'loginView' })
+  if (to.name == 'overview') {
+    const { data: boardData, promise } = useDocument(doc(db, 'Boards', to.params.boardUUID))
+    await promise.value.then(async (data) => {
+      if (data.settings.public) next()
+      if (!user) next({ name: 'loginView', query: from })
+      const { data: userData } = useDocument(doc(db, 'Users', user.uid))
 
+      if (userData?.type == 'admin') next()
+      if (boardData?.ownerID == user.uid) next()
+    })
+  }
+  if (!user && to.name !== 'loginView') next({ name: 'loginView' })
   next()
 })
 

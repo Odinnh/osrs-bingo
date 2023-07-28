@@ -1,12 +1,11 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
-import { useCurrentUser, useFirebaseAuth } from 'vuefire'
+import { useFirebaseAuth } from 'vuefire'
 
 const provider = new GoogleAuthProvider()
 const auth = useFirebaseAuth()
-
-export const popupLogin = async (destination, router) => {
+const popupLogin = async (destination, router) => {
   signInWithPopup(auth, provider)
     .then(async (response) => {
       const user = response.user
@@ -25,3 +24,7 @@ export const popupLogin = async (destination, router) => {
       console.error(error, errorCode, errorMessage)
     })
 }
+const signOutFromApp = async (router) => {
+  signOut(auth).then(() => router.push({ path: '/' }))
+}
+export { popupLogin, signOutFromApp }
