@@ -18,14 +18,10 @@
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
     </div>
     <img
-      v-if="
-        props.tileData?.type != 'null' &&
-        ((props?.isEditor == true && !props.tileData?.hidden) ||
-          props.tileData?.hidden ||
-          (props.isEditor != true && !props.tileData?.hidden))
-      "
+      v-if="!props.tileData.hidden || props.isEditor"
       :src="
         props.teamData &&
+        !props.tileData.hidden &&
         props.tileData.altImg &&
         props.teamData?.collected.hasOwnProperty(props.tileData.id)
           ? props.tileData.altImg

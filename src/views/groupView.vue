@@ -260,4 +260,9 @@ const addNewTeam = () => {
   })
 }
 </script>
-<style scoped></style>
+<style scoped>
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 30px);
+}
+</style>

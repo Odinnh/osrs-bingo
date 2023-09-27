@@ -105,8 +105,12 @@ const route = useRoute()
 const boardID = route.params.boardUUID
 const userStateStore = useUserStateStore()
 
+let userData
 const user = await getCurrentUser()
-const userData = useDocument(doc(db, 'Users', user.uid))
+
+if (user) {
+  userData = useDocument(doc(db, 'Users', user.uid))
+}
 const router = useRouter()
 
 const boardData = useDocument(doc(db, 'Boards', route.params.boardUUID))

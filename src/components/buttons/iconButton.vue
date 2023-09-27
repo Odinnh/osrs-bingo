@@ -1,5 +1,5 @@
 <template>
-  <button class="icon-button btn">
+  <button class="icon-button btn" :class="{ outline: props.fasIcon == props.groupIcon }">
     {{ props.label }}
     <font-awesome-icon
       :class="{ outline: props.fasIcon == props.groupIcon }"
@@ -23,4 +23,9 @@ const props = defineProps({
   }
 })
 </script>
-<style scoped></style>
+<style scoped>
+.outline {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+</style>

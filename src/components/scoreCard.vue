@@ -13,9 +13,15 @@
           }"
         />
         {{ group.name }}<br />
-        <span class="tooltiptext">
-          <span v-for="member in group.member" :key="member">{{ member }}<br /></span>
-        </span>
+        <iconButton
+          class="iconBtn"
+          :label="'view members'"
+          @click="openList(group.name)"
+          :fasIcon="'eye'"
+        />
+        <ul v-if="openedLists.includes(group.name)">
+          <li v-for="member in group.members" :key="member">{{ member }}</li>
+        </ul>
         score: {{ group.points ? group.points : '0' }}<br /><br />
       </li>
       <!-- <li>
@@ -31,7 +37,9 @@
 </template>
 <script setup>
 // import { storeToRefs } from 'pinia'
+import { reactive } from 'vue'
 import tileFlag from './tileFlag.vue'
+import iconButton from './buttons/iconButton.vue'
 import { useBoardStore } from '@/stores/board'
 // import { route } from 'vue-router'
 const boardStore = useBoardStore()
@@ -42,10 +50,22 @@ const props = defineProps({
     required: true
   }
 })
+const openedLists = reactive([])
+const openList = (groupName) => {
+  if (!openedLists.includes(groupName)) {
+    openedLists.push(groupName)
+  } else {
+    openedLists.splice(openedLists.indexOf(groupName), 1)
+  }
+}
 </script>
 <style scoped>
 ul {
   list-style-type: none;
+}
+ul li ul {
+  list-style-type: circle;
+  margin-bottom: 15px;
 }
 .tileFlag {
   width: var(--width);

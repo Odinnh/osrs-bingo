@@ -156,8 +156,7 @@ const { data: boardData, promise: boardDataPromise } = useDocument(doc(db, 'Boar
 await boardDataPromise.value
 const moderators = boardData?.value?.moderators
 const editors = boardData?.value?.editors
-console.log(typeof moderators)
-console.log(typeof editors)
+
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
@@ -211,7 +210,6 @@ const removeMod = (mod) => {
   }
 }
 const addModerator = () => {
-  console.log(typeof moderators)
   newModerator.value = newModerator.value.trim()
   if (moderators.indexOf(newModerator.value) === -1) {
     moderators.push(newModerator.value)
