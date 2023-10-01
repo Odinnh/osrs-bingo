@@ -2,6 +2,7 @@
   <div>
     <ul v-if="props.groupsData">
       <li v-for="(group, index) in props.groupsData" :key="index + group.id" class="tooltip">
+        <!-- #TODO: need to calculate the max score dynamically -->
         <tileFlag
           :color="group.color"
           class="tileFlag"
@@ -9,7 +10,7 @@
           :icon="group.icon"
           :style="{
             '--groupColor': group.color,
-            '--width': (group.points / 750) * 100 * 1.5 + 'px'
+            '--width': (group.points / 25) * 100 * 1.5 + 'px'
           }"
         />
         {{ group.name }}<br />
