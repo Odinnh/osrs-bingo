@@ -39,6 +39,8 @@
             class="tileFlag"
             :class="'flag-end-' + group.flagEnd"
             :icon="group.icon"
+            :group="group.name"
+            :name="group?.collected.hasOwnProperty(props.tileData.id) ? group.name : ''"
             color="none"
             :inverted="true"
             :style="{

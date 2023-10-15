@@ -16,7 +16,7 @@
         {{ group.name }}<br />
         <iconButton
           class="iconBtn"
-          :label="'view members'"
+          :label="'view details'"
           @click="openList(group.name)"
           :fasIcon="'eye'"
         />
@@ -53,11 +53,28 @@ const props = defineProps({
 })
 const openedLists = reactive([])
 const openList = (groupName) => {
+  document.querySelectorAll(`[name]`).forEach((el) => {
+    el.parentNode.parentNode.style.opacity = 1
+    el.parentNode.parentNode.style.backgroundColor = 'initial'
+    el.parentNode.parentNode.style.borderColor = ''
+    el.parentNode.style.opacity = 1
+  })
   if (!openedLists.includes(groupName)) {
-    openedLists.push(groupName)
+    openedLists[0] = groupName
+    document.querySelectorAll(`[name]`).forEach((el) => {
+      el.parentNode.style.opacity = 0.1
+      el.parentNode.parentNode.style.borderColor = 'var(--color-accent)'
+    })
+
+    document.querySelectorAll(`[name='${groupName}']`).forEach((el) => {
+      // el.parentNode.parentNode.style.opacity = 0.05
+      el.parentNode.parentNode.style.borderColor = ''
+      el.parentNode.parentNode.style.backgroundColor = 'color-mix(in srgb, lime, transparent 90%)'
+    })
   } else {
-    openedLists.splice(openedLists.indexOf(groupName), 1)
+    openedLists[0] = ''
   }
+  console.log(groupName)
 }
 </script>
 <style scoped>
