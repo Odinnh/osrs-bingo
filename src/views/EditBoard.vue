@@ -91,7 +91,7 @@
             <ul>
               <li v-for="mod in moderators" :key="mod">
                 <FontAwesomeIcon :icon="['fas', 'caret-right']" /><span class="UID">{{ mod }}</span>
-                <button class="btn" @click.prevent="removeMod(mod)">-</button>
+                <button class="btn" @click.prevent="removeMod(mod)">remove</button>
               </li>
               <li>
                 <form @submit.prevent="addModerator">

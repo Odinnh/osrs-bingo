@@ -2,14 +2,14 @@
   <div>
     id:
     {{ boardStore.selectedTile.id }}<br />
-    <div v-if="boardStore.selectedTile.type != 'null'" class="tile">
+    <div class="tile">
       <img :src="boardStore.selectedTile.img" alt="" />
 
       <div v-if="boardStore.selectedTile.altImg" class="sub-tile">
         <img :src="boardStore.selectedTile.altImg" alt="" />
       </div>
     </div>
-    <div v-if="boardStore.selectedTile.type != 'null'">
+    <div>
       Default img:
       <input
         type="text"
@@ -28,7 +28,7 @@
         "
       />
     </div>
-    <div v-if="boardStore.selectedTile.type != 'null'">
+    <div v-if="false">
       Image on completed tile:
       <input
         type="text"
@@ -47,7 +47,7 @@
         "
       />
     </div>
-    <h2 @click="focusOn('#title')" v-if="boardStore.selectedTile.type != 'null'">
+    <h2 @click="focusOn('#title')">
       <span
         ref="boardStore.selectedTile.title"
         contenteditable
@@ -71,7 +71,7 @@
         <font-awesome-icon :icon="['fas', 'pen']" />
       </span>
     </h2>
-    <p @click="focusOn('#points')" v-if="boardStore.selectedTile.type != 'null'">
+    <p @click="focusOn('#points')">
       <span
         type="text"
         ref="boardStore.selectedTile.points"
@@ -98,7 +98,7 @@
       </span>
     </p>
 
-    <p @click="focusOn('#description')" v-if="boardStore.selectedTile.type != 'null'">
+    <p @click="focusOn('#description')">
       description:
       <span
         type="text"
@@ -118,6 +118,30 @@
         <font-awesome-icon :icon="['fas', 'pen']" />
       </span>
     </p>
+    <div>
+      <hr />
+      <h3>Background color</h3>
+      <input
+        type="color"
+        v-model="boardStore.selectedTile.bgColor"
+        @change="changeColor(event)"
+        class="color-picker"
+      /><input
+        type="text"
+        @blur.prevent="
+          (event) => {
+            changeColor(event)
+          }
+        "
+        @keydown.enter="
+          (event) => {
+            changeColor(event)
+          }
+        "
+        v-model="boardStore.selectedTile.bgColor"
+      />
+    </div>
+    <hr />
     <ul v-if="['any-unique', 'multi-item'].includes(boardStore.selectedTile.type)">
       Eligible items:
       <li v-for="item of boardStore.selectedTile?.items" :key="item?.item">
@@ -139,9 +163,7 @@
         <button class="btn">Add item</button>
       </form>
     </ul>
-    <div
-      v-if="boardStore.selectedTile?.hidden !== undefined && boardStore.selectedTile.type != 'null'"
-    >
+    <div v-if="boardStore.selectedTile?.hidden !== undefined">
       hidden:
       <input
         type="checkbox"
@@ -212,6 +234,14 @@ const removeItem = (item) => {
     })
   }
 }
+const changeColor = (event = false) => {
+  if (event) {
+    event.target.blur()
+  }
+  updateDoc(doc(db, 'Boards', boardStore.boardUUID, 'Tiles', boardStore.selectedTile.id), {
+    bgColor: boardStore.selectedTile.bgColor
+  })
+}
 
 const newItem = computed((item, count) => {
   return { item: item, count: count }
@@ -255,6 +285,9 @@ const objExists = (item) => {
 }
 </script>
 <style scoped>
+hr {
+  margin-bottom: 0.5rem;
+}
 .tile img {
   max-width: 100%;
   z-index: 2 !important;

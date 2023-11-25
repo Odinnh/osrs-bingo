@@ -3,7 +3,7 @@
   <main v-if="props.boardData" class="bingo-board">
     <BoardTile
       v-for="tileData in props.tilesData"
-      :key="'board-tile-' + tileData.id"
+      :key="'board-tile-' + tileData.coordinates"
       :tileData="tileData"
       :groupsData="props.groupsData"
       :teamData="props.teamData"
