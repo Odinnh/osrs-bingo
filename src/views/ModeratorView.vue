@@ -18,6 +18,7 @@
         :groupsData="groupsData"
         :tilesData="tilesData"
         :isModerator="true"
+        :isEditor="boardData.editors?.includes(user.uid) ? true : false"
       />
       <aside>
         <moderatorSidePannel
