@@ -9,6 +9,7 @@
       :teamData="props.teamData"
       :selected="selectedTile == tileData.id"
       :isEditor="props.isEditor"
+      :isModerator="props.isModerator"
     />
   </main>
 </template>

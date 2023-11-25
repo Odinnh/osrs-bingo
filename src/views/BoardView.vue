@@ -5,7 +5,11 @@
       v-if="
         boardData &&
         tilesData &&
-        (boardData.settings.public || user?.uid == boardData.ownerID || userData?.type == 'admin')
+        (boardData.settings.public ||
+          user?.uid == boardData.ownerID ||
+          userData?.type == 'admin' ||
+          boardData.moderators?.includes(user?.uid) ||
+          boardData.editors?.includes(user?.uid))
       "
     >
       <section>

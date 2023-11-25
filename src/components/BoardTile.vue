@@ -6,13 +6,12 @@
       isSelected: boardStore.selectedTile.id == props.tileData.id && groupsData,
       isCollected:
         props.teamData && props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
-      isVerify: props.teamData?.verify?.includes(props.tileData.id),
-      needVerifying: props.needVerifying,
       allowHover: groupsData ? true : false,
       hidden:
         props?.isEditor == false &&
         (props.tileData?.hidden == true || props.tileData?.type == 'null')
     }"
+    :style="{ '--_backgroundColor': props.tileData?.bgColor }"
   >
     <div v-if="props?.isEditor == true && props.tileData?.hidden == true" class="hidden-indicator">
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
@@ -95,7 +94,7 @@ const setSelectedTile = (tile) => {
   box-sizing: border-box;
   border: var(--border);
   border-radius: var(--border-radius);
-  background-color: var(--color-secondairy);
+  background-color: var(--_backgroundColor, --color-secondairy);
   position: relative;
   overflow: clip;
   aspect-ratio: 1;
@@ -111,7 +110,7 @@ const setSelectedTile = (tile) => {
   --color-primary: var(--color-accent);
   scale: 1.05;
   border-color: var(--color-accent);
-  background-color: var(--color-tertiary);
+  background-color: color-mix(in srgb, var(--_backgroundColor, --color-secondairy) 90%, black 100%);
 }
 .tile img {
   box-sizing: border-box;

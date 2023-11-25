@@ -9,11 +9,16 @@
         user &&
         (user.uid == boardData?.ownerID ||
           userData?.type == 'admin' ||
-          boardData?.moderators.includes(user.uid) ||
-          boardData?.editors.includes(user.uid))
+          boardData?.moderators?.includes(user.uid) ||
+          boardData?.editors?.includes(user.uid))
       "
     >
-      <BingoBoard :boardData="boardData" :groupsData="groupsData" :tilesData="tilesData" />
+      <BingoBoard
+        :boardData="boardData"
+        :groupsData="groupsData"
+        :tilesData="tilesData"
+        :isModerator="true"
+      />
       <aside>
         <moderatorSidePannel
           :tileData="boardStore.selectedTile"
