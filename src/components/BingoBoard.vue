@@ -59,7 +59,7 @@ main {
   border-radius: var(--border-radius);
   display: grid;
   grid-template-columns: repeat(v-bind('boardData.settings.width'), 1fr);
-  grid-template-rows: repeat(v-bind('boardData.settings.height'), 1fr);
+  /* grid-template-rows: repeat(v-bind('boardData.settings.height'), 1fr); */
   gap: min(2vw, calc(var(--border-radius) * 3));
   height: min-content;
 }

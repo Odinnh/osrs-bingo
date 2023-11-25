@@ -51,12 +51,14 @@ const user = await getCurrentUser()
 const router = useRouter()
 const board = ref({
   name: '<name of bingo board>',
-
+  editors: [],
+  moderators: [],
   settings: {
     width: 1,
     height: 1,
     public: false
-  }
+  },
+  order: []
 })
 const userData = useDocument(doc(db, 'Users', user.uid))
 const titleElement = ref(null)
@@ -80,9 +82,10 @@ const tiles = computed(() => {
     i <= parseInt(board.value.settings.width) * board.value.settings.height - 1;
     i++
   ) {
-    let coords =
-      (Math.floor(i / parseInt(board.value.settings.width)) + 1) * 100 +
-      ((i % parseInt(board.value.settings.width)) + 1)
+    const x = Math.floor(i / parseInt(board.value.settings.width) + 1)
+    const y = (i % parseInt(board.value.settings.width)) + 1
+    let coords = `T${x}-${y}`
+
     tempObject.push({
       title: '<title of tile>',
       points: 0,
@@ -90,14 +93,20 @@ const tiles = computed(() => {
       hidden: 'false',
       description: 'description',
       coordinates: coords,
-      img: ' '
+      img: null,
+      bgColor: null
     })
   }
+
   return tempObject
 })
+
 const addBoardThenRoute = async () => {
   const newBoard = doc(collection(db, 'Boards'))
   const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
+  tiles.value.forEach((tile) => {
+    board.value.order.push(tile.coordinates)
+  })
   await setDoc(newBoard, { ...board.value, ownerID: user.uid })
     .then(() => {
       tiles.value.forEach((tile) => {

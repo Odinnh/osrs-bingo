@@ -192,7 +192,7 @@ const setSelectedTile = (tile) => {
   z-index: 2;
 }
 .hidden {
-  opacity: 0;
+  display: none;
   pointer-events: none;
 }
 .hidden-indicator {
