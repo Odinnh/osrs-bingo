@@ -7,9 +7,8 @@
       isCollected:
         props.teamData && props.teamData?.collected.hasOwnProperty(props.tileData.id) ? 1 : 0,
       allowHover: groupsData ? true : false,
-      hidden:
-        props?.isEditor == false &&
-        (props.tileData?.hidden == true || props.tileData?.type == 'null')
+      hidden: props?.isEditor == false && props.tileData?.hidden == true,
+      nullTile: props.tileData?.type == 'null' && props?.isEditor == false
     }"
     :style="{ '--_backgroundColor': props.tileData?.bgColor }"
   >
@@ -17,15 +16,10 @@
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
     </div>
     <img
-      v-if="!props.tileData.hidden || props.isEditor"
+      v-if="props.tileData?.type !== 'null' || (props.isEditor && props.tileData.img)"
       :src="
-        props.teamData &&
-        !props.tileData.hidden &&
-        props.tileData.altImg &&
-        props.teamData?.collected.hasOwnProperty(props.tileData.id)
-          ? props.tileData.altImg
-          : props.tileData.img ||
-            'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
+        props.tileData.img.trim() ||
+        'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
     <div class="boardTileFlags">
@@ -192,6 +186,10 @@ const setSelectedTile = (tile) => {
 }
 .hidden {
   display: none;
+  pointer-events: none;
+}
+.nullTile {
+  opacity: 0;
   pointer-events: none;
 }
 .hidden-indicator {
