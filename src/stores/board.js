@@ -5,6 +5,7 @@ export const useBoardStore = defineStore('board', () => {
   const selectedTile = ref('')
   const boardUUID = ref('')
   const rules = ref('')
+  const inputting = ref(false)
 
   function setSelectedTile(data) {
     selectedTile.value = data
@@ -22,6 +23,7 @@ export const useBoardStore = defineStore('board', () => {
     boardUUID,
     setBoardUUID,
     rules,
-    setRules
+    setRules,
+    inputting
   }
 })

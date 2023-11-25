@@ -16,8 +16,10 @@
         v-model="boardStore.selectedTile.img"
         name="img"
         id="addtileimg"
+        @focus="boardStore.inputting = true"
         @blur="
           (event) => {
+            boardStore.inputting = false
             updateImg(event)
           }
         "
@@ -35,6 +37,7 @@
         v-model="boardStore.selectedTile.altImg"
         name="altImg"
         id="addtileimg"
+        @focus="boardStore.inputting = true"
         @blur.prevent="
           (event) => {
             updateImg(event)
@@ -53,13 +56,16 @@
         contenteditable
         class="editable"
         spellcheck="false"
+        @focus="boardStore.inputting = true"
         @keydown.prevent.enter="
           (event) => {
+            boardStore.inputting = false
             validate(event)
           }
         "
         @blur.prevent="
           (event) => {
+            boardStore.inputting = false
             validate(event)
           }
         "
@@ -78,13 +84,16 @@
         contenteditable
         class="editable"
         spellcheck="false"
+        @focus="boardStore.inputting = true"
         @keydown.enter.prevent="
           (event) => {
+            boardStore.inputting = false
             validate(event)
           }
         "
         @blur.prevent="
           (event) => {
+            boardStore.inputting = false
             validate(event)
           }
         "
@@ -106,8 +115,10 @@
         contenteditable
         class="editable"
         spellcheck="false"
+        @focus="boardStore.inputting = true"
         @blur.prevent="
           (event) => {
+            boardStore.inputting = false
             validate(event)
           }
         "
@@ -128,13 +139,16 @@
         class="color-picker"
       /><input
         type="text"
+        @focus="boardStore.inputting = true"
         @blur.prevent="
           (event) => {
+            boardStore.inputting = false
             changeColor(event)
           }
         "
         @keydown.enter="
           (event) => {
+            boardStore.inputting = false
             changeColor(event)
           }
         "
@@ -191,7 +205,7 @@
 </template>
 <script setup>
 import { setDoc, doc, updateDoc } from 'firebase/firestore'
-
+import { onKeyStroke } from '@vueuse/core'
 import { db } from '@/firebaseSettings'
 import { useBoardStore } from '../stores/board'
 import { computed } from 'vue'
@@ -283,6 +297,17 @@ const objExists = (item) => {
         .indexOf(item)
     : -1
 }
+onKeyStroke(
+  'h',
+  () => {
+    if (!boardStore.inputting) {
+      boardStore.selectedTile.hidden = !boardStore.selectedTile.hidden
+      console.log(boardStore.selectedTile.hidden, !boardStore.selectedTile.hidden)
+      updateHidden()
+    }
+  },
+  { dedupe: true }
+)
 </script>
 <style scoped>
 hr {

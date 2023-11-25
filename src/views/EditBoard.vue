@@ -17,8 +17,10 @@
             spellcheck="false"
             @keydown.enter="validate"
             name="name"
+            @focus="boardStore.inputting = true"
             @blur.prevent="
               (event) => {
+                boardStore.inputting = true
                 validate(event)
               }
             "
@@ -62,8 +64,10 @@
               style="white-space: pre-wrap"
               contenteditable
               spellcheck="false"
+              @focus="boardStore.inputting = true"
               @blur.prevent="
                 (event) => {
+                  boardStore.inputting = false
                   validate(event)
                 }
               "
@@ -95,7 +99,12 @@
               </li>
               <li>
                 <form @submit.prevent="addModerator">
-                  <input type="text" v-model="newModerator" />
+                  <input
+                    type="text"
+                    v-model="newModerator"
+                    @focus="boardStore.inputting = true"
+                    @blur="boardStore.inputting = false"
+                  />
                   <button class="btn" type="submit">Add</button>
                 </form>
               </li>
@@ -113,7 +122,12 @@
               </li>
               <li>
                 <form @submit.prevent="addEditor">
-                  <input type="text" v-model="newEditor" />
+                  <input
+                    type="text"
+                    v-model="newEditor"
+                    @focus="boardStore.inputting = true"
+                    @blur="boardStore.inputting = false"
+                  />
                   <button class="btn" type="submit">Add</button>
                 </form>
               </li>
