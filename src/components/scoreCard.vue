@@ -53,28 +53,27 @@ const props = defineProps({
 })
 const openedLists = reactive([])
 const openList = (groupName) => {
-  document.querySelectorAll(`[name]`).forEach((el) => {
-    el.parentNode.parentNode.style.opacity = 1
-    el.parentNode.parentNode.style.backgroundColor = 'initial'
-    el.parentNode.parentNode.style.borderColor = ''
-    el.parentNode.style.opacity = 1
-  })
   if (!openedLists.includes(groupName)) {
     openedLists[0] = groupName
-    document.querySelectorAll(`[name]`).forEach((el) => {
-      el.parentNode.style.opacity = 0.1
-      el.parentNode.parentNode.style.borderColor = 'var(--color-accent)'
+    document.querySelectorAll(`[data-name]:not([data-name='${groupName}'])`).forEach((el) => {
+      el.parentNode.parentNode.style.setProperty('--_opacity', '1')
     })
 
-    document.querySelectorAll(`[name='${groupName}']`).forEach((el) => {
-      // el.parentNode.parentNode.style.opacity = 0.05
-      el.parentNode.parentNode.style.borderColor = ''
-      el.parentNode.parentNode.style.backgroundColor = 'color-mix(in srgb, lime, transparent 90%)'
+    document.querySelectorAll(`[data-name='${groupName}']`).forEach((el) => {
+      el.parentNode.parentNode.style.setProperty(
+        '--_bgClr',
+        'color-mix(in srgb, var(--_backgroundColor, --color-secondairy) 60%, transparent 40%)'
+      )
+
+      el.parentNode.parentNode.style.setProperty('--_opacity', '.1')
     })
   } else {
     openedLists[0] = ''
+    document.querySelectorAll(`[data-name]`).forEach((el) => {
+      el.parentNode.parentNode.style.removeProperty('--_bgClr')
+      el.parentNode.parentNode.style.removeProperty('--_opacity')
+    })
   }
-  console.log(groupName)
 }
 </script>
 <style scoped>

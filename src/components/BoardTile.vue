@@ -33,7 +33,7 @@
             :class="'flag-end-' + group.flagEnd"
             :icon="group.icon"
             :group="group.name"
-            :name="group?.collected.hasOwnProperty(props.tileData.id) ? group.name : ''"
+            :data-name="group?.collected.hasOwnProperty(props.tileData.id) ? group.name : ''"
             color="none"
             :inverted="true"
             :style="{
@@ -83,12 +83,13 @@ const setSelectedTile = (tile) => {
 
 <style scoped>
 .tile {
+  opacity: var(--_opacity);
   font-family: 'Roboto', sans-serif;
   user-select: none;
   box-sizing: border-box;
-  border: var(--border);
   border-radius: var(--border-radius);
-  background-color: var(--_backgroundColor, --color-secondairy);
+  border: var(--border);
+  background-color: var(--_bgClr, var(--_backgroundColor, --color-secondairy));
   position: relative;
   overflow: clip;
   aspect-ratio: 1;
