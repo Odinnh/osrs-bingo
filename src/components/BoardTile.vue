@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="!props.tileData?.hidden || props?.isEditor"
     class="tile"
     @click="setSelectedTile({ id: props.tileData.id, ...props.tileData })"
     :class="{
