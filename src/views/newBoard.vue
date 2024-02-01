@@ -90,7 +90,7 @@ const tiles = computed(() => {
       title: '<title of tile>',
       points: 0,
       type: 'drop',
-      hidden: 'false',
+      hidden: false,
       description: 'description',
       coordinates: coords,
       img: null,

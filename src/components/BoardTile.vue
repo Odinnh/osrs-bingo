@@ -17,9 +17,9 @@
       <FontAwesomeIcon class="icon" :icon="['fas', 'eye-low-vision']" />
     </div>
     <img
-      v-if="props.tileData?.type !== 'null' || (props.isEditor && props.tileData.img)"
+      v-if="props.tileData?.type !== 'null' || (props.isEditor && props.tileData?.type == 'null')"
       :src="
-        props.tileData.img.trim() ||
+        props.tileData?.img?.trim() ||
         'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
@@ -81,7 +81,6 @@ const setSelectedTile = (tile) => {
   boardStore.setSelectedTile(tile)
 }
 </script>
-
 <style scoped>
 .tile {
   opacity: var(--_opacity);
