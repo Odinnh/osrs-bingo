@@ -72,3 +72,5 @@
 
 - [x] group creation
 - [x] hidden tile indicator on edit view
+
+- [x] blackout gamemode

@@ -84,6 +84,7 @@ const scoreOpen = ref(false)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)
+boardStore.setBlackout(boardData.value?.isBlackout)
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {

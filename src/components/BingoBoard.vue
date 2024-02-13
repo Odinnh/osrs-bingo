@@ -10,6 +10,7 @@
       :selected="selectedTile == tileData.id"
       :isEditor="props.isEditor"
       :isModerator="props.isModerator"
+      :blackout="props.boardData.isBlackout"
     />
   </main>
 </template>

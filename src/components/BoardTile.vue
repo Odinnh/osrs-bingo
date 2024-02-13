@@ -30,13 +30,25 @@
           :key="'tile-flag-' + group.name + '-' + props.tileData.id"
         >
           <tileFlag
+            v-if="
+              (group.collected != undefined &&
+                group.collected.hasOwnProperty(props.tileData.id) &&
+                isBlackout) ||
+              !isBlackout
+            "
             class="tileFlag"
-            :class="'flag-end-' + group.flagEnd"
+            :class="{
+              BigFlag: isBlackout,
+              'flag-end-round': group.end == 'round',
+              'flag-end-split': group.end == 'split',
+              'flag-end-point': group.end == 'point'
+            }"
             :icon="group.icon"
             :group="group.name"
             :data-name="group?.collected.hasOwnProperty(props.tileData.id) ? group.name : ''"
             color="none"
             :inverted="true"
+            :isBlackout="isBlackout"
             :style="{
               opacity:
                 group?.collected != undefined && group?.collected.hasOwnProperty(props.tileData.id)
@@ -55,6 +67,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import tileFlag from './tileFlag.vue'
 import { useBoardStore } from '@/stores/board.js'
 const boardStore = useBoardStore()
+const isBlackout = boardStore.isBlackout
 const props = defineProps({
   tileData: {
     type: Object,
@@ -135,19 +148,24 @@ const setSelectedTile = (tile) => {
   width: var(--width);
   height: calc(var(--width) / 2);
   z-index: 100;
+  &.BigFlag {
+    height: 100%;
+    width: 100%;
+  }
+  &:after {
+    display: block;
+    width: 100%;
+    height: 200%;
+    position: absolute;
+    aspect-ratio: 1;
+    top: calc(var(--width) / 2);
+    left: 0;
+    z-index: 50;
+    content: ' ';
+    background-color: var(--color-primary);
+  }
 }
-.tileFlag:after {
-  display: block;
-  width: 100%;
-  height: 200%;
-  position: absolute;
-  aspect-ratio: 1;
-  top: calc(var(--width) / 2);
-  left: 0;
-  z-index: 50;
-  content: ' ';
-  background-color: var(--color-primary);
-}
+
 .flag-end-round:after {
   border-bottom-left-radius: 50%;
   border-bottom-right-radius: 50%;
@@ -181,6 +199,9 @@ const setSelectedTile = (tile) => {
   flex-direction: row;
   justify-content: space-between;
   z-index: -1;
+  &:has(.BigFlag) {
+    height: 100%;
+  }
 }
 .tile img {
   z-index: 2;

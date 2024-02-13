@@ -14,8 +14,8 @@
           collected:
           <input
             :id="group.id + tileData.id"
-            type="checkbox"
             class="toggle"
+            type="checkbox"
             :key="group.id + tileData.id"
             v-bind:checked="group.collected.hasOwnProperty(props.tileData.id)"
             @click.prevent="updateToCompleted({ tile: tileData, group: group })"
@@ -31,8 +31,6 @@
 import { computed } from 'vue'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
-
-// import AddTile from '@/components/addTile.vue'
 
 const props = defineProps({
   tileData: { type: Object, required: true },
