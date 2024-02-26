@@ -16,11 +16,11 @@
     </h1>
     <div>
       name: width:
-      <input min="1" max="9" name="width" type="range" v-model="board.settings.width" />{{
+      <input min="1" max="12" name="width" type="range" v-model="board.settings.width" />{{
         board.settings.width
       }}<br />
       height:
-      <input min="1" max="9" name="height" type="range" v-model="board.settings.height" />{{
+      <input min="1" max="12" name="height" type="range" v-model="board.settings.height" />{{
         board.settings.height
       }}<br />
       total tiles: {{ board.settings.width * board.settings.height }}

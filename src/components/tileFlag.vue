@@ -54,7 +54,6 @@ const props = defineProps({
 }
 .inverted {
   color: var(--color-secondairy) !important ;
-  background-color: var(--color-primary) !important;
-  --groupColor: var(--color-primary) !important;
+  background-color: v-bind('props.color') !important;
 }
 </style>
