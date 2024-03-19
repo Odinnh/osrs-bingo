@@ -24,6 +24,7 @@
           :boardData="boardData"
           :groupsData="groupsData"
           :tilesData="tilesData"
+          :isEditor="boardData.editors?.includes(user?.uid) || user.type == 'admin'"
           :key="'bingo-board-' + boardStore.boardUUID"
         />
         <aside class="detail-pane" v-if="boardStore.selectedTile != ''">
@@ -84,7 +85,7 @@ const scoreOpen = ref(false)
 const { data: GROUPS } = useDocument(collection(db, 'Boards', boardUUID, 'Groups'))
 const boardData = useDocument(doc(db, 'Boards', boardUUID))
 boardStore.setRules(boardData.value?.rules)
-boardStore.setBlackout(boardData.value?.isBlackout)
+boardStore.setBlackout(boardData.value?.isBlackout || false)
 const groupsData = computed(() => {
   let tempObject = {}
   if (GROUPS) {
