@@ -19,7 +19,8 @@
     <img
       v-if="props.tileData?.type !== 'null' || (props.isEditor && props.tileData?.type == 'null')"
       :src="
-        props.tileData?.img?.trim() ||
+        props.tileData?.img ||
+        props.tileData?.type == 'null' ||
         'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e'
       "
     />
@@ -46,10 +47,11 @@
             :icon="group.icon"
             :group="group.name"
             :data-name="group?.collected.hasOwnProperty(props.tileData.id) ? group.name : ''"
-            color="none"
+            :color="isBlackout ? group.color : 'none'"
             :inverted="true"
             :isBlackout="isBlackout"
             :style="{
+              '--bg-color': isBlackout ? group.color : 'var(--color-primary)',
               opacity:
                 group?.collected != undefined && group?.collected.hasOwnProperty(props.tileData.id)
                   ? 1
@@ -148,10 +150,7 @@ const setSelectedTile = (tile) => {
   width: var(--width);
   height: calc(var(--width) / 2);
   z-index: 100;
-  &.BigFlag {
-    height: 100%;
-    width: 100%;
-  }
+
   &:after {
     display: block;
     width: 100%;
@@ -162,7 +161,11 @@ const setSelectedTile = (tile) => {
     left: 0;
     z-index: 50;
     content: ' ';
-    background-color: var(--color-primary);
+    background-color: --bg-color;
+  }
+  &.BigFlag {
+    height: 100%;
+    width: 100%;
   }
 }
 
