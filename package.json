@@ -1,6 +1,8 @@
 {
   "name": "osrs-bingo",
-  "version": "0.0.0",
+  "engines": {
+    "npm": ">9.6.7"
+  },
   "private": true,
   "scripts": {
     "dev": "vite --host",

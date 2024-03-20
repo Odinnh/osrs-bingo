@@ -6,10 +6,11 @@ import UserOverview from '@/views/UserOverview.vue'
 import StatsScreen from '@/views/StatsScreen.vue'
 import EditBoard from '../views/EditBoard.vue'
 import LoginView from '../views/loginView.vue'
-import GroupView from '../views/GroupView.vue'
+import GroupView from '../views/groupView.vue'
 import { doc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
 import { getCurrentUser, useDocument } from 'vuefire'
+import WOMTEST from '../views/WOMTEST.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -60,6 +61,11 @@ const router = createRouter({
       name: 'stats-graph',
       props: true,
       component: StatsScreen
+    },
+    {
+      path: '/wom/:competitionID',
+      name: 'wiseOldManTest',
+      component: WOMTEST
     }
   ]
 })

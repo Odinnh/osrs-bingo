@@ -1,6 +1,8 @@
 <template>
   <div class="flag" :style="{ backgroundColor: props.color }" :class="{ inverted: props.inverted }">
     <FontAwesomeIcon
+      :inverse="!props.isBlackout"
+      :true="true"
       ref="tileIcon"
       :class="{ blackout: props.isBlackout }"
       class="icon"
@@ -10,7 +12,7 @@
 </template>
 <script setup>
 import { ref } from 'vue'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { FontAwesomeIcon, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 
 const tileIcon = ref(null)
 const props = defineProps({
