@@ -128,3 +128,5 @@ const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID}/Tile
   }
 }
 </style>
+../components/depricated/BingoBoard.vue../components/depricated/scoreCard.vue../components/depricated/sidePannel.vue../components/depricated/loginButton.vue
+../../stores/board.js

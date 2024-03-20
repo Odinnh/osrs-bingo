@@ -4,7 +4,7 @@
   </pre>
 </template>
 <script setup>
-import { WOMClient, CompetitionStatus } from '@wise-old-man/utils'
+import { WOMClient } from '@wise-old-man/utils'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()

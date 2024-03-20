@@ -266,3 +266,4 @@ const addNewTeam = () => {
   grid-template-columns: repeat(4, 30px);
 }
 </style>
+../components/depricated/loginButton.vue/index.js ../../stores/board.js

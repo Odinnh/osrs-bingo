@@ -291,3 +291,5 @@ ul {
   background: var(--color-tertiary);
 }
 </style>
+../components/depricated/BingoBoard.vue../components/depricated/editTile.vue../components/depricated/loginButton.vue
+../../stores/board.js

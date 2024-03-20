@@ -91,3 +91,4 @@ const { data: tilesData } = useDocument(collection(db, `Boards/${boardUUID.value
 </script>
 
 <style scoped></style>
+../components/depricated/loginButton.vue

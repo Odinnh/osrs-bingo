@@ -14,3 +14,4 @@ import { popupLogin } from './popupLogin'
 const router = useRouter()
 </script>
 <style scoped></style>
+../popupLogin

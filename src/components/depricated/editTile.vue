@@ -343,3 +343,4 @@ hr {
   /* filter: brightness(70%) contrast(118%) saturate(0%) hue-rotate(-46deg); */
 }
 </style>
+../../stores/board

@@ -142,3 +142,4 @@ if (!user) {
 </script>
 
 <style scoped></style>
+../components/depricated/emptyTile.vue ../../stores/boardCreation
