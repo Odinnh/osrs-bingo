@@ -3,6 +3,7 @@ import { doc } from 'firebase/firestore'
 import { db } from '../firebaseSettings'
 import { getCurrentUser, useDocument } from 'vuefire'
 import WOMTEST from '../views/WOMTEST.vapor.vue'
+import SortableTilesTestVapor from '../views/sortableTilesTest.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -11,6 +12,11 @@ const router = createRouter({
       path: '/wom/:competitionID',
       name: 'wiseOldManTest',
       component: WOMTEST
+    },
+    {
+      path: '/sort',
+      name: 'sortableTilesTest',
+      component: SortableTilesTestVapor
     }
   ]
 })

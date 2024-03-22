@@ -53,9 +53,7 @@ participants.value.map((participant) => {
   teams.value[participant.teamName].players = [
     ...teams.value[participant.teamName].players,
     (teams.value[participant.teamName].players[participant.player.username] = {
-      username: participant.player.displayName,
-      build: participant.player.build,
-      id: participant.playerId
+      ...participant.player
     })
   ]
 })
