@@ -1,11 +1,30 @@
 <template>
   <main ref="el">
-    <div class="tile" v-for="tile in sortedList" :key="tile.id">
+    <div
+      class="tile"
+      :class="{ 'to-be-deleted': tile.status == 'DELETEME' }"
+      v-for="tile in sortedList"
+      :key="tile.id"
+    >
       {{ tile.title }}
-      <button @click="RemoveTileFromList(list, tile.id)">X</button>
+      <button @click="showDialog(tile)">X</button>
     </div>
     <button v-if="list.length < 25" class="add tile" @click="AddTileToList(list)">+</button>
   </main>
+  <dialog ref="dialog">
+    <h2>do you want to delete me?</h2>
+    <button @click="RemoveTileFromList(list, tile)">Yes</button>
+    <button
+      @click="
+        (tile, dialog) => {
+          tile.status = null
+          dialog.close()
+        }
+      "
+    >
+      No
+    </button>
+  </dialog>
 </template>
 <script setup lang="ts">
 import { uid } from 'uid'
@@ -14,10 +33,15 @@ import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
 interface Tile {
   id: string
   title: string
+  status?: string | 'DELETEME' | null
 }
+const dialog = ref<HTMLDialogElement | null>(null)
 const el = ref<HTMLElement | null>(null)
 const list = ref<Tile[]>([])
 const orderOfList = ref<string[]>([])
+
+const tileToBeDeleted = ref<Tile | null>(null)
+
 for (let i = 0; i < 25; i++) {
   let uuid = uid(4)
   list.value[i] = <Tile>{ id: uuid, title: uuid }
@@ -26,7 +50,7 @@ for (let i = 0; i < 25; i++) {
 
 const sortedList = computed<Tile[]>(() => {
   return list.value.toSorted(
-    (a, b) => orderOfList.value.indexOf(a.id) - orderOfList.value.indexOf(b.id)
+    (a: Tile, b: Tile) => orderOfList.value.indexOf(a.id) - orderOfList.value.indexOf(b.id)
   )
 })
 
@@ -42,17 +66,23 @@ useSortable(el, sortedList, {
     })
   }
 })
+const showDialog = (tile: Tile) => {
+  tileToBeDeleted.value = tile
+  tile.status = 'DELETEME'
+  dialog.value?.showModal()
+}
 const AddTileToList = (list: Tile[]) => {
   const uuid = uid(4)
   list.push({ id: uuid, title: uuid })
   orderOfList.value.push(uuid)
 }
-const RemoveTileFromList = (list: Tile[], id: string) => {
+const RemoveTileFromList = (list: Tile[], tile: Tile) => {
   list.splice(
-    list.findIndex((tile) => tile.id === id),
+    list.findIndex((_tile: Tile) => _tile.id === tile.id),
     1
   )
-  orderOfList.value = sortedList.value.map((tile) => tile.id)
+  orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
+  dialog.value?.close()
 }
 </script>
 <style scoped>
@@ -76,6 +106,9 @@ main {
     &.blue-background-class {
       background-color: #7e7d7d;
       color: white;
+    }
+    &.to-be-deleted {
+      background-color: red;
     }
   }
 }
