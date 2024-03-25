@@ -1,4 +1,29 @@
 <template>
+  <div v-if="editBoard">
+    <button @click="widthInputForm?.stepDown()">-</button>
+    <input
+      ref="widthInputForm"
+      class="widthInput"
+      v-model="widthInput"
+      type="number"
+      min="3"
+      max="12"
+      @blur="
+        () => {
+          widthInput = Math.min(widthInput, 12)
+          console.log(Math.min(widthInput, 12))
+          widthInput = Math.max(widthInput, 3)
+        }
+      "
+    />
+    <button @click="widthInputForm?.stepUp()">+</button>
+    <button @click="editBoard = false">save</button>
+    <button v-if="list.length < 100" class="add tile" @click="AddTileToList(list)">
+      Add a tile
+    </button>
+  </div>
+  <button @click="editBoard = true" v-else>edit</button>
+
   <main ref="el">
     <div
       class="tile"
@@ -9,16 +34,22 @@
       {{ tile.title }}
       <button @click="showDialog(tile)">X</button>
     </div>
-    <button v-if="list.length < 25" class="add tile" @click="AddTileToList(list)">+</button>
   </main>
   <dialog ref="dialog">
-    <h2>do you want to delete me?</h2>
-    <button @click="RemoveTileFromList(list, tile)">Yes</button>
+    <h2>do you want to delete me? {{ tileToBeDeleted?.title }}</h2>
+    <button @click="RemoveTileFromList(list)">Yes</button>
     <button
       @click="
-        (tile, dialog) => {
-          tile.status = null
-          dialog.close()
+        () => {
+          if (!tileToBeDeleted) return
+          tileToBeDeleted.status = null
+          
+            list.some((el:Tile, index:number, arr:Tile[]) => {
+             if (el.id === tileToBeDeleted?.id) { el.status = null
+              arr[index].status = null}
+            },)
+          tileToBeDeleted = null
+          dialog?.close()
         }
       "
     >
@@ -35,11 +66,13 @@ interface Tile {
   title: string
   status?: string | 'DELETEME' | null
 }
-const dialog = ref<HTMLDialogElement | null>(null)
+const dialog = ref<HTMLDialogElement>()
 const el = ref<HTMLElement | null>(null)
+const widthInputForm = ref<HTMLInputElement | null>(null)
+const widthInput = ref<number>(5)
 const list = ref<Tile[]>([])
 const orderOfList = ref<string[]>([])
-
+const editBoard = ref<boolean>(false)
 const tileToBeDeleted = ref<Tile | null>(null)
 
 for (let i = 0; i < 25; i++) {
@@ -76,9 +109,9 @@ const AddTileToList = (list: Tile[]) => {
   list.push({ id: uuid, title: uuid })
   orderOfList.value.push(uuid)
 }
-const RemoveTileFromList = (list: Tile[], tile: Tile) => {
+const RemoveTileFromList = (list: Tile[]) => {
   list.splice(
-    list.findIndex((_tile: Tile) => _tile.id === tile.id),
+    list.findIndex((_tile: Tile) => _tile.id === tileToBeDeleted.value?.id),
     1
   )
   orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
@@ -87,16 +120,17 @@ const RemoveTileFromList = (list: Tile[], tile: Tile) => {
 </script>
 <style scoped>
 main {
+  --width: v-bind('widthInput');
   display: grid;
   align-content: flex-start;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(var(--width), 1fr);
   gap: 20px;
-  width: 500px;
+  width: min-content;
+  min-width: 80vw;
   padding: 20px;
   background-color: grey;
   & .tile {
-    width: 80px;
-    height: 80px;
+    /* width: min-content; */
     aspect-ratio: 1;
     background-color: white;
     text-align: center;
@@ -111,5 +145,19 @@ main {
       background-color: red;
     }
   }
+}
+.widthInput {
+  width: 3ch;
+  text-align: center;
+}
+input[type='number'] {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
 }
 </style>
