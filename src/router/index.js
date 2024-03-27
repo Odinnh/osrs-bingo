@@ -1,11 +1,11 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { doc } from 'firebase/firestore'
-import { db } from '../firebaseSettings'
+import { db } from '@/firebaseSettings'
 import { getCurrentUser, useDocument } from 'vuefire'
-import WOMTEST from '../views/WOMTEST.vapor.vue'
-import SortableTilesTestVapor from '../views/sortableTilesTest.vapor.vue'
-import newBoard from '../views/newBoard.vapor.vue'
-import loginView from '../views/loginView.vapor.vue'
+import WOMTEST from '@/views/WOMTEST.vapor.vue'
+import SortableTilesTestVapor from '@/views/sortableTilesTest.vapor.vue'
+import newBoard from '@/views/newBoard.vapor.vue'
+import loginView from '@/views/loginView.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',

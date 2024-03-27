@@ -1,6 +1,6 @@
 import { signInWithPopup, GoogleAuthProvider, signOut, getAuth } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db, firebaseApp } from '../firebaseSettings'
+import { db, firebaseApp } from '@/firebaseSettings'
 import { useFirebaseAuth } from 'vuefire'
 
 const provider = new GoogleAuthProvider()

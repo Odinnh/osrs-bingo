@@ -61,7 +61,7 @@
 import { uid } from 'uid'
 import { ref, computed, nextTick } from 'vue'
 import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
-import type { Tile } from '../types'
+import type { Tile } from '@/types'
 
 const dialog = ref<HTMLDialogElement>()
 const el = ref<HTMLElement | null>(null)

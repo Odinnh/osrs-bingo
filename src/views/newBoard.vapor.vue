@@ -30,12 +30,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { WOMClient } from '@wise-old-man/utils'
-import type { Teams, Player } from '../types'
+import type { Teams, Player } from '@/types'
 import type { CompetitionDetails, ParticipationWithPlayerAndProgress } from '@wise-old-man/utils'
 import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { getCurrentUser } from 'vuefire'
+import { db } from '@/firebaseSettings'
+
 const user = await getCurrentUser()
-import { db } from '../firebaseSettings'
 
 const WOMCode = ref<number | null>(40963)
 const ErrorMessage = ref<string>()
