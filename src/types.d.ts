@@ -1,3 +1,5 @@
+import { Prisma_Base_Player } from '@wise-old-man/utils'
+
 interface Tile {
   id: string
   title: string
@@ -22,32 +24,14 @@ interface CollectedLogItem {
 }
 
 interface Team {
-  teamName: string
+  teamName: string | null
   stats: null
   players: Player[]
 }
-interface Player {
-  id: number
-  username: string
-  displayName: string
-  type: 'unknown' | 'regular' | 'ironman' | 'hardcore' | 'ultimate'
-  build: string
-  status: string
-  country: null
-  patron: boolean
-  exp: number
-  ehp: number
-  ehb: number
-  ttm: number
-  tt200m: number
-  registeredAt: string
-  updatedAt: string
-  lastChangedAt: string
-  lastImportedAt: null
-}
+interface Player extends Prisma_Base_Player {}
 
 interface Teams {
-  [key: Team.teamName]: string
+  [key: string]: Team
 }
 
 export { Tile, Team, Teams, Player }

@@ -30,13 +30,17 @@
     </div>
   </div>
 </template>
-<script setup lang="ts">
 // @ts-nocheck
-import Vue from 'vue'
+<script setup lang="ts">
 import { ref } from 'vue'
 import { WOMClient } from '@wise-old-man/utils'
-import type { Teams, Player } from '../types'
+import type { Teams, Team, Player } from '../types'
 import type { CompetitionDetails, ParticipationWithPlayerAndProgress } from '@wise-old-man/utils'
+import { arrayUnion, collection, doc, setDoc } from 'firebase/firestore'
+import { getCurrentUser, useDocument } from 'vuefire'
+
+import { db } from '@/firebaseSettings'
+import { useRouter } from 'vue-router'
 
 const WOMCode = ref<number | null>(40963)
 const ErrorMessage = ref<string>()
@@ -46,10 +50,13 @@ const createBingo = async (): Promise<void> => {
   if (!WOMCode.value || WOMCode.value <= 0 || isNaN(WOMCode.value as number)) {
     return
   }
-  await client.competitions
+  interface Response extends CompetitionDetails {
+    message?: string
+  }
 
-    .getCompetitionDetails(parseInt(WOMCode.value))
-    .then((result) => {
+  await client.competitions
+    .getCompetitionDetails(WOMCode.value)
+    .then((result: Response) => {
       if (result?.message) {
         throw new Error('Error creating bingo: ' + result.message)
       }
@@ -65,24 +72,47 @@ const createBingo = async (): Promise<void> => {
 
 const formatTeams = (competitions: CompetitionDetails): Teams => {
   const participants = ref<ParticipationWithPlayerAndProgress[] | null>()
-  const teams = ref({})
+  const teams = ref<Teams>({})
 
   participants.value = competitions.participations
   participants.value?.map((participant) => {
-    const teamName = <string>participant.teamName
-
-    teams.value[teamName] = { teamName: teamName, stats: null, players: [] }
+    teams.value[participant.teamName as keyof Teams] = {
+      teamName: participant.teamName,
+      players: [],
+      stats: null
+    }
   })
 
   participants.value.map((participant) => {
-    teams.value[participant.teamName].players = [
-      ...teams.value[participant.teamName].players,
-      (teams.value[participant.teamName].players[participant.player.username] = {
+    teams.value[participant.teamName as keyof Teams].players = [
+      ...teams.value[participant.teamName as keyof Teams].players,
+      (teams.value[participant.teamName as keyof Teams].players[
+        participant.player.username as keyof Player
+      ] = {
         ...participant.player
       })
     ]
   })
   return teams.value
+}
+
+const addBoardThenRoute = async () => {
+  const newBoard = doc(collection(db, 'Boards'))
+  const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
+
+  await setDoc(newBoard, { ownerID: user.uid }).then(() => {
+    setDoc(doc(db, newGroup.path), {
+      name: 'all',
+      collected: {},
+      verify: {},
+      icon: 'frog',
+      color: '#8a038f',
+      points: 0
+    })
+    setDoc(doc(db, 'Users', user.uid), {
+      boards: arrayUnion(newBoard.id)
+    })
+  })
 }
 </script>
 <style scoped>
