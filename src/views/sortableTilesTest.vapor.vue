@@ -87,7 +87,6 @@ const sortedList = computed<Tile[]>(() => {
   )
 })
 
-list.value.sort()
 useSortable(el, sortedList, {
   inverted: true,
   ghostClass: 'blue-background-class',
@@ -126,7 +125,7 @@ main {
   grid-template-columns: repeat(var(--width), 1fr);
   gap: 20px;
   width: min-content;
-  min-width: 80vw;
+  max-width: 80vw;
   padding: 20px;
   background-color: grey;
   & .tile {
