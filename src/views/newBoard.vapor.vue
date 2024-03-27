@@ -14,19 +14,15 @@
       "
     />
     <button @click="createBingo()">Create new Bingo</button>
-    <div v-if="resultmsg !== null">
-      <div v-for="team in resultmsg" :key="team.teamName">
+    <button @click="addBoard()">finish setup</button>
+    <div v-if="teams !== null">
+      {{ teams }}
+      <div v-for="team in teams" :key="(team.teamName as string)">
         <h2>{{ team.teamName }}</h2>
         <div v-for="player in team.players" :key="player.username">
           <div>{{ player.username }}</div>
         </div>
       </div>
-    </div>
-    <div v-if="ErrorMessage !== ''">
-      <div>{{ ErrorMessage }}</div>
-    </div>
-    <div v-if="resultmsg !== null">
-      <div v-for="team in resultmsg.value" :key="team.teamName"></div>
     </div>
   </div>
 </template>
@@ -34,18 +30,17 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { WOMClient } from '@wise-old-man/utils'
-import type { Teams, Team, Player } from '../types'
+import type { Teams, Player } from '../types'
 import type { CompetitionDetails, ParticipationWithPlayerAndProgress } from '@wise-old-man/utils'
-import { arrayUnion, collection, doc, setDoc } from 'firebase/firestore'
-import { getCurrentUser, useDocument } from 'vuefire'
-
-import { db } from '@/firebaseSettings'
-import { useRouter } from 'vue-router'
+import { arrayUnion, collection, doc, setDoc, updateDoc } from 'firebase/firestore'
+import { getCurrentUser } from 'vuefire'
+const user = await getCurrentUser()
+import { db } from '../firebaseSettings'
 
 const WOMCode = ref<number | null>(40963)
 const ErrorMessage = ref<string>()
 const client = new WOMClient()
-const resultmsg = ref<Teams>({})
+const teams = ref<Teams>({})
 const createBingo = async (): Promise<void> => {
   if (!WOMCode.value || WOMCode.value <= 0 || isNaN(WOMCode.value as number)) {
     return
@@ -60,7 +55,7 @@ const createBingo = async (): Promise<void> => {
       if (result?.message) {
         throw new Error('Error creating bingo: ' + result.message)
       }
-      resultmsg.value = formatTeams(result)
+      teams.value = formatTeams(result)
     })
     .catch((error) => {
       ErrorMessage.value = error.message
@@ -83,12 +78,13 @@ const formatTeams = (competitions: CompetitionDetails): Teams => {
     }
   })
 
-  participants.value.map((participant) => {
+  participants.value.map((participant: Player) => {
+    delete participant.player.ehb
+    delete participant.player.exp
+    delete participant.player.ehp
     teams.value[participant.teamName as keyof Teams].players = [
       ...teams.value[participant.teamName as keyof Teams].players,
-      (teams.value[participant.teamName as keyof Teams].players[
-        participant.player.username as keyof Player
-      ] = {
+      (teams.value[participant.teamName as keyof Teams].players[participant.player.username] = {
         ...participant.player
       })
     ]
@@ -96,23 +92,26 @@ const formatTeams = (competitions: CompetitionDetails): Teams => {
   return teams.value
 }
 
-const addBoardThenRoute = async () => {
+const addBoard = async () => {
   const newBoard = doc(collection(db, 'Boards'))
-  const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
-
-  await setDoc(newBoard, { ownerID: user.uid }).then(() => {
-    setDoc(doc(db, newGroup.path), {
-      name: 'all',
-      collected: {},
-      verify: {},
-      icon: 'frog',
-      color: '#8a038f',
-      points: 0
+  if (user) {
+    await setDoc(newBoard, { ownerID: user.uid! }).then(() => {
+      const userDoc = doc(db, 'Users', user.uid)
+      for (let teamKey in teams.value) {
+        const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
+        const team = teams.value[teamKey]
+        setDoc(doc(db, newGroup.path), {
+          teamName: team.teamName,
+          teamId: newGroup.id,
+          players: teams.value[teamKey].players,
+          stats: null
+        })
+      }
+      updateDoc(userDoc, {
+        boards: arrayUnion(newBoard.id)
+      })
     })
-    setDoc(doc(db, 'Users', user.uid), {
-      boards: arrayUnion(newBoard.id)
-    })
-  })
+  }
 }
 </script>
 <style scoped>

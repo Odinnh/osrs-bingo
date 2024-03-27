@@ -26,9 +26,9 @@ interface CollectedLogItem {
 interface Team {
   teamName: string | null
   stats: null
-  players: Player[]
+  players: Prisma_Base_Player[]
 }
-interface Player extends Prisma_Base_Player {}
+type Player = Omit<Prisma_Base_Player, 'ehb' | 'ehp' | 'exp'>
 
 interface Teams {
   [key: string]: Team
