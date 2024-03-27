@@ -1,10 +1,10 @@
-import { signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth'
+import { signInWithPopup, GoogleAuthProvider, signOut, getAuth } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
-import { db } from '../firebaseSettings'
+import { db, firebaseApp } from '../firebaseSettings'
 import { useFirebaseAuth } from 'vuefire'
 
 const provider = new GoogleAuthProvider()
-const auth = useFirebaseAuth()
+const auth = getAuth(firebaseApp)
 const popupLogin = async (destination, router) => {
   signInWithPopup(auth, provider)
     .then(async (response) => {

@@ -5,6 +5,7 @@ import { getCurrentUser, useDocument } from 'vuefire'
 import WOMTEST from '../views/WOMTEST.vapor.vue'
 import SortableTilesTestVapor from '../views/sortableTilesTest.vapor.vue'
 import newBoard from '../views/newBoard.vapor.vue'
+import loginView from '../views/loginView.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -23,12 +24,17 @@ const router = createRouter({
       path: '/new',
       name: 'createNewBingo',
       component: newBoard
+    },
+    {
+      path: '/login',
+      name: 'loginView',
+      component: loginView
     }
   ]
 })
 // router.beforeEach(async (to, from, next) => {
 //   const user = await getCurrentUser()
-//   if (to.name == 'overview') {
+//   if (to.name == 'new') {
 //     const { data: boardData, promise } = useDocument(doc(db, 'Boards', to.params.boardUUID))
 //     await promise.value.then(async (data) => {
 //       if (data.settings.public) next()
