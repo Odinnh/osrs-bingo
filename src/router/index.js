@@ -4,6 +4,7 @@ import { db } from '../firebaseSettings'
 import { getCurrentUser, useDocument } from 'vuefire'
 import WOMTEST from '../views/WOMTEST.vapor.vue'
 import SortableTilesTestVapor from '../views/sortableTilesTest.vapor.vue'
+import newBoard from '../views/newBoard.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -17,6 +18,11 @@ const router = createRouter({
       path: '/sort',
       name: 'sortableTilesTest',
       component: SortableTilesTestVapor
+    },
+    {
+      path: '/new',
+      name: 'createNewBingo',
+      component: newBoard
     }
   ]
 })

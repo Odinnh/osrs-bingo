@@ -61,11 +61,8 @@
 import { uid } from 'uid'
 import { ref, computed, nextTick } from 'vue'
 import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
-interface Tile {
-  id: string
-  title: string
-  status?: string | 'DELETEME' | null
-}
+import type { Tile } from '../types'
+
 const dialog = ref<HTMLDialogElement>()
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement | null>(null)
@@ -77,7 +74,16 @@ const tileToBeDeleted = ref<Tile | null>(null)
 
 for (let i = 0; i < 25; i++) {
   let uuid = uid(4)
-  list.value[i] = <Tile>{ id: uuid, title: uuid }
+  list.value.push({
+    id: uuid,
+    title: uuid,
+    description: '',
+    image: '',
+    type: 'drop',
+    selector: 'OR',
+    points: 0,
+    count: 0
+  })
   orderOfList.value[i] = uuid
 }
 
@@ -105,7 +111,16 @@ const showDialog = (tile: Tile) => {
 }
 const AddTileToList = (list: Tile[]) => {
   const uuid = uid(4)
-  list.push({ id: uuid, title: uuid })
+  list.push({
+    id: uuid,
+    title: uuid,
+    description: '',
+    image: '',
+    type: 'drop',
+    selector: 'OR',
+    points: 0,
+    count: 0
+  })
   orderOfList.value.push(uuid)
 }
 const RemoveTileFromList = (list: Tile[]) => {
