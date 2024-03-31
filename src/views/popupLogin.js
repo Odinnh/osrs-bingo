@@ -4,7 +4,7 @@ import { db, firebaseApp } from '@/firebaseSettings'
 import { useFirebaseAuth } from 'vuefire'
 
 const provider = new GoogleAuthProvider()
-const auth = getAuth(firebaseApp)
+const auth = useFirebaseAuth(firebaseApp)
 const popupLogin = async (destination, router) => {
   signInWithPopup(auth, provider)
     .then(async (response) => {
