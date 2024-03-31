@@ -12,4 +12,6 @@ const route = useRoute()
   </div>
 </template>
 
-<style scoped></style>
+<style>
+@import url('./assets/root.css');
+</style>

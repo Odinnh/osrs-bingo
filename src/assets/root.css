@@ -41,7 +41,7 @@ h4,
 h5 {
   padding-bottom: 15px;
 }
-.UID {
+code {
   font-family: monospace;
   font-size: 1rem;
   background: var(--color-secondairy);

@@ -3,9 +3,9 @@ import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import { getCurrentUser, useDocument } from 'vuefire'
 import WOMTEST from '@/views/WOMTEST.vapor.vue'
-import SortableTilesTestVapor from '@/views/sortableTilesTest.vapor.vue'
 import newBoard from '@/views/newBoard.vapor.vue'
 import loginView from '@/views/loginView.vapor.vue'
+import editBoard from '@/views/editBoard.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -16,19 +16,19 @@ const router = createRouter({
       component: WOMTEST
     },
     {
-      path: '/sort',
-      name: 'sortableTilesTest',
-      component: SortableTilesTestVapor
-    },
-    {
       path: '/new',
       name: 'createNewBingo',
       component: newBoard
     },
     {
       path: '/login',
-      name: 'loginView',
+      name: 'loginScreen',
       component: loginView
+    },
+    {
+      path: '/edit/:boardUUID',
+      name: 'editBingoBoard',
+      component: editBoard
     }
   ]
 })
