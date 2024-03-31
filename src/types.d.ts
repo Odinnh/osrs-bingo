@@ -1,6 +1,6 @@
 import { Prisma_Base_Player } from '@wise-old-man/utils'
 
-interface Tile {
+interface Tile extends DocumentData {
   id: string
   title: string
   description: string
@@ -16,6 +16,9 @@ interface Tile {
   drops?: string[]
   collected?: collectionLogItem[]
   status?: 'DELETEME' | null
+}
+interface Tiles {
+  [key: string]: Tile
 }
 interface CollectedLogItem {
   id: number
@@ -34,4 +37,4 @@ interface Teams {
   [key: string]: Team
 }
 
-export { Tile, Team, Teams, Player }
+export { Tile, Tiles, Team, Teams, Player }
