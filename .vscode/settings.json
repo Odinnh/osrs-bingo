@@ -1,11 +1,17 @@
 {
   "window.closeWhenEmpty": false,
   "window.autoDetectColorScheme": false,
-  "workbench.colorTheme": "Tokyo Night Storm",
   "workbench.iconTheme": "material-icon-theme",
   "material-icon-theme.activeIconPack": "vue",
   "material-icon-theme.folders.theme": "specific",
   "terminal.integrated.minimumContrastRatio": 7,
   "editor.fontFamily": "Fira Code",
-  "editor.tabSize": 4
+  "editor.tabSize": 4,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#fab005",
+    "activityBar.foreground": "#221f22",
+    "activityBar.inactiveForeground": "#221f22",
+    "activityBarBadge.background": "#a900bf",
+    "activityBarBadge.foreground": "#e7e7e7"
+  }
 }
