@@ -85,6 +85,7 @@ if (boardData.value?.orderOfList) {
 } else {
   orderOfList.value = list.value.map((tile) => tile.id)
 }
+// TODO:
 const sortedList = computed(() => {
   if (list.value === undefined) return []
   return list.value.toSorted(
@@ -190,7 +191,9 @@ const saveTiles = async (): Promise<void> => {
     })
 
     // Commit the batch
-    await batch.commit()
+    await batch.commit().then(() => {
+      list.value = tilesData.value as unknown as Tile[]
+    })
   } catch (error) {
     console.error('Error synchronizing tiles:', error)
   }
