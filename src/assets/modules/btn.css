@@ -1,42 +1,71 @@
-.btn {
+button,
+a.btn {
+  font-size: 1rem;
   cursor: pointer;
-  padding: 5px;
-  border: var(--border);
+  --color: var(--primary-500);
+  --color-0: color-mix(in srgb, var(--color) 30%, var(--background));
+  --color-100: color-mix(in srgb, var(--color) 50%, var(--background));
+  --background-color: var(--color);
+  --border-color: var(--color);
+  background-color: var(--background-color);
+  color: var(--text);
+  padding: 1ch 2ch;
+  border: 1px solid var(--background-color);
+
+  &[submit] {
+    --color: var(--secondary-100);
+    color: var(--dark);
+  }
+  &[cancel] {
+    --background-color: var(--background);
+    border-color: var(--color);
+  }
+  &[outline] {
+    background-color: unset;
+    &:active {
+      background-color: var(--background-color);
+    }
+  }
   border-radius: var(--border-radius);
-  border-color: var(--border-color);
-  color: var(--color-primary);
-  background-color: var(--color-secondairy);
-  text-align: center;
-  text-decoration: none;
-}
-.btn.highlight {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-  color: var(--color-secondairy);
+  &:hover {
+    --background-color: var(--color-100);
+  }
+  &:active {
+    --background-color: var(--color-0);
+  }
+  &:has(+ input, + .input, + select) {
+    border-bottom-right-radius: unset;
+    border-top-right-radius: unset;
+    padding-inline: 1.5ch;
+  }
+  &:is(input + &, .input + &, select + &) {
+    border-bottom-left-radius: unset;
+    border-top-left-radius: unset;
+    padding-inline: 1.5ch;
+  }
 }
 
-.btn:hover {
-  color: var(--color-secondairy);
-  border-color: var(--color-primary);
-  background-color: var(--color-primary);
+@media (prefers-color-scheme: dark) {
+  button,
+  a {
+    --color: var(--primary);
+    --color-0: color-mix(in srgb, var(--color) 30%, var(--text));
+    --color-100: color-mix(in srgb, var(--color) 50%, var(--text));
+    --background-color: var(--color);
+    --border-color: var(--color);
+
+    &:active {
+      color: var(--dark);
+    }
+  }
 }
-.btn.danger {
-  background-color: var(--color-error);
-  border-color: var(--color-error);
-  color: var(--color-secondairy);
-  font-weight: 900;
-}
-.btn.danger:hover {
-  background-color: unset;
-  color: var(--color-error);
-}
-.btn.close {
-  border-color: var(--color-error);
-  background-color: unset;
-  color: var(--color-error);
-}
-.btn.close:hover {
-  background-color: var(--color-error);
-  color: var(--color-secondairy);
-  font-weight: 900;
+@media (prefers-color-scheme: light) {
+  button,
+  a {
+    --color: var(--primary);
+    --color-0: color-mix(in srgb, var(--color) 70%, var(--background));
+    --color-100: color-mix(in srgb, var(--color) 50%, var(--background));
+    --background-color: var(--color);
+    --border-color: var(--color);
+  }
 }

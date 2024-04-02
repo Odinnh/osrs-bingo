@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:700|Roboto%20Flex:400');
+:root {
+  --border-radius: 1ch /0.9ch;
+}
+
+body {
+  font-family: 'Roboto Flex';
+  font-weight: 400;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Poppins';
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 5px;
+}
+
+html {
+  font-size: 100%;
+} /* 16px */
+
+h1 {
+  font-size: 3.053rem; /* 48.8px */
+}
+
+h2 {
+  font-size: 2.442rem; /* 39.04px */
+}
+
+h3 {
+  font-size: 1.954rem; /* 31.2px */
+}
+
+h4 {
+  font-size: 1.563rem; /* 24.96px */
+}
+
+h5 {
+  font-size: 1.25rem; /* 20px */
+}
+
+small {
+  font-size: 0.8rem; /* 12.8px */
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --text: #070609;
+
+    --background: #f5f3f7;
+
+    --dark: var(--text);
+    --light: var(--background);
+
+    --primary-hue: 268;
+    --primary-sat: 57%;
+    --primary: hsl(var(--primary-hue), var(--primary-sat), 59%);
+    --primary-100: hsl(var(--primary-hue), var(--primary-sat), 70%);
+    --primary-500: var(--primary);
+    --primary-900: hsl(var(--primary-hue), var(--primary-sat), 30%);
+
+    --secondary-hue: 165;
+    --secondary-sat: 60%;
+    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 62%);
+    --secondary-100: hsl(var(--secondary-hue), var(--secondary-sat), 80%);
+    --secondary-500: var(--secondary);
+    --secondary-900: hsl(var(--secondary-hue), var(--secondary-sat), 20%);
+
+    --accent-hue: 45;
+    --accent-sat: 97%;
+    --accent: hsl(var(--accent-hue), var(--accent-sat), 46%);
+    --accent-100: hsl(var(--accent-hue), var(--accent-sat), 70%);
+    --accent-500: var(--accent);
+    --accent-900: hsl(var(--accent-hue), var(--accent-sat), 30%);
+
+    --text-accent: color-mix(in srgb, var(--light), var(--accent-500) 70%);
+    --text-alt: color-mix(in srgb, var(--dark) 10%, var(--primary-500) 70%);
+    --background-accent: color-mix(in srgb, var(--light) 70%, var(--accent-500) 30%);
+    --background-alt: color-mix(in srgb, var(--light) 70%, var(--primary-500) 30%);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: #f7f6f9;
+
+    --background: #0a080c;
+
+    --light: var(--text);
+    --dark: var(--background);
+
+    --primary-hue: 268;
+    --primary-sat: 57%;
+    --primary: hsl(var(--primary-hue), var(--primary-sat), 41%);
+    --primary-100: hsl(var(--primary-hue), var(--primary-sat), 70%);
+    --primary-500: var(--primary);
+    --primary-900: hsl(var(--primary-hue), var(--primary-sat), 30%);
+
+    --secondary-hue: 165;
+    --secondary-sat: 60%;
+    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 38%);
+    --secondary-100: hsl(var(--secondary-hue), var(--secondary-sat), 80%);
+    --secondary-500: var(--secondary);
+    --secondary-900: hsl(var(--secondary-hue), var(--secondary-sat), 20%);
+
+    --accent-hue: 45;
+    --accent-sat: 97%;
+    --accent: hsl(var(--accent-hue), var(--accent-sat), 54%);
+    --accent-100: hsl(var(--accent-hue), var(--accent-sat), 70%);
+    --accent-500: var(--accent);
+    --accent-900: hsl(var(--accent-hue), var(--accent-sat), 30%);
+
+    --text-accent: color-mix(in srgb, var(--light), var(--accent-500) 70%);
+    --text-alt: color-mix(in srgb, var(--dark) 30%, var(--primary-500) 70%);
+
+    --background-accent: hsl(var(--accent-hue), var(--accent-sat), 30%);
+    --background-alt: hsl(var(--primary-hue), var(--primary-sat), 30%);
+  }
+}

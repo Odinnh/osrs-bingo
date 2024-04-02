@@ -1,50 +1,26 @@
-@import url(./modules/input.css);
+@import url(./root/theme.css);
 @import url(./modules/btn.css);
 @import url(./modules/checkbox.css);
+@import url(./modules/input.css);
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
-:root {
-  --color-error: #f51717;
-  --color-warning: #fab005;
-  --color-correct: #33ff58;
-  --color-verifying: rgb(249, 191, 83, 10%);
-  --color-collected: rgb(83, 249, 93, 10%);
-  --color-primary: #d9d9d9;
-  --color-secondairy: #212529;
-  --color-tertiary: #171a1c;
-  --color-accent: #fab005;
-  --border-radius: 5px;
-  --border-width: 1px;
-  --border-style: solid;
-  --border-color: color-mix(in srgb, var(--color-primary), transparent 50%);
-  --border: var(--border-width) var(--border-style) var(--border-color);
-}
-
 body {
-  font-family: 'Roboto', sans-serif;
-  color: var(--color-primary);
-  background: var(--color-tertiary);
-}
-.highlight {
-  color: var(--color-accent);
-}
-p {
-  line-height: 1.8rem;
-}
-h1,
-h2,
-h3,
-h4,
-h5 {
-  padding-bottom: 15px;
+  color: var(--text);
+  background-color: var(--background);
+  min-height: 100vh;
 }
 code {
   font-family: monospace;
   font-size: 1rem;
-  background: var(--color-secondairy);
+  background: var(--dark);
   padding: 5px;
-  color: var(--color-accent);
+  color: var(--accent);
+}
+
+dialog {
+  background-color: var(--background);
+  border: none;
+  border-radius: var(--border-radius);
+  color: var(--text);
 }

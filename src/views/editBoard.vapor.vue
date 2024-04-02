@@ -1,8 +1,8 @@
 <template>
-  <div>{{ router.params.boardUUID }}</div>
-  <div v-if="boardData">{{ boardData.name }}</div>
-  <div v-if="boardData">{{ boardData.orderOfList }}</div>
-  <div v-if="orderOfList">{{ orderOfList }}</div>
+  <h1 v-if="boardData">
+    {{ boardData.name }}
+  </h1>
+  <code>{{ router.params.boardUUID }}</code>
   <div v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
     <input
@@ -20,8 +20,8 @@
       "
     />
     <button @click="updateWidth('add')">+</button>
-    <button @click="saveTiles()">save</button>
-    <button @click="cancelEdit()">cancel</button>
+    <button submit @click="saveTiles()">save</button>
+    <button cancel @click="cancelEdit()">cancel</button>
     <button v-if="list.length < 100" class="add tile" @click="AddTileToList()">Add a tile</button>
   </div>
   <button @click="editBoard()" v-else>edit</button>
@@ -33,14 +33,16 @@
       v-for="tile in sortedList"
       :key="tile.id"
     >
+      <button v-if="isEditingBoard" @click="showDialog(tile)">Delete</button>
       {{ tile.title }}
-      <button v-if="isEditingBoard" @click="showDialog(tile)">X</button>
     </div>
   </main>
-  <dialog ref="dialog">
-    <h2>do you want to delete me? {{ tileToBeDeleted?.title }}</h2>
-    <button @click="RemoveTileFromList()">Yes</button>
-    <button @click="cancelDelete()">No</button>
+  <dialog ref="dialog" class="danger">
+    <h2>Are you sure?</h2>
+    <p>do you want to delete {{ tileToBeDeleted?.title }}?</p>
+    <p>once you press save, this is final and can't be undone</p>
+    <button submit @click="RemoveTileFromList()">Yes</button>
+    <button cancel @click="cancelDelete()">No</button>
   </dialog>
 </template>
 
@@ -57,7 +59,7 @@ import { db } from '@/firebaseSettings'
 import { tinyid } from '@/assets/js/tinyid'
 import { generateName } from '@/assets/js/tileNameGenerator'
 // type imports
-import type { Tile, Tiles } from '@/types'
+import type { Tile } from '@/types'
 
 const dialog = ref<HTMLDialogElement>()
 const el = ref<HTMLElement | null>(null)
@@ -85,7 +87,7 @@ if (boardData.value?.orderOfList) {
 } else {
   orderOfList.value = list.value.map((tile) => tile.id)
 }
-// TODO:
+
 const sortedList = computed(() => {
   if (list.value === undefined) return []
   return list.value.toSorted(
@@ -191,14 +193,20 @@ const saveTiles = async (): Promise<void> => {
     })
 
     // Commit the batch
-    await batch.commit().then(() => {
-      list.value = tilesData.value as unknown as Tile[]
+    await batch.commit().then(async () => {
+      const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
+        collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
+        { once: true }
+      )
+      await newTilesDataPromise.value
+      list.value = newTilesData.value as unknown as Tile[]
     })
   } catch (error) {
     console.error('Error synchronizing tiles:', error)
   }
 }
 const cancelEdit = () => {
+  // canceling anything you did between saves
   isEditingBoard.value = false
   orderOfList.value = localOrderOfList
 }

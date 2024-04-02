@@ -1,15 +1,42 @@
-input[type='text'],
-select,
-.input {
-  padding: 10px;
-  border: var(--border);
+input,
+.input,
+select {
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline;
+  font-size: 1rem;
+  border: 1px solid var(--primary-500);
   border-radius: var(--border-radius);
-  background-color: var(--color-tertiary);
-  margin-block-end: 15px;
-  color: white;
-  position: relative;
-}
+  padding: 1ch 2ch;
+  background: var(--background);
+  color: var(--text);
+  /* align text middle */
 
-option:checked {
-  background-color: red;
+  &[type='number'] {
+    -moz-appearance: textfield;
+  }
+  &[type='number']::-webkit-outer-spin-button,
+  &[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  &:is(button + &) {
+    border-bottom-left-radius: unset;
+    border-top-left-radius: unset;
+    border-inline-start-width: 0px;
+  }
+  &:has(+ button) {
+    border-bottom-right-radius: unset;
+    border-top-right-radius: unset;
+    border-inline-end-width: 0px;
+  }
+  & * {
+    display: inline;
+    white-space: nowrap;
+  }
+}
+.width-2 {
+  width: 6ch;
+}
+.width-10 {
+  width: 18ch;
 }

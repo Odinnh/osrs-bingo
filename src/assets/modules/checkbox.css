@@ -11,7 +11,7 @@ input[type='checkbox'] {
   outline: none;
   width: calc(var(--_scale) / 3 * 5);
   height: var(--_scale);
-  background-color: var(--color-error);
+  background-color: var(--primary-900);
   border-radius: calc(var(--_scale) / 3 * 5);
   margin-block-end: 0;
 }
@@ -23,13 +23,13 @@ input[type='checkbox']::after {
   left: var(--_spacing);
   width: calc(var(--_scale) - (var(--_spacing) * 2));
   height: calc(var(--_scale) - (var(--_spacing) * 2));
-  background-color: var(--color-tertiary);
+  background-color: var(--light);
   border-radius: 50%;
   transition: 100ms;
 }
 
 input[type='checkbox']:checked {
-  background-color: var(--color-correct);
+  background-color: var(--secondary-500);
 }
 
 input[type='checkbox']:hover::after {

@@ -6,6 +6,7 @@ import WOMTEST from '@/views/WOMTEST.vapor.vue'
 import newBoard from '@/views/newBoard.vapor.vue'
 import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
+import colorPallete from '@/views/colorPallete.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -29,6 +30,11 @@ const router = createRouter({
       path: '/edit/:boardUUID',
       name: 'editBingoBoard',
       component: editBoard
+    },
+    {
+      path: '/color/',
+      name: 'color',
+      component: colorPallete
     }
   ]
 })
