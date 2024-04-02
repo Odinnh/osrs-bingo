@@ -16,7 +16,7 @@ h5 {
   font-family: 'Poppins';
   font-weight: 700;
   color: var(--text);
-  margin-bottom: 5px;
+  margin: 0px;
 }
 
 html {
@@ -81,12 +81,33 @@ small {
     --background-accent: color-mix(in srgb, var(--light) 70%, var(--accent-500) 30%);
     --background-alt: color-mix(in srgb, var(--light) 70%, var(--primary-500) 30%);
   }
+
+  ::-moz-selection {
+    color: var(--light);
+    background: var(--primary-100);
+  }
+
+  ::selection {
+    color: var(--light);
+    background: var(--primary-100);
+  }
+  code {
+    background: var(--dark);
+
+    &::selection {
+      background-color: var(--accent-500);
+      color: var(--dark);
+    }
+  }
+  a {
+    color: var(--primary);
+  }
 }
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #f7f6f9;
 
-    --background: #0a080c;
+    --background: #15111a;
 
     --light: var(--text);
     --dark: var(--background);
@@ -118,4 +139,33 @@ small {
     --background-accent: hsl(var(--accent-hue), var(--accent-sat), 30%);
     --background-alt: hsl(var(--primary-hue), var(--primary-sat), 30%);
   }
+
+  ::-moz-selection {
+    background: var(--primary-100);
+  }
+
+  ::selection {
+    background: var(--primary-100);
+  }
+  code {
+    background-color: var(--background-alt);
+    &::selection {
+      background-color: var(--accent-500);
+      color: var(--background-alt);
+    }
+  }
+  a {
+    color: var(--accent);
+  }
+}
+
+a[target='_blank']::after {
+  content: '';
+  display: inline-block;
+  background-color: currentColor;
+  width: 15px;
+  height: 15px;
+  margin-inline-start: 0.5ch;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='blue' d='M220-153q-27.637 0-47.319-19.681Q153-192.363 153-220v-520q0-27.638 19.681-47.319Q192.363-807 220-807h257v67H220v520h520v-257h67v257q0 27.637-19.681 47.319Q767.638-153 740-153H220Zm168.5-188L341-388.5 692.5-740H568v-67h239v239h-67v-124.5L388.5-341Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='blue' d='M220-153q-27.637 0-47.319-19.681Q153-192.363 153-220v-520q0-27.638 19.681-47.319Q192.363-807 220-807h257v67H220v520h520v-257h67v257q0 27.637-19.681 47.319Q767.638-153 740-153H220Zm168.5-188L341-388.5 692.5-740H568v-67h239v239h-67v-124.5L388.5-341Z'/%3E%3C/svg%3E");
 }

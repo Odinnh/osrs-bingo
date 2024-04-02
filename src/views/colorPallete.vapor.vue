@@ -28,6 +28,7 @@
     <p><code>this is code</code></p>
 
     <p><a href="https://www.example.com">This is a link</a></p>
+    <p><a href="https://www.example.com" target="_blank">This is an external link</a></p>
   </section>
 
   <section>

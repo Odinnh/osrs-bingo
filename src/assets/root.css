@@ -13,14 +13,18 @@ body {
 code {
   font-family: monospace;
   font-size: 1rem;
-  background: var(--dark);
   padding: 5px;
+  border-radius: var(--border-radius);
   color: var(--accent);
 }
 
 dialog {
-  background-color: var(--background);
+  background-color: color-mix(in srgb, var(--background-alt), transparent 50%);
   border: none;
   border-radius: var(--border-radius);
   color: var(--text);
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+  }
 }

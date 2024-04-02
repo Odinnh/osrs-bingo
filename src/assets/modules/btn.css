@@ -1,5 +1,6 @@
 button,
 a.btn {
+  user-select: none;
   font-size: 1rem;
   cursor: pointer;
   --color: var(--primary-500);
@@ -17,11 +18,11 @@ a.btn {
     color: var(--dark);
   }
   &[cancel] {
-    --background-color: var(--background);
+    --background-color: transparent;
     border-color: var(--color);
   }
   &[outline] {
-    background-color: unset;
+    background-color: transparent;
     &:active {
       background-color: var(--background-color);
     }
