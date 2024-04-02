@@ -3,7 +3,7 @@
   <div v-if="boardData">{{ boardData.name }}</div>
   <div v-if="boardData">{{ boardData.orderOfList }}</div>
   <div v-if="orderOfList">{{ orderOfList }}</div>
-  <div v-if="editBoard">
+  <div v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
     <input
       ref="widthInputForm"
@@ -21,19 +21,20 @@
     />
     <button @click="updateWidth('add')">+</button>
     <button @click="saveTiles()">save</button>
+    <button @click="cancelEdit()">cancel</button>
     <button v-if="list.length < 100" class="add tile" @click="AddTileToList()">Add a tile</button>
   </div>
-  <button @click="editBoard = true" v-else>edit</button>
+  <button @click="editBoard()" v-else>edit</button>
 
   <main ref="el" class="board" :style="{ '--width': widthInput + 'rem' }">
     <div
       class="tile"
-      :class="{ 'to-be-deleted': tile.status == 'DELETEME', handle: editBoard }"
+      :class="{ 'to-be-deleted': tile.status == 'DELETEME', handle: isEditingBoard }"
       v-for="tile in sortedList"
       :key="tile.id"
     >
       {{ tile.title }}
-      <button v-if="editBoard" @click="showDialog(tile)">X</button>
+      <button v-if="isEditingBoard" @click="showDialog(tile)">X</button>
     </div>
   </main>
   <dialog ref="dialog">
@@ -44,21 +45,26 @@
 </template>
 
 <script setup lang="ts">
+// base imports
 import { ref, computed, nextTick } from 'vue'
-import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
-import type { Tile } from '@/types'
-import { useCollection, useDocument } from 'vuefire'
-import { db } from '@/firebaseSettings'
-import { doc, collection, writeBatch, getDocs } from 'firebase/firestore'
 import { useRoute } from 'vue-router'
+// database imports
+import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
+import { useCollection, useDocument } from 'vuefire'
+import { doc, collection, writeBatch, getDocs } from 'firebase/firestore'
+import { db } from '@/firebaseSettings'
+//misc imports
 import { tinyid } from '@/assets/js/tinyid'
+import { generateName } from '@/assets/js/tileNameGenerator'
+// type imports
+import type { Tile, Tiles } from '@/types'
 
 const dialog = ref<HTMLDialogElement>()
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement>()
 const widthInput = ref<number>(5)
 
-const editBoard = ref<boolean>(false)
+const isEditingBoard = ref<boolean>(false)
 const tileToBeDeleted = ref<Tile | null>(null)
 const router = useRoute()
 const { data: boardData, promise: boardDataPromise } = useDocument(
@@ -67,14 +73,15 @@ const { data: boardData, promise: boardDataPromise } = useDocument(
 await boardDataPromise.value
 
 let orderOfList = ref<string[]>([])
+let localOrderOfList = <string[]>[]
 
 const { data: tilesData, promise: tilesDataPromise } = useCollection(
   collection(db, 'Boards', router.params.boardUUID as string, 'Tiles')
 )
 await tilesDataPromise.value
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
-if (boardData.value?.orderOfList.value) {
-  orderOfList.value = boardData.value.orderOfList.value
+if (boardData.value?.orderOfList) {
+  orderOfList.value = boardData.value.orderOfList
 } else {
   orderOfList.value = list.value.map((tile) => tile.id)
 }
@@ -102,13 +109,14 @@ const showDialog = (tile: Tile) => {
   tile.status = 'DELETEME'
   dialog.value?.showModal()
 }
-const AddTileToList = () => {
-  const uuid = tinyid(4)
+const AddTileToList = (): void => {
+  const uuid = <string>tinyid()
+  const name = <string>generateName()
   list.value.push({
     id: uuid,
-    title: uuid,
-    description: '',
-    image: '',
+    title: name,
+    description: 'a sample description',
+    image: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e',
     type: 'drop',
     selector: 'OR',
     points: 0,
@@ -116,18 +124,18 @@ const AddTileToList = () => {
   })
   orderOfList.value.push(uuid)
 }
-const RemoveTileFromList = () => {
+const RemoveTileFromList = (): void => {
   if (!tileToBeDeleted.value) return
   list.value = list.value.filter((tile) => tile.id !== tileToBeDeleted.value!.id)
   orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
   dialog.value?.close()
 }
-const cancelDelete = () => {
+const cancelDelete = (): void => {
   if (!tileToBeDeleted.value) return
   tileToBeDeleted.value = null
   dialog.value?.close()
 }
-const updateWidth = (type: string) => {
+const updateWidth = (type: string): void => {
   //Width input can be at minimum be 3 and maximum be 12
   if (type === 'add') {
     widthInput.value = Math.min(widthInput.value + 1, 12)
@@ -137,8 +145,8 @@ const updateWidth = (type: string) => {
 
   el.value?.style.setProperty('--width', widthInput.value.toString())
 }
-const saveTiles = async () => {
-  editBoard.value = false
+const saveTiles = async (): Promise<void> => {
+  isEditingBoard.value = false
 
   try {
     const boardDocRef = doc(db, 'Boards', router.params.boardUUID as string)
@@ -186,6 +194,16 @@ const saveTiles = async () => {
   } catch (error) {
     console.error('Error synchronizing tiles:', error)
   }
+}
+const cancelEdit = () => {
+  isEditingBoard.value = false
+  orderOfList.value = localOrderOfList
+}
+
+const editBoard = (): void => {
+  // make a local version of the current order of the tiles
+  localOrderOfList = orderOfList.value
+  isEditingBoard.value = true
 }
 </script>
 
