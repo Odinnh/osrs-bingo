@@ -10,6 +10,18 @@ body {
   background-color: var(--background);
   min-height: 100vh;
 }
+.main {
+  width: 90vw;
+  margin-inline: auto;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background-color: var(--background-900);
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  padding: 4ch;
+}
 code {
   font-family: monospace;
   font-size: 1rem;

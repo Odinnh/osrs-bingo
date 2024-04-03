@@ -7,6 +7,7 @@ import newBoard from '@/views/newBoard.vapor.vue'
 import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
+import home from '@/views/home.vapor.vue'
 const router = createRouter({
   history: createWebHashHistory(),
   mode: 'hash',
@@ -35,6 +36,11 @@ const router = createRouter({
       path: '/color/',
       name: 'color',
       component: colorPallete
+    },
+    {
+      path: '/',
+      name: 'Home',
+      component: home
     }
   ]
 })

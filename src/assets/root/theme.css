@@ -1,11 +1,17 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:700|Roboto%20Flex:400');
 :root {
   --border-radius: 1ch /0.9ch;
+  --font-size-H: 3.053rem;
+  --font-size-XL: 2.442rem;
+  --font-size-L: 1.954rem;
+  --font-size-M: 1.563rem;
+  --font-size-S: 1.25rem;
 }
 
 body {
   font-family: 'Roboto Flex';
   font-weight: 400;
+  line-height: 1.4em;
 }
 
 h1,
@@ -13,34 +19,38 @@ h2,
 h3,
 h4,
 h5 {
+  text-wrap: balance;
+  width: 25ch;
+  font-size: var(--font-size-L);
   font-family: 'Poppins';
   font-weight: 700;
   color: var(--text);
   margin: 0px;
+  line-height: 1em;
 }
 
 html {
   font-size: 100%;
 } /* 16px */
 
-h1 {
-  font-size: 3.053rem; /* 48.8px */
+.font-size-H {
+  font-size: var(--font-size-H);
 }
 
-h2 {
-  font-size: 2.442rem; /* 39.04px */
+.font-size-XL {
+  font-size: var(--font-size-XL);
 }
 
-h3 {
-  font-size: 1.954rem; /* 31.2px */
+.font-size-L {
+  font-size: var(--font-size-L);
 }
 
-h4 {
-  font-size: 1.563rem; /* 24.96px */
+.font-size-M {
+  font-size: var(--font-size-M);
 }
 
-h5 {
-  font-size: 1.25rem; /* 20px */
+.font-size-S {
+  font-size: var(--font-size-S);
 }
 
 small {
@@ -80,6 +90,9 @@ small {
     --text-alt: color-mix(in srgb, var(--dark) 10%, var(--primary-500) 70%);
     --background-accent: color-mix(in srgb, var(--light) 70%, var(--accent-500) 30%);
     --background-alt: color-mix(in srgb, var(--light) 70%, var(--primary-500) 30%);
+
+    --background-100: color-mix(in srgb, var(--background), var(--dark) 5%);
+    --background-900: color-mix(in srgb, var(--background), var(--dark) 20%);
   }
 
   ::-moz-selection {
@@ -101,6 +114,9 @@ small {
   }
   a {
     color: var(--primary);
+  }
+  em {
+    oolor: var(--accent);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -138,6 +154,8 @@ small {
 
     --background-accent: hsl(var(--accent-hue), var(--accent-sat), 30%);
     --background-alt: hsl(var(--primary-hue), var(--primary-sat), 30%);
+    --background-100: color-mix(in srgb, var(--background) 80%, var(--light) 20%);
+    --background-900: color-mix(in srgb, var(--background) 95%, var(--light) 5%);
   }
 
   ::-moz-selection {
@@ -158,7 +176,10 @@ small {
     color: var(--accent);
   }
 }
-
+em {
+  color: var(--primary);
+  font-weight: bold;
+}
 a[target='_blank']::after {
   content: '';
   display: inline-block;
