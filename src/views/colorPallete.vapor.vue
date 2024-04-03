@@ -15,8 +15,6 @@
       <div class="block bg-accent-100">accent-100</div>
       <div class="block bg-accent">accent</div>
       <div class="block bg-accent-900">accent-900</div>
-      <div class="block"></div>
-      <div class="block"></div>
     </div>
   </section>
   <section>

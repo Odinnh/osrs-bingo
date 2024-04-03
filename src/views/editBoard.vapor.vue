@@ -1,9 +1,11 @@
 <template>
-  <h1 v-if="boardData">
-    {{ boardData.name }}
-  </h1>
-  <code>{{ router.params.boardUUID }}</code>
-  <div v-if="isEditingBoard">
+  <section>
+    <h1 v-if="boardData">
+      {{ boardData.name }}
+    </h1>
+    <code> Board ID: {{ router.params.boardUUID }}</code>
+  </section>
+  <section v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
     <input
       ref="widthInputForm"
@@ -23,8 +25,8 @@
     <button submit @click="saveTiles()">save</button>
     <button cancel @click="cancelEdit()">cancel</button>
     <button v-if="list.length < 100" class="add tile" @click="AddTileToList()">Add a tile</button>
-  </div>
-  <button @click="editBoard()" v-else>edit</button>
+  </section>
+  <section v-else><button @click="editBoard()">edit</button></section>
 
   <main ref="el" class="board" :style="{ '--width': widthInput + 'rem' }">
     <div
@@ -33,17 +35,16 @@
       v-for="tile in sortedList"
       :key="tile.id"
     >
-      <button v-if="isEditingBoard" @click="showDialog(tile)">Delete</button>
+      <button v-if="isEditingBoard" @click="showModal">Delete</button>
       {{ tile.title }}
     </div>
   </main>
-  <dialog ref="dialog" class="danger">
-    <h2>Are you sure?</h2>
-    <p>do you want to delete {{ tileToBeDeleted?.title }}?</p>
-    <p>once you press save, this is final and can't be undone</p>
-    <button submit @click="RemoveTileFromList()">Yes</button>
-    <button cancel @click="cancelDelete()">No</button>
-  </dialog>
+
+  <Modal ref="modal">
+    <template #header> a </template>
+    <template #body> b </template>
+    <template #controls><button @click="modal?.closeModal">Close</button></template>
+  </Modal>
 </template>
 
 <script setup lang="ts">
@@ -58,16 +59,24 @@ import { db } from '@/firebaseSettings'
 //misc imports
 import { tinyid } from '@/assets/js/tinyid'
 import { generateName } from '@/assets/js/tileNameGenerator'
+// Component imports
+import Modal from '@/components/Modal.vapor.vue'
 // type imports
-import type { Tile } from '@/types'
+import type { Tile, ModalElement } from '@/types'
 
-const dialog = ref<HTMLDialogElement>()
+const modal = ref<ModalElement>()
+const showModal = () => {
+  if (modal.value && modal.value.showModal) {
+    modal.value.showModal()
+  }
+}
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement>()
 const widthInput = ref<number>(5)
 
 const isEditingBoard = ref<boolean>(false)
 const tileToBeDeleted = ref<Tile | null>(null)
+
 const router = useRoute()
 const { data: boardData, promise: boardDataPromise } = useDocument(
   doc(db, 'Boards', router.params.boardUUID as string)
@@ -206,6 +215,7 @@ const saveTiles = async (): Promise<void> => {
   }
 }
 const cancelEdit = () => {
+  list.value = tilesData.value as unknown as Tile[]
   // canceling anything you did between saves
   isEditingBoard.value = false
   orderOfList.value = localOrderOfList
@@ -213,6 +223,8 @@ const cancelEdit = () => {
 
 const editBoard = (): void => {
   // make a local version of the current order of the tiles
+  const snapshotTilesData = [...tilesData.value] as Tile[]
+  list.value = snapshotTilesData
   localOrderOfList = orderOfList.value
   isEditingBoard.value = true
 }

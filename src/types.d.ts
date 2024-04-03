@@ -36,5 +36,8 @@ type Player = Omit<Prisma_Base_Player, 'ehb' | 'ehp' | 'exp'>
 interface Teams {
   [key: string]: Team
 }
-
-export { Tile, Tiles, Team, Teams, Player }
+interface ModalElement extends HTMLDialogElement {
+  //closes the Modal
+  closeModal: Function
+}
+export { Tile, Tiles, Team, Teams, Player, ModalElement }
