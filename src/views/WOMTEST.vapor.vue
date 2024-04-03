@@ -38,6 +38,7 @@ const client = new WOMClient()
 const competitions = ref()
 const participants = ref()
 const teams = ref({})
+const test = ref({})
 await client.competitions
   .getCompetitionDetails(parseInt(route.params.competitionID), 'corporeal_beast')
   .then((result) => {
@@ -45,17 +46,8 @@ await client.competitions
     participants.value = competitions.value.participations
   })
 
-participants.value.map((participant) => {
-  teams.value[participant.teamName] = { teamName: participant.teamName, stats: null, players: [] }
-})
-
-participants.value.map((participant) => {
-  teams.value[participant.teamName].players = [
-    ...teams.value[participant.teamName].players,
-    (teams.value[participant.teamName].players[participant.player.username] = {
-      ...participant.player
-    })
-  ]
+teams.value = Object.groupBy(participants.value, (item) => {
+  return item.teamName
 })
 </script>
 <style scoped>
