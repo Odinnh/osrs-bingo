@@ -1,6 +1,12 @@
-input,
+/* input,
 .input,
-select {
+select,
+.multiselect__tags {
+  .multiselect__select input {
+    border: 0;
+    color: inherit;
+    padding: 0;
+  }
   white-space: nowrap;
   overflow: hidden;
   display: inline;
@@ -10,7 +16,7 @@ select {
   padding: 1ch 2ch;
   background: var(--background);
   color: var(--text);
-  /* align text middle */
+
 
   &[type='number'] {
     -moz-appearance: textfield;
@@ -40,3 +46,6 @@ select {
 .width-10 {
   width: 18ch;
 }
+.multiselect__select {
+  width: max-content;
+} */

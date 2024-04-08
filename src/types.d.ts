@@ -8,7 +8,7 @@ interface Tile extends DocumentData {
   type: 'drop' | 'exp' | 'kc'
   metric?: string[]
   repeatable?: boolean
-  selector: 'OR' | 'AND'
+  needAny: boolean
   points: number
   count: number
   min?: number

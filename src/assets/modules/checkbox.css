@@ -28,7 +28,7 @@ input[type='checkbox']::after {
   transition: 100ms;
 }
 
-input[type='checkbox']:checked {
+input[type='checkbox']:not([choice]):checked {
   background-color: var(--secondary-500);
 }
 

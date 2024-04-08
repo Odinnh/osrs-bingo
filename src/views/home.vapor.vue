@@ -3,15 +3,15 @@
   <h2 class="font-size-L">Simplifying OSRS Clan Bingos</h2>
   <div class="col-2">
     <div class="ghost-board">
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
-      <div class="tile"></div>
+      <div
+        v-for="i in 9"
+        class="tile"
+        :key="i + 'tile'"
+        :style="{
+          '--rotate': Math.random() * 6 - 3 + 'deg',
+          backgroundColor: getRandomColor(i)
+        }"
+      ></div>
     </div>
     <div>
       <h2>No more spreadsheets</h2>
@@ -24,7 +24,7 @@
         that front. It's like having a reliable sidekick for our clan events, making everything run
         smoothly and keeping the stress levels down.
       </p>
-      <a class="btn big" submit @click="router.push({ name: 'createNewBingo' })"
+      <a class="btn" big submit @click="router.push({ name: 'createNewBingo' })"
         >Start a new event!</a
       >
     </div>
@@ -34,15 +34,34 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 const router = useRouter()
+const secondaryIndices = new Set()
+
+const getRandomColor = (index: number) => {
+  while (secondaryIndices.size < 3) {
+    secondaryIndices.add(Math.floor(Math.random() * 9) + 1)
+  }
+  return secondaryIndices.has(index) ? 'var(--secondary)' : 'var(--primary)'
+}
 </script>
-<style></style>
+<style>
+@media screen and (max-width: 650px) {
+  .col-2 {
+    flex-direction: column;
+    align-items: center;
+  }
+  .ghost-board {
+    width: 100%;
+  }
+}
+</style>
 <style scoped>
 .ghost-board {
+  flex-basis: 25%;
   flex-shrink: 0;
   display: grid;
   align-self: flex-start;
-  width: 180px;
-  gap: 5px;
+  min-width: 180px;
+  gap: 2.5%;
   padding: 8px;
   aspect-ratio: 1;
   grid-template-rows: repeat(3, 1fr);
@@ -55,10 +74,11 @@ const router = useRouter()
     height: 100%;
     aspect-ratio: 1;
     border-radius: var(--border-radius);
-    &:nth-of-type(3),
-    &:nth-of-type(4),
-    &:nth-of-type(8) {
-      background-color: var(--secondary-100);
+    transition: all 0.2s ease-in-out;
+    &:hover {
+      scale: 1.05;
+      rotate: var(--rotate);
+      background-color: var(--accent);
     }
   }
 }

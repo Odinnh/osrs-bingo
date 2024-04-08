@@ -8,6 +8,7 @@
   <section v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
     <input
+      id="widthInputElement"
       ref="widthInputForm"
       class="widthInput"
       v-model="widthInput"
@@ -28,60 +29,156 @@
   </section>
   <section v-else><button @click="editBoard()">edit</button></section>
 
-  <main ref="el" class="board" :style="{ '--width': widthInput + 'rem' }">
-    <div
-      class="tile"
-      :class="{ 'to-be-deleted': tile.status == 'DELETEME', handle: isEditingBoard }"
-      v-for="tile in sortedList"
-      :key="tile.id"
-    >
-      <button v-if="isEditingBoard" @click="showModal">Delete</button>
+  <section ref="el" class="board" :style="{ '--width': widthInput + 'rem' }">
+    <div class="tile" :class="{ handle: isEditingBoard }" v-for="tile in sortedList" :key="tile.id">
+      <button
+        icon
+        cancel
+        v-if="isEditingBoard"
+        @click="
+          () => {
+            selectedTile = tile
+            showModal()
+          }
+        "
+      >
+        delete
+      </button>
       {{ tile.title }}
+      <button
+        icon
+        v-if="isEditingBoard"
+        @click="
+          () => {
+            selectedTile = tile
+            editTile()
+          }
+        "
+      >
+        edit
+      </button>
     </div>
-  </main>
+  </section>
 
-  <Modal ref="modal">
-    <template #header> a </template>
-    <template #body> b </template>
-    <template #controls><button @click="modal?.closeModal">Close</button></template>
-  </Modal>
+  <modal ref="modalEle">
+    <template #header> Delete tile: {{ selectedTile?.title }} </template>
+    <template #body> are you sure you want to delete the tile {{ selectedTile?.title }} </template>
+    <template #controls>
+      <button submit @click="RemoveTileFromList">REMOVE</button>
+      <button cancel @click="cancelRemoval">Cancel</button>
+    </template>
+  </modal>
+
+  <dialog ref="asideModalEle">
+    <div v-if="selectedTile">
+      <h2>
+        Edit tile: {{ localTileData?.title }}<small>{{ localTileData?.id }}</small>
+      </h2>
+      <pre>{{ localTileData }}</pre>
+      <div>
+        <input type="text" v-model="localTileData!.title" />
+        <editor v-model="localTileData!.description" />
+      </div>
+      <div>
+        <img :src="localTileData!.image" />
+        <input type="text" v-model="localTileData!.image" />
+      </div>
+
+      <select v-model="localTileData!.type">
+        <option value="drop">Drop</option>
+        <option value="exp">Experience</option>
+        <option value="kc">Killcount</option>
+      </select>
+      {{ filteredMetrics }}
+
+      <VueMultiselect
+        v-model="localTileData!.metric"
+        :options="filteredMetrics"
+        :close-on-select="true"
+        :clear-on-select="false"
+        :allow-empty="true"
+        placeholder="Choose a metric to track progress"
+      />
+      localTileData?.metric?: string[] localTileData?.repeatable?: boolean points: number count:
+      number min?: number max?: number drops?: string[] collected?: collectionLogItem[]
+
+      <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
+      <div v-if="localTileData && localTileData.needAny.toString()">
+        <h3 class="font-size-S">Need Any or All?</h3>
+        <p>do the competors need to collect all of the requirements to complete the tile?</p>
+        <label>All<input type="checkbox" choice v-model="localTileData.needAny" />Any</label>
+      </div>
+    </div>
+    <button submit @click="saveEditTile">Save changes</button>
+    <button cancel @click="cancelEditTile">Cancel</button>
+  </dialog>
 </template>
 
 <script setup lang="ts">
 // base imports
-import { ref, computed, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRoute } from 'vue-router'
 // database imports
-import { useSortable, moveArrayElement } from '@vueuse/integrations/useSortable'
-import { useCollection, useDocument } from 'vuefire'
-import { doc, collection, writeBatch, getDocs } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
+import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
+import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
+import { useCollection, useDocument } from 'vuefire'
 //misc imports
-import { tinyid } from '@/assets/js/tinyid'
 import { generateName } from '@/assets/js/tileNameGenerator'
+import { tinyid } from '@/assets/js/tinyid'
+import { METRICS } from '@wise-old-man/utils'
 // Component imports
-import Modal from '@/components/Modal.vapor.vue'
+import editor from '@/components/editor.vapor.vue'
+import modal from '@/components/modal.vapor.vue'
+import VueMultiselect from 'vue-multiselect'
 // type imports
-import type { Tile, ModalElement } from '@/types'
+import type { ModalElement, Tile } from '@/types'
 
-const modal = ref<ModalElement>()
+const filteredMetrics = ref(METRICS.filter((metric) => !['ehb', 'ehp'].includes(metric)))
+const selectedTile = ref<Tile | null>()
+const isEditingTile = ref<boolean>(false)
+const modalEle = ref<ModalElement>()
+const asideModalEle = ref<ModalElement>()
+const localTileData = ref<Tile>()
+
 const showModal = () => {
-  if (modal.value && modal.value.showModal) {
-    modal.value.showModal()
+  if (modalEle.value && modalEle.value.showModal) {
+    modalEle.value.showModal()
   }
 }
+const closeModal = () => {
+  if (modalEle.value && modalEle.value.closeModal) {
+    modalEle.value.closeModal()
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'Escape':
+      if (modalEle.value && modalEle.value.closeModal) {
+        modalEle.value.closeModal()
+        asideModalEle.value!.close()
+        selectedTile.value = null
+        isEditingTile.value = false
+        isEditingTile.value = false
+        localTileData.value = undefined
+      }
+      break
+    default:
+      break
+  }
+})
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement>()
-const widthInput = ref<number>(5)
 
 const isEditingBoard = ref<boolean>(false)
-const tileToBeDeleted = ref<Tile | null>(null)
 
 const router = useRoute()
 const { data: boardData, promise: boardDataPromise } = useDocument(
   doc(db, 'Boards', router.params.boardUUID as string)
 )
 await boardDataPromise.value
+const widthInput = ref<number>(boardData.value?.boardWidt || 5)
 
 let orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
@@ -116,11 +213,7 @@ useSortable(el, sortedList, {
     })
   }
 })
-const showDialog = (tile: Tile) => {
-  tileToBeDeleted.value = tile
-  tile.status = 'DELETEME'
-  dialog.value?.showModal()
-}
+
 const AddTileToList = (): void => {
   const uuid = <string>tinyid()
   const name = <string>generateName()
@@ -130,23 +223,25 @@ const AddTileToList = (): void => {
     description: 'a sample description',
     image: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e',
     type: 'drop',
-    selector: 'OR',
+    needAny: false,
     points: 0,
     count: 0
   })
   orderOfList.value.push(uuid)
 }
+//remove tile from local list
 const RemoveTileFromList = (): void => {
-  if (!tileToBeDeleted.value) return
-  list.value = list.value.filter((tile) => tile.id !== tileToBeDeleted.value!.id)
+  if (!selectedTile.value) return
+  list.value = list.value.filter((_tile) => _tile.id !== selectedTile.value!.id)
   orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
-  dialog.value?.close()
+  closeModal()
 }
-const cancelDelete = (): void => {
-  if (!tileToBeDeleted.value) return
-  tileToBeDeleted.value = null
-  dialog.value?.close()
+//cancel removal
+const cancelRemoval = (): void => {
+  selectedTile.value = null
+  closeModal()
 }
+
 const updateWidth = (type: string): void => {
   //Width input can be at minimum be 3 and maximum be 12
   if (type === 'add') {
@@ -167,26 +262,42 @@ const saveTiles = async (): Promise<void> => {
     const batch = writeBatch(db)
     // update the order of the tiles
     batch.update(boardDocRef, {
-      orderOfList: orderOfList.value
+      orderOfList: orderOfList.value,
+      boardWidt: widthInput.value
     })
 
     // Update the tiles in Firestore
     // Get the current tiles from Firestore
     const querySnapshot = await getDocs(tilesCollectionRef)
-    const existingTiles: string[] = []
+    const existingTiles: { [id: string]: boolean } = {}
     querySnapshot.forEach((docSnapshot) => {
       const tileId = docSnapshot.id
-      existingTiles.push(tileId)
-      if (!list.value.find((tile) => tile.id === tileId)) {
+      existingTiles[tileId] = true
+      const tileData = docSnapshot.data() as Tile
+      const matchingTile = list.value.find((tile) => tile.id === tileId)
+      if (!matchingTile) {
         // If a tile exists in Firestore but not in the list, delete it
         const tileDocRef = doc(tilesCollectionRef, tileId)
         batch.delete(tileDocRef)
+      } else if (JSON.stringify(matchingTile) !== JSON.stringify(tileData)) {
+        // If the tile exists in both Firestore and the list but has changed, update it
+        const tileDocRef = doc(tilesCollectionRef, tileId)
+        batch.set(tileDocRef, {
+          id: matchingTile.id,
+          title: matchingTile.title,
+          description: matchingTile.description,
+          image: matchingTile.image,
+          type: matchingTile.type,
+          needAny: matchingTile.needAny,
+          points: matchingTile.points,
+          count: matchingTile.count
+        })
       }
     })
 
     // Add new tiles to Firestore
     list.value.forEach((tile) => {
-      if (!existingTiles.includes(tile.id)) {
+      if (!existingTiles[tile.id]) {
         const tileDocRef = doc(tilesCollectionRef, tile.id)
         batch.set(tileDocRef, {
           id: tile.id,
@@ -194,7 +305,7 @@ const saveTiles = async (): Promise<void> => {
           description: tile.description,
           image: tile.image,
           type: tile.type,
-          selector: tile.selector,
+          needAny: tile.needAny,
           points: tile.points,
           count: tile.count
         })
@@ -202,14 +313,14 @@ const saveTiles = async (): Promise<void> => {
     })
 
     // Commit the batch
-    await batch.commit().then(async () => {
-      const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-        collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
-        { once: true }
-      )
-      await newTilesDataPromise.value
-      list.value = newTilesData.value as unknown as Tile[]
-    })
+    await batch.commit()
+
+    const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
+      collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
+      { once: true }
+    )
+    await newTilesDataPromise.value
+    list.value = newTilesData.value as unknown as Tile[]
   } catch (error) {
     console.error('Error synchronizing tiles:', error)
   }
@@ -228,6 +339,47 @@ const editBoard = (): void => {
   localOrderOfList = orderOfList.value
   isEditingBoard.value = true
 }
+
+// edit tile functions
+const saveEditTile = async () => {
+  // this should save the localTile to firebase and close the modal
+  updateDoc(
+    doc(db, 'Boards', router.params.boardUUID as string, 'Tiles', localTileData.value!.id),
+    { ...localTileData.value }
+  )
+
+  isEditingTile.value = false
+  asideModalEle.value!.close()
+  selectedTile.value = localTileData.value
+
+  const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
+    collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
+    { once: true }
+  )
+  await newTilesDataPromise.value
+  list.value = newTilesData.value as unknown as Tile[]
+}
+const cancelEditTile = () => {
+  // canceling anything you did between saves
+  isEditingTile.value = false
+  asideModalEle.value!.close()
+  localTileData.value = undefined
+  selectedTile.value = null
+}
+
+const editTile = (): void => {
+  // make a local version of the current Tile
+  const snapshotTileData = { ...selectedTile.value } as Tile
+  localTileData.value = snapshotTileData
+  isEditingTile.value = true
+  asideModalEle.value!.showModal()
+}
 </script>
 
-<style scoped></style>
+<style scoped>
+dialog img {
+  width: 100px;
+  aspect-ratio: 1/1;
+  object-fit: contain;
+}
+</style>

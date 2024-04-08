@@ -6,7 +6,7 @@ a.btn {
   cursor: pointer;
   --color: var(--primary-500);
   --color-0: color-mix(in srgb, var(--color) 30%, var(--background));
-  --color-100: color-mix(in srgb, var(--color) 50%, var(--background));
+  --color-100: color-mix(in srgb, var(--color) 70%, var(--background));
   --background-color: var(--color);
   --border-color: var(--color);
   background-color: var(--background-color);
@@ -14,12 +14,11 @@ a.btn {
   padding: 1ch 2ch;
   border: 1px solid var(--background-color);
 
-  &.big {
+  &[big] {
     font-size: 1.5rem;
-    font-weight: bold;
   }
   &[submit] {
-    --color: var(--secondary-100);
+    --color: var(--secondary);
     color: var(--dark);
   }
   &[cancel] {
@@ -37,6 +36,8 @@ a.btn {
     --background-color: var(--color-100);
   }
   &:active {
+    color: var(--dark);
+
     --background-color: var(--color-0);
   }
   &:has(+ input, + .input, + select) {
@@ -61,7 +62,6 @@ a.btn {
     --border-color: var(--color);
 
     &:active {
-      color: var(--dark);
     }
   }
 }
@@ -74,4 +74,11 @@ a.btn {
     --background-color: var(--color);
     --border-color: var(--color);
   }
+}
+
+button[icon] {
+  padding: 0.5ch;
+  line-height: 1rem;
+  border-radius: 10px;
+  font-family: 'Material Symbols Outlined';
 }

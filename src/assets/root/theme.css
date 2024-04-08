@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:700|Roboto%20Flex:400');
 :root {
-  --border-radius: 1ch /0.9ch;
+  --border-radius: 10px;
   --font-size-H: 3.053rem;
   --font-size-XL: 2.442rem;
   --font-size-L: 1.954rem;
@@ -12,6 +12,8 @@ body {
   font-family: 'Roboto Flex';
   font-weight: 400;
   line-height: 1.4em;
+  padding-block: 0;
+  margin-block: 0;
 }
 
 h1,
@@ -20,7 +22,7 @@ h3,
 h4,
 h5 {
   text-wrap: balance;
-  width: 25ch;
+  max-width: 25ch;
   font-size: var(--font-size-L);
   font-family: 'Poppins';
   font-weight: 700;
@@ -31,7 +33,7 @@ h5 {
 
 html {
   font-size: 100%;
-} /* 16px */
+}
 
 .font-size-H {
   font-size: var(--font-size-H);
@@ -54,7 +56,7 @@ html {
 }
 
 small {
-  font-size: 0.8rem; /* 12.8px */
+  font-size: 0.8rem;
 }
 @media (prefers-color-scheme: light) {
   :root {
@@ -72,9 +74,9 @@ small {
     --primary-500: var(--primary);
     --primary-900: hsl(var(--primary-hue), var(--primary-sat), 30%);
 
-    --secondary-hue: 165;
-    --secondary-sat: 60%;
-    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 62%);
+    --secondary-hue: 88;
+    --secondary-sat: 80%;
+    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 60%);
     --secondary-100: hsl(var(--secondary-hue), var(--secondary-sat), 80%);
     --secondary-500: var(--secondary);
     --secondary-900: hsl(var(--secondary-hue), var(--secondary-sat), 20%);
@@ -116,7 +118,7 @@ small {
     color: var(--primary);
   }
   em {
-    oolor: var(--accent);
+    color: var(--accent);
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -135,9 +137,9 @@ small {
     --primary-500: var(--primary);
     --primary-900: hsl(var(--primary-hue), var(--primary-sat), 30%);
 
-    --secondary-hue: 165;
-    --secondary-sat: 60%;
-    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 38%);
+    --secondary-hue: 88;
+    --secondary-sat: 80%;
+    --secondary: hsl(var(--secondary-hue), var(--secondary-sat), 60%);
     --secondary-100: hsl(var(--secondary-hue), var(--secondary-sat), 80%);
     --secondary-500: var(--secondary);
     --secondary-900: hsl(var(--secondary-hue), var(--secondary-sat), 20%);
@@ -178,7 +180,6 @@ small {
 }
 em {
   color: var(--primary);
-  font-weight: bold;
 }
 a[target='_blank']::after {
   content: '';

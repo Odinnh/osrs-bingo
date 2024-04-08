@@ -11,6 +11,9 @@
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/vue-fontawesome": "^3.0.6",
+    "@tiptap/pm": "^2.2.6",
+    "@tiptap/starter-kit": "^2.2.6",
+    "@tiptap/vue-3": "^2.2.6",
     "@vueuse/integrations": "^10.9.0",
     "@wise-old-man/utils": "^3.2.2",
     "firebase": "^10.9.0",
@@ -18,6 +21,7 @@
     "sortablejs": "^1.15.2",
     "uid": "^2.0.2",
     "vue": "^3.4.21",
+    "vue-multiselect": "^3.0.0-beta.3",
     "vue-router": "^4.3.0",
     "vuefire": "^3.1.23"
   },

@@ -5,13 +5,14 @@ const route = useRoute()
 </script>
 
 <template>
-  <div class="container">
+  <main>
     <suspense>
       <RouterView :key="route.fullPath" />
     </suspense>
-  </div>
+  </main>
 </template>
 
 <style>
 @import url('./assets/root.css');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 </style>
