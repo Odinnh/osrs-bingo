@@ -83,37 +83,50 @@
         <editor class="editable" v-model="localTileData!.description" />
       </div>
       <div>
+        <h3 class="font-size-S">Image</h3>
         <img :src="localTileData!.image" />
-        <input type="text" v-model="localTileData!.image" />
+        <br />
+        <label>Image URL: <input type="text" v-model="localTileData!.image" /></label>
       </div>
-      <VueMultiselect
-        v-model="localTileData!.type"
-        :options="['drop', 'exp', 'kc']"
-        :close-on-select="true"
-        :clear-on-select="false"
-        :allow-empty="true"
-        placeholder="Choose a tile Type"
-      />
-      <div v-if="localTileData?.type !== 'exp'">
+      <div>
+        <h3 class="font-size-S">Tile type</h3>
+        <p>Choose any of the different tile types.</p>
         <VueMultiselect
-          v-model="localTileData!.metric"
-          :options="filteredMetrics"
+          v-model="localTileData!.type"
+          :options="['drop', 'exp', 'kc']"
           :close-on-select="true"
           :clear-on-select="false"
           :allow-empty="true"
-          placeholder="Choose a metric to track progress"
+          placeholder="Choose a tile Type"
         />
       </div>
-      <div v-else>
-        <VueMultiselect
-          v-model="localTileData!.metric"
-          :options="SKILLS"
-          :close-on-select="true"
-          :clear-on-select="false"
-          :allow-empty="true"
-          placeholder="Choose a metric to track progress"
-        />
+      <hr />
+      <div>
+        <h3 class="font-size-S">Metric</h3>
+        <p>Search and select the metric you want to associate with this tile.</p>
+
+        <template v-if="localTileData?.type !== 'exp'">
+          <VueMultiselect
+            v-model="localTileData!.metric"
+            :options="filteredMetrics"
+            :close-on-select="true"
+            :clear-on-select="false"
+            :allow-empty="true"
+            placeholder="Choose a metric to track progress"
+          />
+        </template>
+        <template v-else>
+          <VueMultiselect
+            v-model="localTileData!.metric"
+            :options="SKILLS"
+            :close-on-select="true"
+            :clear-on-select="false"
+            :allow-empty="true"
+            placeholder="Choose a metric to track progress"
+          />
+        </template>
       </div>
+      <hr />
       <div v-if="localTileData && localTileData.repeatable?.toString()">
         <h3 class="font-size-S">Repeatable tile</h3>
         <p>Can the competitors complete the tile multiple times and gain points each time?</p>
@@ -122,19 +135,18 @@
           {{ localTileData.repeatable }}</label
         >
       </div>
+      <hr />
       <div>
-        <p>the points the players will get when they complete the tile</p>
+        <h3 class="font-size-S">Points and count</h3>
+        <p>the points the competitors will get when they complete the tile</p>
         <label>points value: <input type="number" min="0" v-model="localTileData!.points" /></label>
-      </div>
-      <div>
         <p>
           amount that is needed to complete the tile <br /><em
             >a.e. 200.000.000 slayer exp or 5 unique barrows items</em
           >
         </p>
         <label>count: <input type="number" min="0" v-model="localTileData!.count" /></label>
-      </div>
-      <div>
+
         <p>
           this is the minimum required amount for the tile<br />
           <em
@@ -161,8 +173,6 @@
             "
             v-model="localTileData.min"
         /></label>
-      </div>
-      <div>
         <p>
           this is the maximum amount for the tile<br />
           <em
@@ -188,6 +198,9 @@
             v-model="localTileData!.max"
         /></label>
       </div>
+      <template v-if="localTileData?.type == 'drop'">
+        <hr />
+      </template>
       <div v-if="localTileData?.type == 'drop'">
         <h3 class="font-size-S">Drops</h3>
         <p>add drops to the list of valid drops</p>
@@ -206,7 +219,7 @@
       <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
       <div v-if="localTileData && localTileData.needAny.toString()">
         <h3 class="font-size-S">Need Any or All?</h3>
-        <p>do the competors need to collect all of the requirements to complete the tile?</p>
+        <p>do the competors need to achieve all of the requirements to complete the tile?</p>
         <label>All<input type="checkbox" choice v-model="localTileData.needAny" />Any</label>
       </div>
     </div>
@@ -266,7 +279,7 @@ const addDropToTile = () => {
     }
   }
 }
-const removeDropFromTile = (drop) => {
+const removeDropFromTile = (drop: { id: string; name: string }) => {
   if (
     localTileData.value &&
     localTileData.value.drops &&

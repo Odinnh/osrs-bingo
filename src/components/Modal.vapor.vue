@@ -40,8 +40,3 @@ defineExpose({
 </style>
 
 <slot name="controlls"> </slot>
-<!-- <h2>Are you sure?</h2> -->
-<!-- <p>do you want to delete {{ tileToBeDeleted?.title }}?</p>
-<p>once you press save, this is final and can't be undone</p> -->
-<!-- <button submit @click="RemoveTileFromList()">Yes</button>
-<button cancel @click="cancelDelete()">No</button> -->

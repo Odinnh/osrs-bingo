@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && npm run publish",
+    "publish": "git subtree push --prefix dist origin gh-pages"
   },
   "dependencies": {
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
