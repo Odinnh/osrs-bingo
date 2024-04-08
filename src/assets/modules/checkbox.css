@@ -1,4 +1,5 @@
 input[type='checkbox'] {
+  display: inline-block;
   cursor: pointer;
   --_scale: 24px;
   --_spacing: calc(var(--_scale) / 10);
