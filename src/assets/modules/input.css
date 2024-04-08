@@ -1,4 +1,4 @@
-/* input,
+input,
 .input,
 select,
 .multiselect__tags {
@@ -16,7 +16,6 @@ select,
   padding: 1ch 2ch;
   background: var(--background);
   color: var(--text);
-
 
   &[type='number'] {
     -moz-appearance: textfield;
@@ -48,4 +47,4 @@ select,
 }
 .multiselect__select {
   width: max-content;
-} */
+}

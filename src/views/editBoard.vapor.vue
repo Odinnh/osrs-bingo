@@ -83,14 +83,14 @@
         <img :src="localTileData!.image" />
         <input type="text" v-model="localTileData!.image" />
       </div>
-
-      <select v-model="localTileData!.type">
-        <option value="drop">Drop</option>
-        <option value="exp">Experience</option>
-        <option value="kc">Killcount</option>
-      </select>
-      {{ filteredMetrics }}
-
+      <VueMultiselect
+        v-model="localTileData!.type"
+        :options="['drop', 'exp', 'kc']"
+        :close-on-select="true"
+        :clear-on-select="false"
+        :allow-empty="true"
+        placeholder="Choose a tile Type"
+      />
       <VueMultiselect
         v-model="localTileData!.metric"
         :options="filteredMetrics"
@@ -99,8 +99,51 @@
         :allow-empty="true"
         placeholder="Choose a metric to track progress"
       />
-      localTileData?.metric?: string[] localTileData?.repeatable?: boolean points: number count:
-      number min?: number max?: number drops?: string[] collected?: collectionLogItem[]
+      <div v-if="localTileData && localTileData.repeatable?.toString()">
+        <h3 class="font-size-S">Repeatable tile</h3>
+        <p>Can the competitors complete the tile multiple times and gain points each time?</p>
+        <label
+          >Repeatable <input type="checkbox" v-model="localTileData.repeatable" />
+          {{ localTileData.repeatable }}</label
+        >
+      </div>
+      <div>
+        <p>the points the players will get when they complete the tile</p>
+        <label>points value: <input type="number" v-model="localTileData!.points" /></label>
+      </div>
+      <div>
+        <p>
+          amount that is needed to complete the tile <br /><em
+            >a.e. 200.000.000 slayer exp or 5 unique barrows items</em
+          >
+        </p>
+        <label>count: <input type="number" v-model="localTileData!.count" /></label>
+      </div>
+      <div>
+        <p>
+          this is the minimum required amount for the tile<br />
+          <em
+            >a.e. if the count is 5 and you want the team to collect at least one of each item, the
+            minimum would be 1</em
+          >
+        </p>
+        <label
+          >minimum count: <input placeholder="unset" type="number" v-model="localTileData!.min"
+        /></label>
+      </div>
+      <div>
+        <p>
+          this is the maximum amount for the tile<br />
+          <em
+            >a.e. if the count is 5 and you want the team to collect at most two of each item, the
+            maximum would be 2</em
+          >
+        </p>
+        <label
+          >maximum count: <input placeholder="unset" type="number" v-model="localTileData!.max"
+        /></label>
+      </div>
+      drops?: string[]
 
       <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
       <div v-if="localTileData && localTileData.needAny.toString()">
@@ -134,7 +177,9 @@ import VueMultiselect from 'vue-multiselect'
 // type imports
 import type { ModalElement, Tile } from '@/types'
 
-const filteredMetrics = ref(METRICS.filter((metric) => !['ehb', 'ehp'].includes(metric)))
+const filteredMetrics = ref(
+  METRICS.filter((metric) => !['ehb', 'ehp', 'league_points'].includes(metric))
+)
 const selectedTile = ref<Tile | null>()
 const isEditingTile = ref<boolean>(false)
 const modalEle = ref<ModalElement>()
@@ -225,7 +270,8 @@ const AddTileToList = (): void => {
     type: 'drop',
     needAny: false,
     points: 0,
-    count: 0
+    count: 0,
+    repeatable: false
   })
   orderOfList.value.push(uuid)
 }
@@ -383,3 +429,4 @@ dialog img {
   object-fit: contain;
 }
 </style>
+<!-- <style src="vue-multiselect/dist/vue-multiselect.css"></style> -->

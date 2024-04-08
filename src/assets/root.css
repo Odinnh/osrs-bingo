@@ -2,6 +2,7 @@
 @import url(./modules/btn.css);
 @import url(./modules/checkbox.css);
 @import url(./modules/input.css);
+@import url(./modules/multi_select.css);
 * {
   box-sizing: border-box;
 }
