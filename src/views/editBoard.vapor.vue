@@ -91,14 +91,26 @@
         :allow-empty="true"
         placeholder="Choose a tile Type"
       />
-      <VueMultiselect
-        v-model="localTileData!.metric"
-        :options="filteredMetrics"
-        :close-on-select="true"
-        :clear-on-select="false"
-        :allow-empty="true"
-        placeholder="Choose a metric to track progress"
-      />
+      <div v-if="localTileData?.type !== 'exp'">
+        <VueMultiselect
+          v-model="localTileData!.metric"
+          :options="filteredMetrics"
+          :close-on-select="true"
+          :clear-on-select="false"
+          :allow-empty="true"
+          placeholder="Choose a metric to track progress"
+        />
+      </div>
+      <div v-else>
+        <VueMultiselect
+          v-model="localTileData!.metric"
+          :options="SKILLS"
+          :close-on-select="true"
+          :clear-on-select="false"
+          :allow-empty="true"
+          placeholder="Choose a metric to track progress"
+        />
+      </div>
       <div v-if="localTileData && localTileData.repeatable?.toString()">
         <h3 class="font-size-S">Repeatable tile</h3>
         <p>Can the competitors complete the tile multiple times and gain points each time?</p>
@@ -109,7 +121,7 @@
       </div>
       <div>
         <p>the points the players will get when they complete the tile</p>
-        <label>points value: <input type="number" v-model="localTileData!.points" /></label>
+        <label>points value: <input type="number" min="0" v-model="localTileData!.points" /></label>
       </div>
       <div>
         <p>
@@ -117,7 +129,7 @@
             >a.e. 200.000.000 slayer exp or 5 unique barrows items</em
           >
         </p>
-        <label>count: <input type="number" v-model="localTileData!.count" /></label>
+        <label>count: <input type="number" min="0" v-model="localTileData!.count" /></label>
       </div>
       <div>
         <p>
@@ -128,7 +140,21 @@
           >
         </p>
         <label
-          >minimum count: <input placeholder="unset" type="number" v-model="localTileData!.min"
+          >minimum count:
+          <input
+            placeholder="unset"
+            type="number"
+            min="0"
+            @blur="
+              () => {
+                console.log('hi')
+                if (localTileData.min == undefined) {
+                  return
+                }
+                localTileData.min = localTileData.min < 0 ? 0 : localTileData.min
+              }
+            "
+            v-model="localTileData.min"
         /></label>
       </div>
       <div>
@@ -140,10 +166,26 @@
           >
         </p>
         <label
-          >maximum count: <input placeholder="unset" type="number" v-model="localTileData!.max"
+          >maximum count:
+          <input
+            placeholder="unset"
+            type="number"
+            min="0"
+            @blur="
+              () => {
+                if (localTileData.max == undefined) {
+                  return
+                }
+                localTileData.max = localTileData.max < 0 ? 0 : localTileData.max
+              }
+            "
+            v-model="localTileData!.max"
         /></label>
       </div>
-      drops?: string[]
+      <div v-if="localTileData?.type == 'drop'">
+        <h3 class="" font-size-S>Drops</h3>
+        <p>add drops to the list of valid drops</p>
+      </div>
 
       <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
       <div v-if="localTileData && localTileData.needAny.toString()">
@@ -161,6 +203,7 @@
 // base imports
 import { computed, nextTick, ref } from 'vue'
 import { useRoute } from 'vue-router'
+import { useActiveElement } from '@vueuse/core'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
@@ -169,7 +212,7 @@ import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
-import { METRICS } from '@wise-old-man/utils'
+import { METRICS, SKILLS } from '@wise-old-man/utils'
 // Component imports
 import editor from '@/components/editor.vapor.vue'
 import modal from '@/components/modal.vapor.vue'
@@ -198,6 +241,8 @@ const closeModal = () => {
 }
 
 window.addEventListener('keydown', (e) => {
+  const activeElement = useActiveElement()
+
   switch (e.key) {
     case 'Escape':
       if (modalEle.value && modalEle.value.closeModal) {

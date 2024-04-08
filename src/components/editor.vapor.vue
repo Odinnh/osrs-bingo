@@ -14,7 +14,7 @@
   </div>
 </template>
 
-<script setup type="ts">
+<script setup lang="ts">
 import StarterKit from '@tiptap/starter-kit'
 import { Editor, EditorContent } from '@tiptap/vue-3'
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'

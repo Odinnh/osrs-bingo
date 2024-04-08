@@ -11,8 +11,8 @@ interface Tile extends DocumentData {
   needAny: boolean
   points: number
   count: number
-  min?: number
-  max?: number
+  min?: number | undefined
+  max?: number | undefined
   drops?: string[]
   collected?: collectionLogItem[]
   status?: 'DELETEME' | null
