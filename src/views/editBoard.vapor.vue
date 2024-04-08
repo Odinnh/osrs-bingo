@@ -70,14 +70,17 @@
   </modal>
 
   <dialog ref="asideModalEle">
-    <div v-if="selectedTile">
-      <h2>
-        Edit tile: {{ localTileData?.title }}<small>{{ localTileData?.id }}</small>
-      </h2>
-      <pre>{{ localTileData }}</pre>
+    <div v-if="selectedTile && localTileData">
       <div>
+        <h2>
+          Edit tile: {{ localTileData?.title }}
+          <small
+            ><code>{{ localTileData?.id }}</code></small
+          >
+        </h2>
         <input type="text" v-model="localTileData!.title" />
-        <editor v-model="localTileData!.description" />
+        <h3 class="font-size-S">Description</h3>
+        <editor class="editable" v-model="localTileData!.description" />
       </div>
       <div>
         <img :src="localTileData!.image" />
@@ -145,9 +148,11 @@
             placeholder="unset"
             type="number"
             min="0"
+            v-if="localTileData !== null"
             @blur="
               () => {
-                console.log('hi')
+                if (!localTileData) return
+
                 if (localTileData.min == undefined) {
                   return
                 }
@@ -173,6 +178,7 @@
             min="0"
             @blur="
               () => {
+                if (!localTileData) return
                 if (localTileData.max == undefined) {
                   return
                 }
@@ -183,8 +189,18 @@
         /></label>
       </div>
       <div v-if="localTileData?.type == 'drop'">
-        <h3 class="" font-size-S>Drops</h3>
+        <h3 class="font-size-S">Drops</h3>
         <p>add drops to the list of valid drops</p>
+        <ul>
+          <li v-for="drop in localTileData.drops">
+            {{ drop }}
+            <button icon cancel @click="removeDropFromTile(drop)">delete</button>
+          </li>
+          <li>
+            <input type="text" v-model="newDropForTile" />
+            <button @click="addDropToTile">Add Drop</button>
+          </li>
+        </ul>
       </div>
 
       <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
@@ -203,7 +219,6 @@
 // base imports
 import { computed, nextTick, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useActiveElement } from '@vueuse/core'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
@@ -227,8 +242,8 @@ const selectedTile = ref<Tile | null>()
 const isEditingTile = ref<boolean>(false)
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
-const localTileData = ref<Tile>()
-
+const localTileData = ref<Tile | null>(null)
+const newDropForTile = ref()
 const showModal = () => {
   if (modalEle.value && modalEle.value.showModal) {
     modalEle.value.showModal()
@@ -239,19 +254,37 @@ const closeModal = () => {
     modalEle.value.closeModal()
   }
 }
-
+const addDropToTile = () => {
+  if (localTileData.value) {
+    if (localTileData.value.drops) {
+      localTileData.value.drops.push({
+        id: tinyid(),
+        name: newDropForTile.value
+      }) as unknown as Tile['drops']
+    } else {
+      localTileData.value.drops = [{ id: tinyid(), name: newDropForTile.value }]
+    }
+  }
+}
+const removeDropFromTile = (drop) => {
+  if (
+    localTileData.value &&
+    localTileData.value.drops &&
+    localTileData.value.drops.indexOf(drop) > -1
+  ) {
+    localTileData.value.drops.splice(localTileData.value.drops.indexOf(drop), 1)
+  }
+}
 window.addEventListener('keydown', (e) => {
-  const activeElement = useActiveElement()
-
   switch (e.key) {
     case 'Escape':
       if (modalEle.value && modalEle.value.closeModal) {
         modalEle.value.closeModal()
         asideModalEle.value!.close()
         selectedTile.value = null
+        localTileData.value = null
         isEditingTile.value = false
         isEditingTile.value = false
-        localTileData.value = undefined
       }
       break
     default:
@@ -454,7 +487,7 @@ const cancelEditTile = () => {
   // canceling anything you did between saves
   isEditingTile.value = false
   asideModalEle.value!.close()
-  localTileData.value = undefined
+  localTileData.value = null
   selectedTile.value = null
 }
 
@@ -468,10 +501,13 @@ const editTile = (): void => {
 </script>
 
 <style scoped>
+.editable {
+  background-color: var(--background);
+  border-radius: var(--border-radius);
+}
 dialog img {
   width: 100px;
   aspect-ratio: 1/1;
   object-fit: contain;
 }
 </style>
-<!-- <style src="vue-multiselect/dist/vue-multiselect.css"></style> -->

@@ -41,3 +41,13 @@ dialog {
     backdrop-filter: blur(6px);
   }
 }
+.tiptap {
+  padding: 1ch;
+  padding-top: 6ch;
+  & p:first-of-type {
+    margin-top: 0px;
+  }
+  & :is(ul, ol) li p {
+    margin: 0px;
+  }
+}

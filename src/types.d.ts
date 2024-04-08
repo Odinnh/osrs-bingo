@@ -13,7 +13,7 @@ interface Tile extends DocumentData {
   count: number
   min?: number | undefined
   max?: number | undefined
-  drops?: string[]
+  drops?: [{ id: string; name: string }]
   collected?: collectionLogItem[]
   status?: 'DELETEME' | null
 }

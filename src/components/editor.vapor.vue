@@ -67,16 +67,6 @@ onBeforeUnmount(() => {
   left: 0px;
   display: flex;
   gap: 15px;
-  display: none;
-}
-</style>
-<style>
-.editor:focus-within {
-  .tiptap {
-    padding-top: 3ch;
-  }
-  .controlls {
-    display: flex;
-  }
+  /* display: none; */
 }
 </style>
