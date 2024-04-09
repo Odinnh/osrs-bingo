@@ -85,10 +85,6 @@ library.add(faHatCowboy)
 library.add(faTree)
 library.add(faFire)
 
-import { Sortable, Swap } from 'sortablejs'
-
-Sortable.mount(new Swap())
-
 const app = createApp(App)
 app.use(createPinia())
 app.use(VueFire, { firebaseApp, modules: [VueFireAuth()] })
