@@ -73,9 +73,21 @@ a.btn {
   }
 }
 
-button[icon] {
+button[icon],
+a.btn[icon] {
   padding: 0.5ch;
   line-height: 1rem;
   border-radius: 10px;
   font-family: 'Material Symbols Outlined';
+}
+a.btn[dissabled='true'] {
+  pointer-events: none;
+  cursor: not-allowed;
+  --color: grey;
+}
+a.btn[current='true'] {
+  pointer-events: none;
+  cursor: not-allowed;
+  --color: var(--accent);
+  color: var(--dark);
 }

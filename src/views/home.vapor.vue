@@ -33,9 +33,15 @@
 </template>
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
+import { useCurrentUser } from 'vuefire'
+import { useTitle } from '@vueuse/core'
+
+const title = useTitle()
+title.value = 'Bingo Bongo - an osrs bingo app'
+
 const router = useRouter()
 const secondaryIndices = new Set()
-
+const user = useCurrentUser()
 const getRandomColor = (index: number) => {
   while (secondaryIndices.size < 3) {
     secondaryIndices.add(Math.floor(Math.random() * 9) + 1)

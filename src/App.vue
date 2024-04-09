@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import menuBar from '@/components/menuBar.vapor.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -6,6 +7,7 @@ const route = useRoute()
 
 <template>
   <main>
+    <menuBar />
     <suspense>
       <RouterView :key="route.fullPath" />
     </suspense>
