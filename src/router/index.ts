@@ -6,7 +6,7 @@ import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
 import viewBoard from '@/views/viewBoard.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
-import { getCurrentUser, useCurrentUser, useDocument } from 'vuefire'
+import { getCurrentUser, useDocument } from 'vuefire'
 import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 
@@ -45,14 +45,12 @@ const router = createRouter({
     }
   ]
 })
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   if (to.name == 'editBoard' && !(await userIsAuthenticated(to.params.boardUUID as string))) {
-    next({ name: 'loginScreen' })
+    return { name: 'loginScreen' }
   }
   if (to.name == 'createNewBingo' && !(await isUserLoggedIn())) {
-    next({ name: 'loginScreen' })
-  } else {
-    next()
+    return { name: 'loginScreen' }
   }
 })
 const isUserLoggedIn = async () => {

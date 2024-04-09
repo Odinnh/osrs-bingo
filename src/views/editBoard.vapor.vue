@@ -1,5 +1,4 @@
 <template>
-  <div>{{ user.uid }}</div>
   <section id="board-info">
     <h1 v-if="boardData">
       {{ boardData.name }}
@@ -252,12 +251,12 @@ const title = useTitle()
 title.value = 'Edit board - Bingo Bongo'
 // base imports
 import { computed, nextTick, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
 import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
-import { useCollection, useDocument, getCurrentUser } from 'vuefire'
+import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
@@ -269,7 +268,6 @@ import VueMultiselect from 'vue-multiselect'
 // type imports
 import type { ModalElement, Tile } from '@/types'
 
-const user = await getCurrentUser()
 const filteredMetrics = ref(
   METRICS.filter((metric) => !['ehb', 'ehp', 'league_points'].includes(metric))
 )
@@ -333,7 +331,6 @@ const widthInputForm = ref<HTMLInputElement>()
 const isEditingBoard = ref<boolean>(false)
 
 const route = useRoute()
-const router = useRouter()
 const { data: boardData, promise: boardDataPromise } = useDocument(
   doc(db, 'Boards', route.params.boardUUID as string)
 )
