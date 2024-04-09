@@ -1,11 +1,11 @@
 <template>
-  <section>
+  <section id="board-info">
     <h1 v-if="boardData">
       {{ boardData.name }}
     </h1>
     <code> Board ID: {{ router.params.boardUUID }}</code>
   </section>
-  <section v-if="isEditingBoard">
+  <section id="controlls-are-editing" v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
     <input
       id="widthInputElement"
@@ -25,12 +25,18 @@
     <button @click="updateWidth('add')">+</button>
     <button submit @click="saveTiles()">save</button>
     <button cancel @click="cancelEdit()">cancel</button>
-    <button v-if="list.length < 100" class="add tile" @click="AddTileToList()">Add a tile</button>
   </section>
-  <section v-else><button @click="editBoard()">edit</button></section>
+  <section id="controlls-are-viewing" v-else><button @click="editBoard()">edit</button></section>
 
-  <section ref="el" class="board" :style="{ '--width': widthInput + 'rem' }">
-    <div class="tile" :class="{ handle: isEditingBoard }" v-for="tile in sortedList" :key="tile.id">
+  <section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
+    <div
+      class="tile"
+      :class="{ handle: isEditingBoard }"
+      :style="{ '--_image': `url('${tile.image}')` }"
+      v-for="tile in sortedList"
+      :key="tile.id"
+    >
+      <img class="tile--image" :src="tile.image" />
       <button
         icon
         cancel
@@ -44,7 +50,6 @@
       >
         delete
       </button>
-      {{ tile.title }}
       <button
         icon
         v-if="isEditingBoard"
@@ -58,6 +63,15 @@
         edit
       </button>
     </div>
+    <button
+      v-if="list.length < 100"
+      class="add_tile"
+      icon
+      @click="AddTileToList()"
+      :style="{ order: sortedList.length + 1 }"
+    >
+      add_box
+    </button>
   </section>
 
   <modal ref="modalEle">
@@ -80,13 +94,13 @@
         </h2>
         <input type="text" v-model="localTileData!.title" />
         <h3 class="font-size-S">Description</h3>
-        <editor class="editable" v-model="localTileData!.description" />
+        <tiptapEditor class="editable" v-model="localTileData!.description" />
       </div>
       <div>
         <h3 class="font-size-S">Image</h3>
         <img :src="localTileData!.image" />
         <br />
-        <label>Image URL: <input type="text" v-model="localTileData!.image" /></label>
+        <label>Image URL: <input required type="url" v-model="localTileData!.image" /></label>
       </div>
       <div>
         <h3 class="font-size-S">Tile type</h3>
@@ -246,7 +260,7 @@ import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
 import { METRICS, SKILLS } from '@wise-old-man/utils'
 // Component imports
-import editor from '@/components/editor.vapor.vue'
+import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import modal from '@/components/modal.vapor.vue'
 import VueMultiselect from 'vue-multiselect'
 // type imports
@@ -261,6 +275,7 @@ const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
 const localTileData = ref<Tile | null>(null)
 const newDropForTile = ref()
+const originalWidth = ref<number>(0)
 const showModal = () => {
   if (modalEle.value && modalEle.value.showModal) {
     modalEle.value.showModal()
@@ -318,7 +333,7 @@ const { data: boardData, promise: boardDataPromise } = useDocument(
   doc(db, 'Boards', router.params.boardUUID as string)
 )
 await boardDataPromise.value
-const widthInput = ref<number>(boardData.value?.boardWidt || 5)
+const widthInput = ref<number>(boardData.value?.boardWidth || 5)
 
 let orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
@@ -404,7 +419,7 @@ const saveTiles = async (): Promise<void> => {
     // update the order of the tiles
     batch.update(boardDocRef, {
       orderOfList: orderOfList.value,
-      boardWidt: widthInput.value
+      boardWidth: widthInput.value
     })
 
     // Update the tiles in Firestore
@@ -466,9 +481,11 @@ const saveTiles = async (): Promise<void> => {
     console.error('Error synchronizing tiles:', error)
   }
 }
-const cancelEdit = () => {
-  list.value = tilesData.value as unknown as Tile[]
+const cancelEdit = async () => {
   // canceling anything you did between saves
+  list.value = tilesData.value as unknown as Tile[]
+  widthInput.value = originalWidth.value
+
   isEditingBoard.value = false
   orderOfList.value = localOrderOfList
 }
@@ -478,6 +495,7 @@ const editBoard = (): void => {
   const snapshotTilesData = [...tilesData.value] as Tile[]
   list.value = snapshotTilesData
   localOrderOfList = orderOfList.value
+  originalWidth.value = widthInput.value
   isEditingBoard.value = true
 }
 
@@ -502,6 +520,7 @@ const saveEditTile = async () => {
 }
 const cancelEditTile = () => {
   // canceling anything you did between saves
+
   isEditingTile.value = false
   asideModalEle.value!.close()
   localTileData.value = null
@@ -526,5 +545,36 @@ dialog img {
   width: 100px;
   aspect-ratio: 1/1;
   object-fit: contain;
+}
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--width), 1fr);
+  gap: 1%;
+  & .tile {
+    border: 1px solid var(--primary);
+    border-radius: var(--border-radius);
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    &:hover {
+      scale: 1.05;
+    }
+    & .tile--image {
+      position: absolute;
+      width: 80%;
+      inset: 0;
+      margin: auto;
+      transform-origin: center center;
+      aspect-ratio: 1/1;
+      object-fit: contain;
+    }
+    button {
+      position: relative;
+    }
+  }
+}
+.add_tile {
+  font-size: 200%;
+  aspect-ratio: 1;
 }
 </style>

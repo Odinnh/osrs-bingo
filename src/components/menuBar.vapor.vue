@@ -16,11 +16,13 @@
         >person</a
       >
       <a
+        v-if="user"
         class="imgbtn"
         :current="route.name == 'loginScreen'"
         @click.prevent="router.push({ name: 'loginScreen' })"
-        ><img class="bobble" v-if="user" :src="user.photoURL"
-      /></a>
+      >
+        <img class="bobble" v-if="user.photoURL" :src="user.photoURL" />
+      </a>
     </nav>
   </header>
 </template>
@@ -62,9 +64,11 @@ const user = useCurrentUser()
 .imgbtn {
   padding: 0;
   margin: 0;
-  width: max-content;
-  height: max-content;
+  width: 4rem;
+  height: 4rem;
+  background-color: var(--background-100);
   display: inline-flex;
+  border-radius: 100vw;
 }
 nav {
   display: flex;
