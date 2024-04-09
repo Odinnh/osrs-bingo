@@ -47,7 +47,7 @@ dialog {
   & p:first-of-type {
     margin-top: 0px;
   }
-  & :is(ul, ol) li p {
-    margin: 0px;
-  }
+}
+:is(ul, ol) li p {
+  margin: 0px;
 }

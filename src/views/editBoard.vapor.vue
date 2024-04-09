@@ -1,9 +1,10 @@
 <template>
+  <div>{{ user.uid }}</div>
   <section id="board-info">
     <h1 v-if="boardData">
       {{ boardData.name }}
     </h1>
-    <code> Board ID: {{ router.params.boardUUID }}</code>
+    <code> Board ID: {{ route.params.boardUUID }}</code>
   </section>
   <section id="controlls-are-editing" v-if="isEditingBoard">
     <button @click="updateWidth('remove')">-</button>
@@ -26,7 +27,9 @@
     <button submit @click="saveTiles()">save</button>
     <button cancel @click="cancelEdit()">cancel</button>
   </section>
-  <section id="controlls-are-viewing" v-else><button @click="editBoard()">edit</button></section>
+  <section id="controlls-are-viewing" v-else>
+    <button @click="editBoard()">edit</button>
+  </section>
 
   <section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
     <div
@@ -249,12 +252,12 @@ const title = useTitle()
 title.value = 'Edit board - Bingo Bongo'
 // base imports
 import { computed, nextTick, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
 import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
-import { useCollection, useDocument } from 'vuefire'
+import { useCollection, useDocument, getCurrentUser } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
@@ -266,6 +269,7 @@ import VueMultiselect from 'vue-multiselect'
 // type imports
 import type { ModalElement, Tile } from '@/types'
 
+const user = await getCurrentUser()
 const filteredMetrics = ref(
   METRICS.filter((metric) => !['ehb', 'ehp', 'league_points'].includes(metric))
 )
@@ -328,9 +332,10 @@ const widthInputForm = ref<HTMLInputElement>()
 
 const isEditingBoard = ref<boolean>(false)
 
-const router = useRoute()
+const route = useRoute()
+const router = useRouter()
 const { data: boardData, promise: boardDataPromise } = useDocument(
-  doc(db, 'Boards', router.params.boardUUID as string)
+  doc(db, 'Boards', route.params.boardUUID as string)
 )
 await boardDataPromise.value
 const widthInput = ref<number>(boardData.value?.boardWidth || 5)
@@ -339,7 +344,7 @@ let orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
 
 const { data: tilesData, promise: tilesDataPromise } = useCollection(
-  collection(db, 'Boards', router.params.boardUUID as string, 'Tiles')
+  collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
 )
 await tilesDataPromise.value
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
@@ -412,7 +417,7 @@ const saveTiles = async (): Promise<void> => {
   isEditingBoard.value = false
 
   try {
-    const boardDocRef = doc(db, 'Boards', router.params.boardUUID as string)
+    const boardDocRef = doc(db, 'Boards', route.params.boardUUID as string)
     const tilesCollectionRef = collection(boardDocRef, 'Tiles')
 
     const batch = writeBatch(db)
@@ -472,7 +477,7 @@ const saveTiles = async (): Promise<void> => {
     await batch.commit()
 
     const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-      collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
+      collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
       { once: true }
     )
     await newTilesDataPromise.value
@@ -502,17 +507,16 @@ const editBoard = (): void => {
 // edit tile functions
 const saveEditTile = async () => {
   // this should save the localTile to firebase and close the modal
-  updateDoc(
-    doc(db, 'Boards', router.params.boardUUID as string, 'Tiles', localTileData.value!.id),
-    { ...localTileData.value }
-  )
+  updateDoc(doc(db, 'Boards', route.params.boardUUID as string, 'Tiles', localTileData.value!.id), {
+    ...localTileData.value
+  })
 
   isEditingTile.value = false
   asideModalEle.value!.close()
   selectedTile.value = localTileData.value
 
   const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-    collection(db, 'Boards', router.params.boardUUID as string, 'Tiles'),
+    collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
     { once: true }
   )
   await newTilesDataPromise.value

@@ -18,14 +18,14 @@
             <a
               icon
               class="btn"
-              @click.prevent="router.push({ name: 'editBingoBoard', params: { boardUUID: board } })"
+              @click.prevent="router.push({ name: 'editBoard', params: { boardUUID: board } })"
               >edit</a
             >
           </label>
           <a
             icon
             class="btn"
-            @click.prevent="router.push({ name: 'viewBingoBoard', params: { boardUUID: board } })"
+            @click.prevent="router.push({ name: 'viewBoard', params: { boardUUID: board } })"
             >visibility</a
           >
         </li>

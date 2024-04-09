@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="user">
     <h1>Hello World</h1>
     <p v-if="ErrorMessage">{{ ErrorMessage }}</p>
     <input

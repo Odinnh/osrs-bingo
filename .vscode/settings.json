@@ -5,7 +5,6 @@
   "material-icon-theme.activeIconPack": "vue",
   "material-icon-theme.folders.theme": "specific",
   "terminal.integrated.minimumContrastRatio": 7,
-  "editor.fontFamily": "Fira Code",
   "editor.tabSize": 4,
   "workbench.colorCustomizations": {
     "activityBar.background": "#fab005",
