@@ -1,247 +1,98 @@
 <template>
-  <section id="board-info">
-    <h1 v-if="boardData">
-      {{ boardData.name }}
-    </h1>
-    <code> Board ID: {{ route.params.boardUUID }}</code>
-  </section>
-  <section id="controlls-are-editing" v-if="isEditingBoard">
-    <button @click="updateWidth('remove')">-</button>
-    <input
-      id="widthInputElement"
-      ref="widthInputForm"
-      class="widthInput"
-      v-model="widthInput"
-      type="number"
-      min="3"
-      max="12"
-      @blur="
-        () => {
-          widthInput = Math.min(widthInput, 12)
-          widthInput = Math.max(widthInput, 3)
-        }
-      "
-    />
-    <button @click="updateWidth('add')">+</button>
-    <button submit @click="saveTiles()">save</button>
-    <button cancel @click="cancelEdit()">cancel</button>
-  </section>
-  <section id="controlls-are-viewing" v-else>
-    <button @click="editBoard()">move / edit</button>
-  </section>
+	<section id="board-info">
+		<h1 v-if="boardData">
+			{{ boardData.name }}
+		</h1>
+		<code> Board ID: {{ route.params.boardUUID }}</code>
+	</section>
+	<section id="controlls-are-editing" v-if="isEditingBoard">
+		<button @click="updateWidth('remove')">-</button>
+		<input
+			id="widthInputElement"
+			ref="widthInputForm"
+			class="widthInput"
+			v-model="widthInput"
+			type="number"
+			min="3"
+			max="12"
+			@blur="
+				() => {
+					widthInput = Math.min(widthInput, 12)
+					widthInput = Math.max(widthInput, 3)
+				}
+			"
+		/>
+		<button @click="updateWidth('add')">+</button>
+		<button submit @click="saveBoard()">save</button>
+		<button cancel @click="cancelEditBoard()">cancel</button>
+	</section>
+	<section id="controlls-are-viewing" v-else>
+		<button @click="editBoard()">move / edit</button>
+	</section>
 
-  <section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
-    <div
-      class="tile"
-      :class="{ handle: isEditingBoard }"
-      :style="{ '--_image': `url('${tile.image}')` }"
-      v-for="tile in sortedList"
-      :key="tile.id"
-    >
-      <img class="tile--image" :src="tile.image" />
-      <button
-        icon
-        cancel
-        v-if="isEditingBoard"
-        @click="
-          () => {
-            selectedTile = tile
-            showModal()
-          }
-        "
-      >
-        delete
-      </button>
-      <button
-        icon
-        v-if="isEditingBoard"
-        @click="
-          () => {
-            selectedTile = tile
-            editTile()
-          }
-        "
-      >
-        edit
-      </button>
-    </div>
-    <button
-      v-if="list.length < 100"
-      class="add_tile"
-      icon
-      @click="AddTileToList()"
-      :style="{ order: sortedList.length + 1 }"
-    >
-      add_box
-    </button>
-  </section>
+	<section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
+		<div
+			class="tile"
+			:class="{ handle: isEditingBoard }"
+			v-for="tile in sortedList"
+			:key="tile.id"
+		>
+			<img class="tile--image" :src="tile.image" />
+			<button
+				icon
+				cancel
+				v-if="isEditingBoard"
+				@click="
+					() => {
+						selectedTile = tile
+						showModal()
+					}
+				"
+			>
+				delete
+			</button>
+			<button
+				icon
+				v-if="isEditingBoard"
+				@click="
+					() => {
+						selectedTile = tile
+						editTile()
+					}
+				"
+			>
+				edit
+			</button>
+		</div>
+		<button
+			v-if="list.length < 100"
+			class="add_tile"
+			icon
+			@click="AddTileToList()"
+			:style="{ order: sortedList.length + 1 }"
+		>
+			add_box
+		</button>
+	</section>
 
-  <modal ref="modalEle">
-    <template #header> Delete tile: {{ selectedTile?.title }} </template>
-    <template #body> are you sure you want to delete the tile {{ selectedTile?.title }} </template>
-    <template #controls>
-      <button submit @click="RemoveTileFromList">REMOVE</button>
-      <button cancel @click="cancelRemoval">Cancel</button>
-    </template>
-  </modal>
+	<modal ref="modalEle">
+		<template #header> Delete tile: {{ selectedTile?.title }} </template>
+		<template #body>
+			are you sure you want to delete the tile {{ selectedTile?.title }}
+		</template>
+		<template #controls>
+			<button submit @click="RemoveTileFromList">REMOVE</button>
+			<button cancel @click="closeModal()">Cancel</button>
+		</template>
+	</modal>
 
-  <dialog ref="asideModalEle">
-    <div v-if="selectedTile && localTileData">
-      <div>
-        <h2>
-          Edit tile: {{ localTileData?.title }}
-          <small
-            ><code>{{ localTileData?.id }}</code></small
-          >
-        </h2>
-        <input type="text" v-model="localTileData!.title" />
-        <h3 class="font-size-S">Description</h3>
-        <tiptapEditor class="editable" v-model="localTileData!.description" />
-      </div>
-      <div>
-        <h3 class="font-size-S">Image</h3>
-        <img :src="localTileData!.image" />
-        <br />
-        <label>Image URL: <input required type="url" v-model="localTileData!.image" /></label>
-      </div>
-      <div>
-        <h3 class="font-size-S">Tile type</h3>
-        <p>Choose any of the different tile types.</p>
-        <VueMultiselect
-          v-model="localTileData!.type"
-          :options="['drop', 'exp', 'kc']"
-          :close-on-select="true"
-          :clear-on-select="false"
-          :allow-empty="true"
-          placeholder="Choose a tile Type"
-        />
-      </div>
-      <hr />
-      <div>
-        <h3 class="font-size-S">Metric</h3>
-        <p>Search and select the metric you want to associate with this tile.</p>
-
-        <template v-if="localTileData?.type !== 'exp'">
-          <VueMultiselect
-            v-model="localTileData!.metric"
-            :options="filteredMetrics"
-            :close-on-select="true"
-            :clear-on-select="false"
-            :allow-empty="true"
-            placeholder="Choose a metric to track progress"
-          />
-        </template>
-        <template v-else>
-          <VueMultiselect
-            v-model="localTileData!.metric"
-            :options="SKILLS"
-            :close-on-select="true"
-            :clear-on-select="false"
-            :allow-empty="true"
-            placeholder="Choose a metric to track progress"
-          />
-        </template>
-      </div>
-      <hr />
-      <div v-if="localTileData && localTileData.repeatable?.toString()">
-        <h3 class="font-size-S">Repeatable tile</h3>
-        <p>Can the competitors complete the tile multiple times and gain points each time?</p>
-        <label
-          >Repeatable <input type="checkbox" v-model="localTileData.repeatable" />
-          {{ localTileData.repeatable }}</label
-        >
-      </div>
-      <hr />
-      <div>
-        <h3 class="font-size-S">Points and count</h3>
-        <p>the points the competitors will get when they complete the tile</p>
-        <label>points value: <input type="number" min="0" v-model="localTileData!.points" /></label>
-        <p>
-          amount that is needed to complete the tile <br /><em
-            >a.e. 200.000.000 slayer exp or 5 unique barrows items</em
-          >
-        </p>
-        <label>count: <input type="number" min="0" v-model="localTileData!.count" /></label>
-
-        <p>
-          this is the minimum required amount for the tile<br />
-          <em
-            >a.e. if the count is 5 and you want the team to collect at least one of each item, the
-            minimum would be 1</em
-          >
-        </p>
-        <label
-          >minimum count:
-          <input
-            placeholder="unset"
-            type="number"
-            min="0"
-            v-if="localTileData !== null"
-            @blur="
-              () => {
-                if (!localTileData) return
-
-                if (localTileData.min == undefined) {
-                  return
-                }
-                localTileData.min = localTileData.min < 0 ? 0 : localTileData.min
-              }
-            "
-            v-model="localTileData.min"
-        /></label>
-        <p>
-          this is the maximum amount for the tile<br />
-          <em
-            >a.e. if the count is 5 and you want the team to collect at most two of each item, the
-            maximum would be 2</em
-          >
-        </p>
-        <label
-          >maximum count:
-          <input
-            placeholder="unset"
-            type="number"
-            min="0"
-            @blur="
-              () => {
-                if (!localTileData) return
-                if (localTileData.max == undefined) {
-                  return
-                }
-                localTileData.max = localTileData.max < 0 ? 0 : localTileData.max
-              }
-            "
-            v-model="localTileData!.max"
-        /></label>
-      </div>
-      <template v-if="localTileData?.type == 'drop'">
-        <hr />
-      </template>
-      <div v-if="localTileData?.type == 'drop'">
-        <h3 class="font-size-S">Drops</h3>
-        <p>add drops to the list of valid drops</p>
-        <ul>
-          <li v-for="drop in localTileData.drops">
-            {{ drop }}
-            <button icon cancel @click="removeDropFromTile(drop)">delete</button>
-          </li>
-          <li>
-            <input type="text" v-model="newDropForTile" />
-            <button @click="addDropToTile">Add Drop</button>
-          </li>
-        </ul>
-      </div>
-
-      <!-- a checkbox that toggles between AND or OR using localTileData>selector-->
-      <div v-if="localTileData && localTileData.needAny.toString()">
-        <h3 class="font-size-S">Need Any or All?</h3>
-        <p>do the competors need to achieve all of the requirements to complete the tile?</p>
-        <label>All<input type="checkbox" choice v-model="localTileData.needAny" />Any</label>
-      </div>
-    </div>
-    <button submit @click="saveEditTile">Save changes</button>
-    <button cancel @click="cancelEditTile">Cancel</button>
-  </dialog>
+	<TileDialog
+		ref="asideModalEle"
+		:selectedTile="selectedTile"
+		:localTileData="localTileData"
+		@save="saveEditTile"
+		@cancel="cancelEditTile"
+	/>
 </template>
 
 <script setup lang="ts">
@@ -260,322 +111,332 @@ import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
-import { METRICS, SKILLS } from '@wise-old-man/utils'
+
 // Component imports
-import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import modal from '@/components/modal.vapor.vue'
-import VueMultiselect from 'vue-multiselect'
+import TileDialog from '@/components/modals/EditTileModal.vapor.vue'
+
 // type imports
 import type { ModalElement, Tile } from '@/types'
 
-const filteredMetrics = ref(
-  METRICS.filter((metric) => !['ehb', 'ehp', 'league_points'].includes(metric))
-)
-const selectedTile = ref<Tile | null>()
-const isEditingTile = ref<boolean>(false)
+const route = useRoute()
+//DOM elements
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
-const localTileData = ref<Tile | null>(null)
-const newDropForTile = ref()
-const originalWidth = ref<number>(0)
-const showModal = () => {
-  if (modalEle.value && modalEle.value.showModal) {
-    modalEle.value.showModal()
-  }
-}
-const closeModal = () => {
-  if (modalEle.value && modalEle.value.closeModal) {
-    modalEle.value.closeModal()
-  }
-}
-const addDropToTile = () => {
-  if (localTileData.value) {
-    if (localTileData.value.drops) {
-      localTileData.value.drops.push({
-        id: tinyid(),
-        name: newDropForTile.value
-      }) as unknown as Tile['drops']
-    } else {
-      localTileData.value.drops = [{ id: tinyid(), name: newDropForTile.value }]
-    }
-  }
-}
-const removeDropFromTile = (drop: { id: string; name: string }) => {
-  if (
-    localTileData.value &&
-    localTileData.value.drops &&
-    localTileData.value.drops.indexOf(drop) > -1
-  ) {
-    localTileData.value.drops.splice(localTileData.value.drops.indexOf(drop), 1)
-  }
-}
-window.addEventListener('keydown', (e) => {
-  switch (e.key) {
-    case 'Escape':
-      if (modalEle.value && modalEle.value.closeModal) {
-        modalEle.value.closeModal()
-        asideModalEle.value!.close()
-        selectedTile.value = null
-        localTileData.value = null
-        isEditingTile.value = false
-        isEditingTile.value = false
-      }
-      break
-    default:
-      break
-  }
-})
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement>()
 
+//state
 const isEditingBoard = ref<boolean>(false)
+const isEditingTile = ref<boolean>(false)
 
-const route = useRoute()
-const { data: boardData, promise: boardDataPromise } = useDocument(
-  doc(db, 'Boards', route.params.boardUUID as string)
-)
-await boardDataPromise.value
-const widthInput = ref<number>(boardData.value?.boardWidth || 5)
+const selectedTile = ref<Tile | null>()
+const localTileData = ref<Tile | null>(null)
 
-let orderOfList = ref<string[]>([])
+const originalWidth = ref<number>(0)
+
+const orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
 
-const { data: tilesData, promise: tilesDataPromise } = useCollection(
-  collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
+//event listened
+window.addEventListener('keydown', (e) => {
+	switch (e.key) {
+		case 'Escape':
+			if (
+				modalEle.value &&
+				modalEle.value.closeModal &&
+				asideModalEle.value &&
+				asideModalEle.value.closeModal
+			) {
+				modalEle.value.closeModal()
+				asideModalEle.value!.closeModal()
+				selectedTile.value = null
+				localTileData.value = null
+				isEditingTile.value = false
+				isEditingTile.value = false
+			}
+			break
+		default:
+			break
+	}
+})
+
+//firebase imports
+const { data: boardData, promise: boardDataPromise } = useDocument(
+	doc(db, 'Boards', route.params.boardUUID as string)
 )
-await tilesDataPromise.value
+const { data: tilesData, promise: tilesDataPromise } = useCollection(
+	collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
+)
+await Promise.all([boardDataPromise.value, tilesDataPromise.value])
+
+const widthInput = ref<number>(boardData.value?.boardWidth || 5)
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
-if (boardData.value?.orderOfList) {
-  orderOfList.value = boardData.value.orderOfList
-} else {
-  orderOfList.value = list.value.map((tile) => tile.id)
+
+// modal functions
+const showModal = (): void => {
+	if (modalEle.value && modalEle.value.showModal) {
+		modalEle.value.showModal()
+	}
+	if (asideModalEle.value && asideModalEle.value.showModal) {
+		asideModalEle.value.showModal()
+	}
+}
+const closeModal = (): void => {
+	if (modalEle.value && modalEle.value.closeModal) {
+		modalEle.value.closeModal()
+	}
+	if (asideModalEle.value && asideModalEle.value.closeModal) {
+		asideModalEle.value.closeModal()
+	}
 }
 
-const sortedList = computed(() => {
-  if (list.value === undefined) return []
-  return list.value.toSorted(
-    (a: Tile, b: Tile) => orderOfList.value.indexOf(a.id) - orderOfList.value.indexOf(b.id)
-  )
+// sort order of list into the required order
+orderOfList.value = boardData.value?.orderOfList
+	? boardData.value.orderOfList
+	: list.value.map((tile) => tile.id)
+
+// sortedList is a list that respects the order in orderOfList
+const sortedList = computed((): Tile[] => {
+	if (list.value === undefined) return []
+	return list.value.toSorted(
+		(a: Tile, b: Tile) => orderOfList.value.indexOf(a.id) - orderOfList.value.indexOf(b.id)
+	)
 })
-// set list to the tiles imported from firebase database
+
+// instanciate useSortable
 useSortable(el, sortedList, {
-  inverted: true,
-  handle: '.handle',
-  ghostClass: 'blue-background-class',
-  onUpdate: (e: any) => {
-    moveArrayElement(sortedList.value, e.oldIndex, e.newIndex)
+	inverted: true,
+	handle: '.handle',
+	ghostClass: 'blue-background-class',
+	onUpdate: (e: any) => {
+		moveArrayElement(sortedList.value, e.oldIndex, e.newIndex)
 
-    nextTick(() => {
-      orderOfList.value = sortedList.value.map((tile) => tile.id)
-    })
-  }
+		nextTick(() => {
+			orderOfList.value = sortedList.value.map((tile) => tile.id)
+		})
+	}
 })
 
+// ## Board methods
+// changes width of board
+const updateWidth = (type: string): void => {
+	//Width input can be at minimum be 3 and maximum be 12
+	if (type === 'add') {
+		widthInput.value = Math.min(widthInput.value + 1, 12)
+	} else if (type === 'remove') {
+		widthInput.value = Math.max(widthInput.value - 1, 3)
+	}
+
+	el.value?.style.setProperty('--width', widthInput.value.toString())
+}
+// publish board changes to Firestore
+const saveBoard = async (): Promise<void> => {
+	isEditingBoard.value = false
+
+	try {
+		const boardDocRef = doc(db, 'Boards', route.params.boardUUID as string)
+		const tilesCollectionRef = collection(boardDocRef, 'Tiles')
+
+		const batch = writeBatch(db)
+		// update the order of the tiles
+		batch.update(boardDocRef, {
+			orderOfList: orderOfList.value,
+			boardWidth: widthInput.value
+		})
+
+		// Update the tiles in Firestore
+		// Get the current tiles from Firestore
+		const querySnapshot = await getDocs(tilesCollectionRef)
+		const existingTiles: { [id: string]: boolean } = {}
+		querySnapshot.forEach((docSnapshot) => {
+			const tileId = docSnapshot.id
+			existingTiles[tileId] = true
+			const tileData = docSnapshot.data() as Tile
+			const matchingTile = list.value.find((tile) => tile.id === tileId)
+			if (!matchingTile) {
+				// If a tile exists in Firestore but not in the list, delete it
+				const tileDocRef = doc(tilesCollectionRef, tileId)
+				batch.delete(tileDocRef)
+			} else if (JSON.stringify(matchingTile) !== JSON.stringify(tileData)) {
+				// If the tile exists in both Firestore and the list but has changed, update it
+				const tileDocRef = doc(tilesCollectionRef, tileId)
+				batch.set(tileDocRef, {
+					id: matchingTile.id,
+					title: matchingTile.title,
+					description: matchingTile.description,
+					image: matchingTile.image,
+					type: matchingTile.type,
+					needAny: matchingTile.needAny,
+					points: matchingTile.points,
+					count: matchingTile.count
+				})
+			}
+		})
+
+		// Add new tiles to Firestore
+		list.value.forEach((tile) => {
+			if (!existingTiles[tile.id]) {
+				const tileDocRef = doc(tilesCollectionRef, tile.id)
+				batch.set(tileDocRef, {
+					id: tile.id,
+					title: tile.title,
+					description: tile.description,
+					image: tile.image,
+					type: tile.type,
+					needAny: tile.needAny,
+					points: tile.points,
+					count: tile.count
+				})
+			}
+		})
+
+		// Commit the batch
+		await batch.commit()
+
+		const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
+			collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
+			{ once: true }
+		)
+		await newTilesDataPromise.value
+		list.value = newTilesData.value as unknown as Tile[]
+	} catch (error) {
+		console.error('Error synchronizing tiles:', error)
+	}
+}
+// cancel editing board and resetting values
+const cancelEditBoard = async (): Promise<void> => {
+	// canceling anything you did between saves
+	list.value = tilesData.value as unknown as Tile[]
+	widthInput.value = originalWidth.value
+
+	isEditingBoard.value = false
+	orderOfList.value = localOrderOfList
+}
+// start editing board
+const editBoard = (): void => {
+	// make a local version of the current order of the tiles
+	const snapshotTilesData = [...tilesData.value] as Tile[]
+	list.value = snapshotTilesData
+	localOrderOfList = orderOfList.value
+	originalWidth.value = widthInput.value
+	isEditingBoard.value = true
+	return
+}
+
+// ## Tile methods
+// publish tile changes to Firestore
+const saveEditTile = async (): Promise<void> => {
+	// this should save the localTile to firebase and close the modal
+	updateDoc(
+		doc(db, 'Boards', route.params.boardUUID as string, 'Tiles', localTileData.value!.id),
+		{
+			...localTileData.value
+		}
+	)
+
+	isEditingTile.value = false
+	if (asideModalEle.value && asideModalEle.value.closeModal) {
+		asideModalEle.value!.closeModal()
+	}
+	selectedTile.value = localTileData.value
+
+	const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
+		collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
+		{ once: true }
+	)
+	await newTilesDataPromise.value
+	list.value = newTilesData.value as unknown as Tile[]
+	return
+}
+// cancel editing a tile and resetting values
+const cancelEditTile = (): void => {
+	// canceling anything you did between saves
+	if (asideModalEle.value && asideModalEle.value.closeModal) {
+		isEditingTile.value = false
+		localTileData.value = null
+		selectedTile.value = null
+		asideModalEle.value.closeModal()
+	}
+	return
+}
+// start editing a tile
+const editTile = (): void => {
+	// make a local version of the current Tile
+	const snapshotTileData = { ...selectedTile.value } as Tile
+	localTileData.value = snapshotTileData
+	isEditingTile.value = true
+	asideModalEle.value!.showModal()
+	return
+}
+
+//add tile to local list
 const AddTileToList = (): void => {
-  const uuid = <string>tinyid()
-  const name = <string>generateName()
-  list.value.push({
-    id: uuid,
-    title: name,
-    description: 'a sample description',
-    image: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e',
-    type: 'drop',
-    needAny: false,
-    points: 0,
-    count: 0,
-    repeatable: false
-  })
-  orderOfList.value.push(uuid)
+	const uuid = <string>tinyid()
+	const name = <string>generateName()
+	list.value.push({
+		id: uuid,
+		title: name,
+		description: 'a sample description',
+		image: 'https://oldschool.runescape.wiki/images/Frog_%28Ruins_of_Camdozaal%29.png?6ae5e',
+		type: 'drop',
+		needAny: false,
+		points: 0,
+		count: 0,
+		repeatable: false
+	})
+	orderOfList.value.push(uuid)
+	return
 }
 //remove tile from local list
 const RemoveTileFromList = (): void => {
-  if (!selectedTile.value) return
-  list.value = list.value.filter((_tile) => _tile.id !== selectedTile.value!.id)
-  orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
-  closeModal()
-}
-//cancel removal
-const cancelRemoval = (): void => {
-  selectedTile.value = null
-  closeModal()
-}
-
-const updateWidth = (type: string): void => {
-  //Width input can be at minimum be 3 and maximum be 12
-  if (type === 'add') {
-    widthInput.value = Math.min(widthInput.value + 1, 12)
-  } else if (type === 'remove') {
-    widthInput.value = Math.max(widthInput.value - 1, 3)
-  }
-
-  el.value?.style.setProperty('--width', widthInput.value.toString())
-}
-const saveTiles = async (): Promise<void> => {
-  isEditingBoard.value = false
-
-  try {
-    const boardDocRef = doc(db, 'Boards', route.params.boardUUID as string)
-    const tilesCollectionRef = collection(boardDocRef, 'Tiles')
-
-    const batch = writeBatch(db)
-    // update the order of the tiles
-    batch.update(boardDocRef, {
-      orderOfList: orderOfList.value,
-      boardWidth: widthInput.value
-    })
-
-    // Update the tiles in Firestore
-    // Get the current tiles from Firestore
-    const querySnapshot = await getDocs(tilesCollectionRef)
-    const existingTiles: { [id: string]: boolean } = {}
-    querySnapshot.forEach((docSnapshot) => {
-      const tileId = docSnapshot.id
-      existingTiles[tileId] = true
-      const tileData = docSnapshot.data() as Tile
-      const matchingTile = list.value.find((tile) => tile.id === tileId)
-      if (!matchingTile) {
-        // If a tile exists in Firestore but not in the list, delete it
-        const tileDocRef = doc(tilesCollectionRef, tileId)
-        batch.delete(tileDocRef)
-      } else if (JSON.stringify(matchingTile) !== JSON.stringify(tileData)) {
-        // If the tile exists in both Firestore and the list but has changed, update it
-        const tileDocRef = doc(tilesCollectionRef, tileId)
-        batch.set(tileDocRef, {
-          id: matchingTile.id,
-          title: matchingTile.title,
-          description: matchingTile.description,
-          image: matchingTile.image,
-          type: matchingTile.type,
-          needAny: matchingTile.needAny,
-          points: matchingTile.points,
-          count: matchingTile.count
-        })
-      }
-    })
-
-    // Add new tiles to Firestore
-    list.value.forEach((tile) => {
-      if (!existingTiles[tile.id]) {
-        const tileDocRef = doc(tilesCollectionRef, tile.id)
-        batch.set(tileDocRef, {
-          id: tile.id,
-          title: tile.title,
-          description: tile.description,
-          image: tile.image,
-          type: tile.type,
-          needAny: tile.needAny,
-          points: tile.points,
-          count: tile.count
-        })
-      }
-    })
-
-    // Commit the batch
-    await batch.commit()
-
-    const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-      collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
-      { once: true }
-    )
-    await newTilesDataPromise.value
-    list.value = newTilesData.value as unknown as Tile[]
-  } catch (error) {
-    console.error('Error synchronizing tiles:', error)
-  }
-}
-const cancelEdit = async () => {
-  // canceling anything you did between saves
-  list.value = tilesData.value as unknown as Tile[]
-  widthInput.value = originalWidth.value
-
-  isEditingBoard.value = false
-  orderOfList.value = localOrderOfList
-}
-
-const editBoard = (): void => {
-  // make a local version of the current order of the tiles
-  const snapshotTilesData = [...tilesData.value] as Tile[]
-  list.value = snapshotTilesData
-  localOrderOfList = orderOfList.value
-  originalWidth.value = widthInput.value
-  isEditingBoard.value = true
-}
-
-// edit tile functions
-const saveEditTile = async () => {
-  // this should save the localTile to firebase and close the modal
-  updateDoc(doc(db, 'Boards', route.params.boardUUID as string, 'Tiles', localTileData.value!.id), {
-    ...localTileData.value
-  })
-
-  isEditingTile.value = false
-  asideModalEle.value!.close()
-  selectedTile.value = localTileData.value
-
-  const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-    collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
-    { once: true }
-  )
-  await newTilesDataPromise.value
-  list.value = newTilesData.value as unknown as Tile[]
-}
-const cancelEditTile = () => {
-  // canceling anything you did between saves
-
-  isEditingTile.value = false
-  asideModalEle.value!.close()
-  localTileData.value = null
-  selectedTile.value = null
-}
-
-const editTile = (): void => {
-  // make a local version of the current Tile
-  const snapshotTileData = { ...selectedTile.value } as Tile
-  localTileData.value = snapshotTileData
-  isEditingTile.value = true
-  asideModalEle.value!.showModal()
+	if (!selectedTile.value) return
+	list.value = list.value.filter((_tile) => _tile.id !== selectedTile.value!.id)
+	orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
+	closeModal()
+	return
 }
 </script>
 
 <style scoped>
 .editable {
-  background-color: var(--background);
-  border-radius: var(--border-radius);
+	background-color: var(--background);
+	border-radius: var(--border-radius);
 }
 dialog img {
-  width: 100px;
-  aspect-ratio: 1/1;
-  object-fit: contain;
+	width: 100px;
+	aspect-ratio: 1/1;
+	object-fit: contain;
 }
 .board {
-  display: grid;
-  grid-template-columns: repeat(var(--width), 1fr);
-  gap: 1%;
-  & .tile {
-    border: 1px solid var(--primary);
-    border-radius: var(--border-radius);
-    position: relative;
-    width: 100%;
-    aspect-ratio: 1;
-    &:hover {
-      scale: 1.05;
-    }
-    & .tile--image {
-      position: absolute;
-      width: 80%;
-      inset: 0;
-      margin: auto;
-      transform-origin: center center;
-      aspect-ratio: 1/1;
-      object-fit: contain;
-    }
-    button {
-      position: relative;
-    }
-  }
+	display: grid;
+	grid-template-columns: repeat(var(--width), 1fr);
+	gap: 1%;
+	& .tile {
+		border: 1px solid var(--primary);
+		border-radius: var(--border-radius);
+		position: relative;
+		width: 100%;
+		aspect-ratio: 1;
+		&:hover {
+			scale: 1.05;
+		}
+		& .tile--image {
+			position: absolute;
+			width: 80%;
+			inset: 0;
+			margin: auto;
+			transform-origin: center center;
+			aspect-ratio: 1/1;
+			object-fit: contain;
+		}
+		button {
+			position: relative;
+		}
+	}
 }
 .add_tile {
-  font-size: 200%;
-  aspect-ratio: 1;
+	font-size: 200%;
+	aspect-ratio: 1;
 }
 </style>
