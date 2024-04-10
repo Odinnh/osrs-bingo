@@ -1,7 +1,7 @@
 {
   "window.closeWhenEmpty": false,
   "window.autoDetectColorScheme": false,
-  "workbench.iconTheme": "material-icon-theme",
+  "workbench.iconTheme": "vs-seti",
   "material-icon-theme.activeIconPack": "vue",
   "material-icon-theme.folders.theme": "specific",
   "terminal.integrated.minimumContrastRatio": 7,

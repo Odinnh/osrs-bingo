@@ -7,7 +7,9 @@ const route = useRoute()
 
 <template>
   <main>
-    <menuBar />
+    <suspense>
+      <menuBar />
+    </suspense>
     <suspense>
       <RouterView :key="route.fullPath" />
     </suspense>

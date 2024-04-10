@@ -19,7 +19,7 @@
 
     <dialog ref="asideModalEle" class="modal">
       <template v-if="selectedTile">
-        <button @click.prevent="closeModal" icon>close</button>
+        <button class="close-modal" @click.prevent="closeModal" icon>close</button>
         <div>
           <img :src="selectedTile!.image" />
         </div>
@@ -135,6 +135,7 @@ const closeModal = () => {
 .modal {
   width: 40ch;
   max-width: 1000px;
+  position: relative;
   & img {
     background-color: var(--background);
     width: 10ch;
@@ -142,6 +143,14 @@ const closeModal = () => {
     object-fit: contain;
     padding: 20px;
     border-radius: var(--border-radius);
+  }
+  .close-modal {
+    top: 20px;
+    right: 20px;
+    position: absolute;
+    --color: var(--secondary);
+    color: var(--dark);
+    font-weight: bold;
   }
 }
 </style>

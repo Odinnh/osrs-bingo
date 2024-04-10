@@ -27,7 +27,7 @@
     <button cancel @click="cancelEdit()">cancel</button>
   </section>
   <section id="controlls-are-viewing" v-else>
-    <button @click="editBoard()">edit</button>
+    <button @click="editBoard()">move / edit</button>
   </section>
 
   <section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">

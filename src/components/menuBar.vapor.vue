@@ -27,11 +27,11 @@
   </header>
 </template>
 <script setup lang="ts">
-import { useCurrentUser } from 'vuefire'
+import { getCurrentUser } from 'vuefire'
 import { useRouter, useRoute } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
-const user = useCurrentUser()
+const user = await getCurrentUser()
 </script>
 <style scoped>
 .bobble {
