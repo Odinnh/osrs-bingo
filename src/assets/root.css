@@ -4,50 +4,51 @@
 @import url(./modules/input.css);
 @import url(./modules/multi_select.css);
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
 }
 body {
-  color: var(--text);
-  background-color: var(--background);
-  min-height: 100vh;
+	color: var(--text);
+	background-color: var(--background);
+	min-height: 100vh;
 }
 main {
-  width: 80vw;
-  margin-inline: auto;
-  max-width: 1000px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background-color: var(--background-900);
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  padding: 4ch;
+	width: 80vw;
+	margin-inline: auto;
+	max-width: 1000px;
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	background-color: var(--background-900);
+	border-bottom-left-radius: 25px;
+	border-bottom-right-radius: 25px;
+	padding: 4ch;
 }
 code {
-  font-family: monospace;
-  font-size: 1rem;
-  padding: 5px;
-  border-radius: var(--border-radius);
-  color: var(--accent);
+	font-family: monospace;
+	font-size: 1rem;
+	padding: 5px;
+	border-radius: var(--border-radius);
+	color: var(--accent);
 }
 
 dialog {
-  background-color: color-mix(in srgb, var(--background-alt), transparent 50%);
-  border: none;
-  border-radius: var(--border-radius);
-  color: var(--text);
-  &::backdrop {
-    background: rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(6px);
-  }
+	background-color: color-mix(in srgb, var(--background-alt), transparent 50%);
+	border: none;
+	border-radius: var(--border-radius);
+	color: var(--text);
+	&::backdrop {
+		background: rgba(0, 0, 0, 0);
+		backdrop-filter: blur(6px);
+	}
 }
 .tiptap {
-  padding: 1ch;
-  padding-top: 6ch;
-  & p:first-of-type {
-    margin-top: 0px;
-  }
+	padding: 1ch;
+	border-radius: var(--border-radius);
+	padding-top: 6ch;
+	& p:first-of-type {
+		margin-top: 0px;
+	}
 }
 :is(ul, ol) li p {
-  margin: 0px;
+	margin: 0px;
 }

@@ -24,7 +24,7 @@
 		/>
 		<button @click="updateWidth('add')">+</button>
 		<button submit @click="saveBoard()">save</button>
-		<button cancel @click="cancelEditBoard()">cancel</button>
+		<button outline @click="cancelEditBoard()">cancel</button>
 	</section>
 	<section id="controlls-are-viewing" v-else>
 		<button class="startEditing" @click="editBoard()">move / edit</button>
@@ -41,7 +41,7 @@
 			<div class="controls">
 				<button
 					icon
-					cancel
+					outline
 					v-if="isEditingBoard"
 					@click="
 						() => {
@@ -65,13 +65,20 @@
 				>
 					edit
 				</button>
-				<button move class="handle" v-if="isEditingBoard" icon @click.prevent title="move">
+				<button
+					dragdrop
+					class="handle"
+					v-if="isEditingBoard"
+					icon
+					@click.prevent
+					title="move"
+				>
 					drag_pan
 				</button>
 			</div>
 		</div>
 		<button
-			v-if="list.length < 100"
+			v-if="list.length < 100 && isEditingBoard"
 			class="add_tile"
 			icon
 			@click="AddTileToList()"
@@ -88,7 +95,7 @@
 		</template>
 		<template #controls>
 			<button submit @click="RemoveTileFromList">REMOVE</button>
-			<button cancel @click="closeModal()">Cancel</button>
+			<button outline @click="closeModal()">Cancel</button>
 		</template>
 	</modal>
 
@@ -392,11 +399,6 @@ const RemoveTileFromList = (): void => {
 .editable {
 	background-color: var(--background);
 	border-radius: var(--border-radius);
-}
-dialog img {
-	width: 100px;
-	aspect-ratio: 1/1;
-	object-fit: contain;
 }
 .board {
 	display: grid;

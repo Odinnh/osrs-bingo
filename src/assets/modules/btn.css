@@ -1,93 +1,95 @@
 button,
 a.btn {
-  display: inline-block;
-  user-select: none;
-  font-size: 1rem;
-  cursor: pointer;
-  --color: var(--primary-500);
-  --color-0: color-mix(in srgb, var(--color) 30%, var(--background));
-  --color-100: color-mix(in srgb, var(--color) 70%, var(--background));
-  --background-color: var(--color);
-  --border-color: var(--color);
-  background-color: var(--background-color);
-  color: var(--text);
-  padding: 1ch 2ch;
-  border: 1px solid var(--background-color);
+	display: inline-block;
+	user-select: none;
+	font-size: 1rem;
+	cursor: pointer;
+	--color: var(--primary-500);
+	--color-0: color-mix(in srgb, var(--color) 30%, var(--background));
+	--color-100: color-mix(in srgb, var(--color) 70%, var(--background));
+	--background-color: var(--color);
+	--border-color: var(--color);
+	background-color: var(--background-color);
+	color: var(--text);
+	padding: 1ch 2ch;
+	border: 1px solid var(--background-color);
 
-  &[big] {
-    font-size: 1.5rem;
-  }
-  &[submit] {
-    --color: var(--secondary);
-    color: var(--dark);
-  }
-  &[cancel] {
-    --background-color: transparent;
-    border-color: var(--color);
-  }
-  &[outline] {
-    background-color: transparent;
-    &:active {
-      background-color: var(--background-color);
-    }
-  }
-  border-radius: var(--border-radius);
-  &:hover {
-    --background-color: var(--color-100);
-  }
-  &:active {
-    color: var(--dark);
+	&[big] {
+		font-size: 1.5rem;
+	}
+	&[submit] {
+		--color: var(--secondary);
+		color: var(--dark);
+	}
+	&[outline] {
+		--background-color: var(--background-900);
+		border-color: var(--color);
+		&:active {
+			background-color: var(--background-color);
+		}
+	}
+	&[dragdrop] {
+		cursor: move;
+		--color: var(--light);
+		color: var(--dark);
+	}
+	border-radius: var(--border-radius);
+	&:hover {
+		--background-color: var(--color-100);
+	}
+	&:active {
+		color: var(--dark);
 
-    --background-color: var(--color-0);
-  }
-  &:has(+ input, + .input, + select) {
-    border-bottom-right-radius: unset;
-    border-top-right-radius: unset;
-    padding-inline: 1.5ch;
-  }
-  &:is(input + &, .input + &, select + &) {
-    border-bottom-left-radius: unset;
-    border-top-left-radius: unset;
-    padding-inline: 1.5ch;
-  }
+		--background-color: var(--color-0);
+	}
+	&:has(+ input, + .input, + select) {
+		border-bottom-right-radius: unset;
+		border-top-right-radius: unset;
+		padding-inline: 1.5ch;
+	}
+	&:is(input + &, .input + &, select + &) {
+		border-bottom-left-radius: unset;
+		border-top-left-radius: unset;
+		padding-inline: 1.5ch;
+	}
 }
 
 @media (prefers-color-scheme: dark) {
-  button,
-  a {
-    --color: var(--primary);
-    --color-0: color-mix(in srgb, var(--color) 30%, var(--text));
-    --color-100: color-mix(in srgb, var(--color) 50%, var(--text));
-    --background-color: var(--color);
-    --border-color: var(--color);
-  }
+	button,
+	a {
+		--color: var(--primary);
+		--color-0: color-mix(in srgb, var(--color) 30%, var(--text));
+		--color-100: color-mix(in srgb, var(--color) 50%, var(--text));
+		--background-color: var(--color);
+		--border-color: var(--color);
+	}
 }
 @media (prefers-color-scheme: light) {
-  button,
-  a {
-    --color: var(--primary);
-    --color-0: color-mix(in srgb, var(--color) 70%, var(--background));
-    --color-100: color-mix(in srgb, var(--color) 50%, var(--background));
-    --background-color: var(--color);
-    --border-color: var(--color);
-  }
+	button,
+	a {
+		--color: var(--primary);
+		--color-0: color-mix(in srgb, var(--color) 70%, var(--background));
+		--color-100: color-mix(in srgb, var(--color) 50%, var(--background));
+		--background-color: var(--color);
+		--border-color: var(--color);
+	}
 }
 
 button[icon],
 a.btn[icon] {
-  padding: 0.5ch;
-  line-height: 1rem;
-  border-radius: 10px;
-  font-family: 'Material Symbols Outlined';
+	padding: 0.5ch;
+	line-height: 1rem;
+	border-radius: 10px;
+	font-family: 'Material Symbols Outlined';
 }
 a.btn[dissabled='true'] {
-  pointer-events: none;
-  cursor: not-allowed;
-  --color: grey;
+	pointer-events: none;
+	cursor: not-allowed;
+	--color: grey;
 }
 a.btn[current='true'] {
-  pointer-events: none;
-  cursor: not-allowed;
-  --color: var(--accent);
-  color: var(--dark);
+	pointer-events: none;
+	cursor: not-allowed;
+	--color: var(--accent);
+	color: var(--dark);
 }

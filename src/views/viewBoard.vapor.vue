@@ -141,7 +141,7 @@ const closeModal = () => {
 	position: relative;
 	& img {
 		background-color: var(--background);
-		width: 10ch;
+		width: 15ch;
 		aspect-ratio: 1/1;
 		object-fit: contain;
 		padding: 20px;

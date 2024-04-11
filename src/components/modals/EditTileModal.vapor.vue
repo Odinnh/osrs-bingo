@@ -1,5 +1,5 @@
 <template>
-	<dialog ref="dialog">
+	<dialog class="modal" ref="dialog">
 		<div v-if="props.localTileData">
 			<div>
 				<h2>
@@ -37,22 +37,41 @@
 				<h3 class="font-size-S">Metric</h3>
 				<p>Search and select the metric you want to associate with this tile.</p>
 
-				<template v-if="props.localTileData?.type !== 'exp'">
+				<template v-if="props.localTileData?.type == 'drop'">
 					<VueMultiselect
+						:max="3"
 						v-model="props.localTileData!.metric"
 						:options="filteredMetrics"
-						:close-on-select="true"
+						:multiple="true"
+						:close-on-select="false"
 						:clear-on-select="false"
+						:preserve-search="true"
 						:allow-empty="true"
 						placeholder="Choose a metric to track progress"
 					/>
 				</template>
-				<template v-else>
+				<template v-if="props.localTileData?.type == 'kc'">
 					<VueMultiselect
+						:max="3"
 						v-model="props.localTileData!.metric"
-						:options="SKILLS"
-						:close-on-select="true"
+						:options="filteredKC"
+						:multiple="true"
+						:close-on-select="false"
 						:clear-on-select="false"
+						:preserve-search="true"
+						:allow-empty="true"
+						placeholder="Choose a metric to track progress"
+					/>
+				</template>
+				<template v-if="props.localTileData?.type == 'exp'">
+					<VueMultiselect
+						:max="3"
+						v-model="props.localTileData!.metric"
+						:options="filteredSkills"
+						:multiple="true"
+						:close-on-select="false"
+						:clear-on-select="false"
+						:preserve-search="true"
 						:allow-empty="true"
 						placeholder="Choose a metric to track progress"
 					/>
@@ -148,7 +167,7 @@
 				<ul>
 					<li v-for="drop in props.localTileData.drops">
 						{{ drop }}
-						<button icon cancel @click="removeDropFromTile(drop)">delete</button>
+						<button icon outline @click="removeDropFromTile(drop)">delete</button>
 					</li>
 					<li>
 						<input type="text" v-model="newDropForTile" />
@@ -173,12 +192,12 @@
 			</div>
 		</div>
 		<button submit @click="$emit('save')">Save changes</button>
-		<button cancel @click="$emit('cancel')">Cancel</button>
+		<button outline @click="$emit('cancel')">Cancel</button>
 	</dialog>
 </template>
 <script setup lang="ts">
 import { ref, defineEmits } from 'vue'
-import { SKILLS, METRICS } from '@wise-old-man/utils'
+import { SKILLS, METRICS, BOSSES } from '@wise-old-man/utils'
 import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import VueMultiselect from 'vue-multiselect'
 
@@ -213,10 +232,13 @@ const removeDropFromTile = (drop: { id: string; name: string }): void => {
 		props.localTileData.drops.splice(props.localTileData.drops.indexOf(drop), 1)
 	}
 }
-
+// metrics filtering
+const filteredKC = ref(BOSSES)
+const filteredSkills = ref(SKILLS.filter((metric) => !['overall'].includes(metric)))
 const filteredMetrics = ref(
-	METRICS.filter((metric) => !['ehb', 'ehp', 'league_points'].includes(metric))
+	METRICS.filter((metric) => !['ehb', 'ehp', 'league_points', 'overall'].includes(metric))
 )
+
 const showModal = () => {
 	if (dialog.value) {
 		dialog.value.showModal()
@@ -234,4 +256,26 @@ defineExpose({
 })
 const emits = defineEmits(['save', 'cancel'])
 </script>
-<style scoped></style>
+<style scoped>
+.modal {
+	width: 60ch;
+	max-width: 1000px;
+	position: relative;
+	& img {
+		background-color: var(--background);
+		width: 15ch;
+		aspect-ratio: 1/1;
+		object-fit: contain;
+		padding: 20px;
+		border-radius: var(--border-radius);
+	}
+	.close-modal {
+		top: 20px;
+		right: 20px;
+		position: absolute;
+		--color: var(--secondary);
+		color: var(--dark);
+		font-weight: bold;
+	}
+}
+</style>
