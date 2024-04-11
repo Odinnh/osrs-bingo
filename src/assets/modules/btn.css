@@ -74,13 +74,14 @@ a.btn {
 		--border-color: var(--color);
 	}
 }
-
+[icon] {
+	font-family: 'Material Symbols Outlined';
+	line-height: 1em;
+}
 button[icon],
 a.btn[icon] {
 	padding: 0.5ch;
-	line-height: 1rem;
 	border-radius: 10px;
-	font-family: 'Material Symbols Outlined';
 }
 a.btn[dissabled='true'] {
 	pointer-events: none;

@@ -78,7 +78,7 @@
 				</template>
 			</div>
 			<hr />
-			<div v-if="props.localTileData && props.localTileData.repeatable?.toString()">
+			<div v-if="props.localTileData">
 				<h3 class="font-size-S">Repeatable tile</h3>
 				<p>
 					Can the competitors complete the tile multiple times and gain points each time?
@@ -196,7 +196,7 @@
 	</dialog>
 </template>
 <script setup lang="ts">
-import { ref, defineEmits } from 'vue'
+import { ref } from 'vue'
 import { SKILLS, METRICS, BOSSES } from '@wise-old-man/utils'
 import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import VueMultiselect from 'vue-multiselect'
@@ -209,7 +209,7 @@ const props = defineProps<{
 }>()
 
 const dialog = ref<ModalElement>()
-const newDropForTile = ref('')
+const newDropForTile = ref<string>('')
 
 const addDropToTile = (): void => {
 	if (props.localTileData) {
@@ -247,6 +247,7 @@ const showModal = () => {
 
 const closeModal = () => {
 	if (dialog.value) {
+		newDropForTile.value = ''
 		dialog.value.close()
 	}
 }

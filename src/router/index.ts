@@ -1,4 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { getCurrentUser, useDocument } from 'vuefire'
+import { doc } from 'firebase/firestore'
+import { db } from '@/firebaseSettings'
+
 // views
 import home from '@/views/home.vapor.vue'
 import newBoard from '@/views/newBoard.vapor.vue'
@@ -6,9 +10,7 @@ import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
 import viewBoard from '@/views/viewBoard.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
-import { getCurrentUser, useDocument } from 'vuefire'
-import { doc } from 'firebase/firestore'
-import { db } from '@/firebaseSettings'
+import TeamViewer from '@/views/teamViewer.vapor.vue'
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -34,6 +36,11 @@ const router = createRouter({
 			component: editBoard
 		},
 		{
+			path: '/teams/:boardUUID',
+			name: 'teamViewer',
+			component: TeamViewer
+		},
+		{
 			path: '/color/',
 			name: 'color',
 			component: colorPallete
@@ -46,7 +53,10 @@ const router = createRouter({
 	]
 })
 router.beforeEach(async (to) => {
-	if (to.name == 'editBoard' && !(await userIsAuthenticated(to.params.boardUUID as string))) {
+	if (
+		['editBoard', 'teamViewer'].includes(to.name as string) &&
+		!(await userIsAuthenticated(to.params.boardUUID as string))
+	) {
 		return { name: 'loginScreen' }
 	}
 	if (to.name == 'createNewBingo' && !(await isUserLoggedIn())) {
