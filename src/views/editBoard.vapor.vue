@@ -27,7 +27,7 @@
 		<button cancel @click="cancelEditBoard()">cancel</button>
 	</section>
 	<section id="controlls-are-viewing" v-else>
-		<button @click="editBoard()">move / edit</button>
+		<button class="startEditing" @click="editBoard()">move / edit</button>
 	</section>
 
 	<section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
@@ -38,31 +38,37 @@
 			:key="tile.id"
 		>
 			<img class="tile--image" :src="tile.image" />
-			<button
-				icon
-				cancel
-				v-if="isEditingBoard"
-				@click="
-					() => {
-						selectedTile = tile
-						showModal()
-					}
-				"
-			>
-				delete
-			</button>
-			<button
-				icon
-				v-if="isEditingBoard"
-				@click="
-					() => {
-						selectedTile = tile
-						editTile()
-					}
-				"
-			>
-				edit
-			</button>
+			<div class="controls">
+				<button
+					icon
+					cancel
+					v-if="isEditingBoard"
+					@click="
+						() => {
+							isDeletingTile = true
+							selectedTile = tile
+							showModal()
+						}
+					"
+				>
+					delete
+				</button>
+				<button
+					icon
+					@click="
+						() => {
+							isEditingTile = true
+							selectedTile = tile
+							editTile()
+						}
+					"
+				>
+					edit
+				</button>
+				<button move class="handle" v-if="isEditingBoard" icon @click.prevent title="move">
+					drag_pan
+				</button>
+			</div>
 		</div>
 		<button
 			v-if="list.length < 100"
@@ -129,6 +135,7 @@ const widthInputForm = ref<HTMLInputElement>()
 //state
 const isEditingBoard = ref<boolean>(false)
 const isEditingTile = ref<boolean>(false)
+const isDeletingTile = ref<boolean>(false)
 
 const selectedTile = ref<Tile | null>()
 const localTileData = ref<Tile | null>(null)
@@ -175,18 +182,18 @@ const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 
 // modal functions
 const showModal = (): void => {
-	if (modalEle.value && modalEle.value.showModal) {
+	if (modalEle.value && modalEle.value.showModal && isDeletingTile.value) {
 		modalEle.value.showModal()
 	}
-	if (asideModalEle.value && asideModalEle.value.showModal) {
+	if (asideModalEle.value && asideModalEle.value.showModal && isEditingTile.value) {
 		asideModalEle.value.showModal()
 	}
 }
 const closeModal = (): void => {
-	if (modalEle.value && modalEle.value.closeModal) {
+	if (modalEle.value && modalEle.value.closeModal && isDeletingTile.value) {
 		modalEle.value.closeModal()
 	}
-	if (asideModalEle.value && asideModalEle.value.closeModal) {
+	if (asideModalEle.value && asideModalEle.value.closeModal && isEditingTile.value) {
 		asideModalEle.value.closeModal()
 	}
 }
@@ -261,16 +268,7 @@ const saveBoard = async (): Promise<void> => {
 			} else if (JSON.stringify(matchingTile) !== JSON.stringify(tileData)) {
 				// If the tile exists in both Firestore and the list but has changed, update it
 				const tileDocRef = doc(tilesCollectionRef, tileId)
-				batch.set(tileDocRef, {
-					id: matchingTile.id,
-					title: matchingTile.title,
-					description: matchingTile.description,
-					image: matchingTile.image,
-					type: matchingTile.type,
-					needAny: matchingTile.needAny,
-					points: matchingTile.points,
-					count: matchingTile.count
-				})
+				batch.update(tileDocRef, matchingTile)
 			}
 		})
 
@@ -278,16 +276,7 @@ const saveBoard = async (): Promise<void> => {
 		list.value.forEach((tile) => {
 			if (!existingTiles[tile.id]) {
 				const tileDocRef = doc(tilesCollectionRef, tile.id)
-				batch.set(tileDocRef, {
-					id: tile.id,
-					title: tile.title,
-					description: tile.description,
-					image: tile.image,
-					type: tile.type,
-					needAny: tile.needAny,
-					points: tile.points,
-					count: tile.count
-				})
+				batch.set(tileDocRef, tile)
 			}
 		})
 
@@ -413,6 +402,7 @@ dialog img {
 	grid-template-columns: repeat(var(--width), 1fr);
 	gap: 1%;
 	& .tile {
+		padding: 10%;
 		border: 1px solid var(--primary);
 		border-radius: var(--border-radius);
 		position: relative;
@@ -420,6 +410,12 @@ dialog img {
 		aspect-ratio: 1;
 		&:hover {
 			scale: 1.05;
+		}
+		.controls {
+			display: flex;
+			width: 100%;
+			justify-content: space-evenly;
+			align-self: end;
 		}
 		& .tile--image {
 			position: absolute;
