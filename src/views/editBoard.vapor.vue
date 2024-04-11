@@ -216,6 +216,7 @@ useSortable(el, sortedList, {
 	inverted: true,
 	handle: '.handle',
 	ghostClass: 'blue-background-class',
+	animation: 200,
 	onUpdate: (e: any) => {
 		moveArrayElement(sortedList.value, e.oldIndex, e.newIndex)
 
@@ -402,6 +403,7 @@ dialog img {
 	grid-template-columns: repeat(var(--width), 1fr);
 	gap: 1%;
 	& .tile {
+		display: flex;
 		padding: 10%;
 		border: 1px solid var(--primary);
 		border-radius: var(--border-radius);
@@ -415,7 +417,8 @@ dialog img {
 			display: flex;
 			width: 100%;
 			justify-content: space-evenly;
-			align-self: end;
+			align-self: flex-end;
+			position: relative;
 		}
 		& .tile--image {
 			position: absolute;
@@ -425,9 +428,6 @@ dialog img {
 			transform-origin: center center;
 			aspect-ratio: 1/1;
 			object-fit: contain;
-		}
-		button {
-			position: relative;
 		}
 	}
 }
