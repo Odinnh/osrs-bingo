@@ -71,7 +71,7 @@ body {
 	color: var(--color-text);
 	font-family: 'Roboto Flex';
 	font-weight: 400;
-	font-size: 1rem;
+	font-size: 16px;
 	line-height: var(--size-8);
 	padding-block: 0;
 	margin-block: 0;

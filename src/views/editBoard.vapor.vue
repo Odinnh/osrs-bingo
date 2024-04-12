@@ -55,7 +55,7 @@
 		<button outline @click="cancelEditBoard()">cancel</button>
 	</section>
 	<section id="controlls-are-viewing" v-else>
-		<button class="startEditing" @click="editBoard()">move / edit</button>
+		<button class="startEditing" @click="editBoard()">reorder / edit board</button>
 	</section>
 
 	<section ref="el" class="board" :style="{ '--width': widthInput, position: 'relative' }">
@@ -126,7 +126,7 @@ import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
 
 // Component imports
-import modal from '@/components/modal.vapor.vue'
+import modal from '@/components/Modal.vapor.vue'
 import TileDialog from '@/components/modals/EditTileModal.vapor.vue'
 
 // type imports

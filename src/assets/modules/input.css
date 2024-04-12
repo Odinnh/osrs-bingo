@@ -50,3 +50,7 @@ fieldset {
 	border-style: solid;
 	border-radius: var(--border-radius-toggle);
 }
+
+input {
+	font-size: 1rem;
+}

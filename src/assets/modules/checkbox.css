@@ -29,7 +29,6 @@ input[type='checkbox'][toggle]::after {
 	height: calc(var(--_scale) - (var(--_border-width) * 2.5));
 	background-color: var(--color-background);
 	border-radius: 50%;
-
 	transition: all 200ms;
 }
 
@@ -38,6 +37,8 @@ input[type='checkbox'][toggle]:not([choice]):checked {
 }
 input[type='checkbox'][toggle]:checked::after {
 	left: calc(var(--_scale) - (var(--_border-width) * 2) - (var(--_spacing) * 2));
+}
+input[type='checkbox'][toggle]:not([choice]):checked::after {
 	background-color: var(--color-background__inv);
 }
 input[type='checkbox']:not([toggle]) {

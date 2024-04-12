@@ -1,45 +1,86 @@
 <template>
 	<dialog class="modal" ref="dialog">
 		<div v-if="props.localTileData">
-			<div>
-				<img :src="props.localTileData!.image" />
-				<br />
-				<label
-					>Image URL: <input required type="url" v-model="props.localTileData.image"
-				/></label>
+			<div class="left-column">
+				<div class="img-container">
+					<img :src="props.localTileData!.image" />
+					<input required type="url" v-model="props.localTileData.image" />
+				</div>
+				<tiptapEditor class="editable" v-model="props.localTileData.description" />
 			</div>
 			<div>
-				<h2
-					class="fs-1"
-					:contenteditable="isTitleEdit"
-					ref="props.localTileData?.title"
-					{{
-					}}
-				>
-					{{ props.localTileData?.title }}
+				<h2 @click="focusOn('#title')" class="fs-1 title">
+					<span
+						ref="props.localTileData.title"
+						contenteditable
+						class="editable"
+						spellcheck="false"
+						@focus="isTitleEdit = true"
+						@keydown.prevent.enter="
+							(event) => {
+								isTitleEdit = false
+								validate(event)
+							}
+						"
+						@blur.prevent="
+							(event) => {
+								isTitleEdit = false
+								validate(event)
+							}
+						"
+						name="title"
+						id="title"
+					>
+						{{ props.localTileData.title }} </span
+					><span icon class="pen fs-4">
+						<font-awesome-icon :icon="['fas', 'pen']" />
+					</span>
 				</h2>
 				<small
 					><code>{{ props.localTileData?.id }}</code></small
 				>
-				<input type="text" v-model="props.localTileData!.title" />
-				<h3 class="font-size-S">Description</h3>
-				<tiptapEditor class="editable" v-model="props.localTileData.description" />
+				<div>
+					<h3 class="fs-4">Tile type</h3>
+					<VueMultiselect
+						v-model="props.localTileData!.type"
+						:options="['drop', 'exp', 'kc']"
+						:close-on-select="true"
+						:clear-on-select="false"
+						:allow-empty="false"
+					/>
+				</div>
+				<div v-if="props.localTileData?.type == 'drop'">
+					<h3 class="fs-4">Drops</h3>
+					<p>
+						Add drops to the list of valid drops and configure the required amount.<br /><em
+							>if none are set it defaults to target count</em
+						>
+					</p>
+					<label>
+						Individual count
+						<input
+							type="checkbox"
+							toggle
+							choice
+							v-model="props.localTileData.needAny"
+						/>
+						Total count
+					</label>
+					<ul class="drop-list">
+						<li v-for="drop in props.localTileData.drops">
+							{{ drop }}
+							<button icon outline @click="removeDropFromTile(drop)">delete</button>
+						</li>
+						<li>
+							<input type="text" v-model="newDropForTile" />
+							<button @click="addDropToTile">Add Drop</button>
+						</li>
+					</ul>
+				</div>
 			</div>
+
 			<div>
-				<h3 class="font-size-S">Tile type</h3>
-				<p>Choose any of the different tile types.</p>
-				<VueMultiselect
-					v-model="props.localTileData!.type"
-					:options="['drop', 'exp', 'kc']"
-					:close-on-select="true"
-					:clear-on-select="false"
-					:allow-empty="true"
-					placeholder="Choose a tile Type"
-				/>
-			</div>
-			<hr />
-			<div>
-				<h3 class="font-size-S">Metric</h3>
+				<h3 class="fs-4">Metric</h3>
 				<p>Search and select the metric you want to associate with this tile.</p>
 
 				<template v-if="props.localTileData?.type == 'drop'">
@@ -82,7 +123,6 @@
 					/>
 				</template>
 			</div>
-			<hr />
 			<div v-if="props.localTileData">
 				<h3 class="font-size-S">Repeatable tile</h3>
 				<p>
@@ -94,7 +134,6 @@
 					{{ props.localTileData.repeatable }}</label
 				>
 			</div>
-			<hr />
 			<div>
 				<h3 class="font-size-S">Points and count</h3>
 				<p>the points the competitors will get when they complete the tile</p>
@@ -164,38 +203,14 @@
 						v-model="props.localTileData!.max"
 				/></label>
 			</div>
-			<template v-if="props.localTileData?.type == 'drop'">
-				<hr />
-			</template>
-			<div v-if="props.localTileData?.type == 'drop'">
-				<h3 class="font-size-S">Drops</h3>
-				<p>add drops to the list of valid drops</p>
-				<ul>
-					<li v-for="drop in props.localTileData.drops">
-						{{ drop }}
-						<button icon outline @click="removeDropFromTile(drop)">delete</button>
-					</li>
-					<li>
-						<input type="text" v-model="newDropForTile" />
-						<button @click="addDropToTile">Add Drop</button>
-					</li>
-				</ul>
-			</div>
+			<template v-if="props.localTileData?.type == 'drop'"> </template>
 
 			<!-- a checkbox that toggles between AND or OR using props.localTileData>selector-->
 			<div v-if="props.localTileData && props.localTileData.needAny.toString()">
-				<h3 class="font-size-S">Need Any or All?</h3>
+				<h3 class="fs-4">Need Any or All?</h3>
 				<p>
 					do the competors need to achieve all of the requirements to complete the tile?
 				</p>
-				<label
-					>All<input
-						type="checkbox"
-						toggle
-						choice
-						v-model="props.localTileData.needAny"
-					/>Any</label
-				>
 			</div>
 		</div>
 		<button submit @click="$emit('save')">Save changes</button>
@@ -220,7 +235,7 @@ const dialog = ref<ModalElement>()
 const newDropForTile = ref<string>('')
 
 const addDropToTile = (): void => {
-	if (props.localTileData) {
+	if (props.localTileData && ![undefined, ''].includes(newDropForTile.value)) {
 		if (props.localTileData.drops) {
 			props.localTileData.drops.push({
 				id: tinyid(),
@@ -263,12 +278,25 @@ defineExpose({
 	showModal,
 	closeModal
 })
+const focusOn = (el: any) => {
+	document.querySelector(el).focus()
+}
+
+const validate = (event: any) => {
+	if ([undefined, ''].includes(event.target.innerHTML)) {
+		event.target.innerHTML = 'Please enter a title...'
+	}
+	props.localTileData!.title = event.target.innerHTML
+}
 const emits = defineEmits(['save', 'cancel'])
 </script>
 <style scoped>
+dialog {
+	width: 800px;
+}
 dialog > div {
 	display: grid;
-	grid-template-columns: 25% 75%;
+	grid-template-columns: 33% 67%;
 	gap: var(--gap);
 }
 dialog img {
@@ -278,5 +306,38 @@ dialog img {
 	padding: 5px;
 	border: 1px solid var(--color-background__inv);
 	border-radius: var(--border-radius);
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+}
+dialog img + [type='url'] {
+	width: 100%;
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+	border-top-color: transparent;
+}
+.img-container {
+	display: flex;
+	flex-direction: column;
+}
+.left-column {
+	display: flex;
+	flex-direction: column;
+	gap: var(--gap);
+}
+
+.title span {
+	outline: unset;
+	border: 1px solid transparent;
+	display: inline-block;
+	word-break: break-word;
+	&:focus-within {
+		border: 1px solid var(--color-background__inv);
+		border-radius: var(--border-radius);
+	}
+}
+.drop-list {
+	list-style-type: none;
+	margin: inherit;
+	padding: inherit;
 }
 </style>

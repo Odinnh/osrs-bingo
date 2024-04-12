@@ -274,6 +274,7 @@ fieldset[disabled] .multiselect {
 .multiselect__select::before {
 	position: relative;
 	right: 0;
+	z-index: 1;
 	top: 80%;
 	color: var(--_color-placeholder);
 	margin-top: 4px;
