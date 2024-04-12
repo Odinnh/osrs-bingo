@@ -1,4 +1,32 @@
 <template>
+	<section>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'editBoard',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>edit</a
+		>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'viewBoard',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>visibility</a
+		>
+	</section>
 	<section id="board-info">
 		<h1 v-if="boardData">
 			{{ boardData.name }}
@@ -37,45 +65,17 @@
 			v-for="tile in sortedList"
 			:key="tile.id"
 		>
-			<img class="tile--image" :src="tile.image" />
-			<div class="controls">
-				<button
-					icon
-					outline
-					v-if="isEditingBoard"
-					@click="
-						() => {
-							isDeletingTile = true
-							selectedTile = tile
-							showModal()
-						}
-					"
-				>
-					delete
-				</button>
-				<button
-					icon
-					@click="
-						() => {
-							isEditingTile = true
-							selectedTile = tile
-							editTile()
-						}
-					"
-				>
-					edit
-				</button>
-				<button
-					dragdrop
-					class="handle"
-					v-if="isEditingBoard"
-					icon
-					@click.prevent
-					title="move"
-				>
-					drag_pan
-				</button>
-			</div>
+			<img
+				class="tile--image"
+				:src="tile.image"
+				@click="
+					() => {
+						isEditingTile = true
+						selectedTile = tile
+						editTile()
+					}
+				"
+			/>
 		</div>
 		<button
 			v-if="list.length < 100 && isEditingBoard"
@@ -115,7 +115,7 @@ const title = useTitle()
 title.value = 'Edit board - Bingo Bongo'
 // base imports
 import { computed, nextTick, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
@@ -133,6 +133,7 @@ import TileDialog from '@/components/modals/EditTileModal.vapor.vue'
 import type { ModalElement, Tile } from '@/types'
 
 const route = useRoute()
+const router = useRouter()
 //DOM elements
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
@@ -395,4 +396,48 @@ const RemoveTileFromList = (): void => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.editable {
+	background-color: var(--background);
+	border-radius: var(--border-radius);
+}
+dialog img {
+	width: 100px;
+	aspect-ratio: 1/1;
+	object-fit: contain;
+}
+.board {
+	display: grid;
+	grid-template-columns: repeat(var(--width), 1fr);
+	gap: 0.5vw;
+	& .tile {
+		padding: 10%;
+		border: 1px solid var(--color-text);
+		border-radius: var(--border-radius);
+		position: relative;
+		width: 100%;
+		aspect-ratio: 1;
+		&:hover {
+			scale: 1.05;
+			cursor: move;
+		}
+		& .tile--image {
+			position: absolute;
+			width: 80%;
+			inset: 0;
+			margin: auto;
+			transform-origin: center center;
+			aspect-ratio: 1/1;
+			object-fit: contain;
+		}
+		button {
+			position: relative;
+		}
+	}
+}
+.add_tile {
+	font-size: 1;
+	padding: 0;
+	aspect-ratio: 1;
+}
+</style>

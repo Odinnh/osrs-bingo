@@ -10,11 +10,25 @@ body {
 	min-height: 100vh;
 }
 main {
-	width: 80vw;
 	margin-inline: auto;
-	max-width: 1000px;
-	padding: 4ch;
 }
+
+body {
+	padding: 2ch; /* Assuming your padding value here */
+}
+
+main {
+	max-width: 1000px;
+	width: 80vw;
+	margin: 0 auto; /* Center the main content horizontally */
+}
+
+@media (max-width: 1250px) {
+	main {
+		width: calc(100% - 4ch); /* Adjust the width to account for body padding */
+	}
+}
+
 code {
 	font-family: monospace;
 	font-size: 1rem;
@@ -23,7 +37,7 @@ code {
 }
 
 dialog {
-	background-color: color-mix(in srgb, var(--background-alt), transparent 50%);
+	background-color: var(--color-background);
 	border: none;
 	border-radius: var(--border-radius);
 	color: var(--text);

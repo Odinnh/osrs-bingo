@@ -2,23 +2,28 @@
 	<dialog class="modal" ref="dialog">
 		<div v-if="props.localTileData">
 			<div>
-				<h2>
-					Edit tile: {{ props.localTileData?.title }}
-					<small
-						><code>{{ props.localTileData?.id }}</code></small
-					>
-				</h2>
-				<input type="text" v-model="props.localTileData!.title" />
-				<h3 class="font-size-S">Description</h3>
-				<tiptapEditor class="editable" v-model="props.localTileData.description" />
-			</div>
-			<div>
-				<h3 class="font-size-S">Image</h3>
 				<img :src="props.localTileData!.image" />
 				<br />
 				<label
 					>Image URL: <input required type="url" v-model="props.localTileData.image"
 				/></label>
+			</div>
+			<div>
+				<h2
+					class="fs-1"
+					:contenteditable="isTitleEdit"
+					ref="props.localTileData?.title"
+					{{
+					}}
+				>
+					{{ props.localTileData?.title }}
+				</h2>
+				<small
+					><code>{{ props.localTileData?.id }}</code></small
+				>
+				<input type="text" v-model="props.localTileData!.title" />
+				<h3 class="font-size-S">Description</h3>
+				<tiptapEditor class="editable" v-model="props.localTileData.description" />
 			</div>
 			<div>
 				<h3 class="font-size-S">Tile type</h3>
@@ -84,7 +89,8 @@
 					Can the competitors complete the tile multiple times and gain points each time?
 				</p>
 				<label
-					>Repeatable <input type="checkbox" v-model="props.localTileData.repeatable" />
+					>Repeatable
+					<input toggle type="checkbox" v-model="props.localTileData.repeatable" />
 					{{ props.localTileData.repeatable }}</label
 				>
 			</div>
@@ -185,6 +191,7 @@
 				<label
 					>All<input
 						type="checkbox"
+						toggle
 						choice
 						v-model="props.localTileData.needAny"
 					/>Any</label
@@ -208,6 +215,7 @@ const props = defineProps<{
 	localTileData: Tile | null
 }>()
 
+const isTitleEdit = ref(false)
 const dialog = ref<ModalElement>()
 const newDropForTile = ref<string>('')
 
@@ -258,25 +266,17 @@ defineExpose({
 const emits = defineEmits(['save', 'cancel'])
 </script>
 <style scoped>
-.modal {
-	width: 60ch;
-	max-width: 1000px;
-	position: relative;
-	& img {
-		background-color: var(--background);
-		width: 15ch;
-		aspect-ratio: 1/1;
-		object-fit: contain;
-		padding: 20px;
-		border-radius: var(--border-radius);
-	}
-	.close-modal {
-		top: 20px;
-		right: 20px;
-		position: absolute;
-		--color: var(--secondary);
-		color: var(--dark);
-		font-weight: bold;
-	}
+dialog > div {
+	display: grid;
+	grid-template-columns: 25% 75%;
+	gap: var(--gap);
+}
+dialog img {
+	width: 100%;
+	aspect-ratio: 1/1;
+	object-fit: contain;
+	padding: 5px;
+	border: 1px solid var(--color-background__inv);
+	border-radius: var(--border-radius);
 }
 </style>

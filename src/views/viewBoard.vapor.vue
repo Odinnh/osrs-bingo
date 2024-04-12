@@ -1,5 +1,33 @@
 <template>
 	<template v-if="boardData">
+		<section>
+			<a
+				icon
+				class="btn"
+				@click.prevent="
+					router.push({
+						name: 'editBoard',
+						params: {
+							boardUUID: route.params.boardUUID
+						}
+					})
+				"
+				>edit</a
+			>
+			<a
+				icon
+				class="btn"
+				@click.prevent="
+					router.push({
+						name: 'viewBoard',
+						params: {
+							boardUUID: route.params.boardUUID
+						}
+					})
+				"
+				>visibility</a
+			>
+		</section>
 		<h1>{{ boardData.name }}</h1>
 		<section
 			ref="el"
@@ -62,11 +90,12 @@ import { useTitle } from '@vueuse/core'
 import { db } from '../firebaseSettings'
 import { useDocument, useCollection } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { Tile, ModalElement } from '@/types'
 
 const route = useRoute()
+const router = useRouter()
 const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)
@@ -107,4 +136,34 @@ const closeModal = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.board {
+	display: grid;
+	grid-template-columns: repeat(var(--width), 1fr);
+	gap: 0.5vw;
+	& .tile {
+		padding: 10%;
+		border: 1px solid var(--color-text);
+		border-radius: var(--border-radius);
+		position: relative;
+		width: 100%;
+		aspect-ratio: 1;
+		&:hover {
+			scale: 1.05;
+			cursor: help;
+		}
+		& .tile--image {
+			position: absolute;
+			width: 80%;
+			inset: 0;
+			margin: auto;
+			transform-origin: center center;
+			aspect-ratio: 1/1;
+			object-fit: contain;
+		}
+		button {
+			position: relative;
+		}
+	}
+}
+</style>
