@@ -29,10 +29,11 @@ button,
 	font-family: 'Material Symbols Outlined';
 	font-size: 1.2em;
 }
-.imgbtn {
-	width: 2rem;
-	border-radius: 100vw;
-	width: max-content;
-	height: fit-content;
-	display: inline-block;
+
+:is(button, .button, .btn):hover {
+	color: var(--color-text);
+	background-color: var(--color-background);
+	&[icon] {
+		font-weight: bold;
+	}
 }
