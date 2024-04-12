@@ -27,8 +27,21 @@
 				"
 				>visibility</a
 			>
+			<a
+				icon
+				class="btn"
+				@click.prevent="
+					router.push({
+						name: 'teamViewer',
+						params: {
+							boardUUID: route.params.boardUUID
+						}
+					})
+				"
+				>group</a
+			>
 		</section>
-		<h1>{{ boardData.name }}</h1>
+		<h1 class="fs-2">{{ boardData.name }}</h1>
 		<section
 			ref="el"
 			class="board"

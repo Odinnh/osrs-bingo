@@ -13,7 +13,6 @@ button,
 	border: 1px solid var(--color-background__inv);
 	border-radius: var(--border-radius);
 	text-decoration: none;
-	line-height: 1rem;
 }
 
 :is(button, .button, [type='button'])[reset] {
@@ -37,14 +36,19 @@ button,
 	}
 }
 
-:is(input[type='text'], input[type='url'], input[type='number'])
+.linked-start {
+	border-top-right-radius: unset !important;
+	border-bottom-right-radius: unset !important;
+}
+.linked-middle {
+	border-radius: unset !important;
+}
+.linked-end {
+	border-top-left-radius: unset !important;
+	border-bottom-left-radius: unset !important;
+}
+/* :is(input[type='text'], input[type='url'], input[type='number'])
 	+ :is(button, .button, [type='button']) {
 	border-top-left-radius: 0px;
 	border-bottom-left-radius: 0px;
-}
-:is(button, .button, [type='button']):has(
-		:is(input[type='text'], input[type='url'], input[type='number']) + &
-	) {
-	border-top-left-radius: 0px;
-	border-bottom-left-radius: 0px;
-}
+} */

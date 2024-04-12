@@ -1,4 +1,45 @@
 <template>
+	<section>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'editBoard',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>edit</a
+		>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'viewBoard',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>visibility</a
+		>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'teamViewer',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>group</a
+		>
+	</section>
 	<div>
 		<h1>teams</h1>
 	</div>
@@ -22,7 +63,7 @@
 <script setup lang="ts">
 import { useCollection } from 'vuefire'
 
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 import { ref } from 'vue'
 
@@ -33,6 +74,7 @@ import { collection, doc, writeBatch } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 
 const route = useRoute()
+const router = useRouter()
 const { data: teamsData, promise: teamsDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Groups')
 )

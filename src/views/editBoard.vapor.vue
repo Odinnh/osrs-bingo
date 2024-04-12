@@ -26,12 +26,25 @@
 			"
 			>visibility</a
 		>
+		<a
+			icon
+			class="btn"
+			@click.prevent="
+				router.push({
+					name: 'teamViewer',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				})
+			"
+			>group</a
+		>
 	</section>
 	<section id="board-info">
-		<h1 v-if="boardData">
+		<h1 v-if="boardData" class="fs-2">
 			{{ boardData.name }}
 		</h1>
-		<code> Board ID: {{ route.params.boardUUID }}</code>
+		Board ID: <code> {{ route.params.boardUUID }}</code>
 	</section>
 	<section id="controlls-are-editing" v-if="isEditingBoard">
 		<button @click="updateWidth('remove')">-</button>
@@ -105,6 +118,7 @@
 		:localTileData="localTileData"
 		@save="saveEditTile"
 		@cancel="cancelEditTile"
+		@delete="primeForRemoval"
 	/>
 </template>
 
@@ -189,6 +203,10 @@ const widthInput = ref<number>(boardData.value?.boardWidth || 5)
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 
 // modal functions
+const primeForRemoval = () => {
+	isDeletingTile.value = true
+	showModal()
+}
 const showModal = (): void => {
 	if (modalEle.value && modalEle.value.showModal && isDeletingTile.value) {
 		modalEle.value.showModal()
@@ -201,7 +219,12 @@ const closeModal = (): void => {
 	if (modalEle.value && modalEle.value.closeModal && isDeletingTile.value) {
 		modalEle.value.closeModal()
 	}
-	if (asideModalEle.value && asideModalEle.value.closeModal && isEditingTile.value) {
+	if (
+		asideModalEle.value &&
+		asideModalEle.value.closeModal &&
+		isEditingTile.value &&
+		!isDeletingTile.value
+	) {
 		asideModalEle.value.closeModal()
 	}
 }
@@ -391,7 +414,8 @@ const RemoveTileFromList = (): void => {
 	if (!selectedTile.value) return
 	list.value = list.value.filter((_tile) => _tile.id !== selectedTile.value!.id)
 	orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
-	closeModal()
+	modalEle.value!.closeModal()
+	asideModalEle.value!.closeModal()
 	return
 }
 </script>
@@ -417,9 +441,9 @@ dialog img {
 		position: relative;
 		width: 100%;
 		aspect-ratio: 1;
+
 		&:hover {
 			scale: 1.05;
-			cursor: move;
 		}
 		& .tile--image {
 			position: absolute;
@@ -434,6 +458,9 @@ dialog img {
 			position: relative;
 		}
 	}
+}
+.handle:hover {
+	cursor: move;
 }
 .add_tile {
 	font-size: 1;

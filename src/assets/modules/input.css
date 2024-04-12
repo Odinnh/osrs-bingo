@@ -5,6 +5,7 @@ input[type='number'] {
 	padding: var(--padding-block) var(--padding-inline);
 	background-color: var(--color-background);
 	border-radius: var(--border-radius);
+	color: var(--color-text);
 }
 progress[value],
 input[type='range'] {

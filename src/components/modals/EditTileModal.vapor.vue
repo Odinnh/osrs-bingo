@@ -8,7 +8,7 @@
 				</div>
 				<tiptapEditor class="editable" v-model="props.localTileData.description" />
 			</div>
-			<div>
+			<div class="right-column">
 				<h2 @click="focusOn('#title')" class="fs-1 title">
 					<span
 						ref="props.localTileData.title"
@@ -36,9 +36,12 @@
 						<font-awesome-icon :icon="['fas', 'pen']" />
 					</span>
 				</h2>
-				<small
-					><code>{{ props.localTileData?.id }}</code></small
-				>
+				<button submit @click="$emit('save')">Save changes</button>
+				<button cancel @click="$emit('cancel')">Cancel</button>
+				<button icon @click="$emit('delete')">delete</button>
+				<small>
+					tile id: <code>{{ props.localTileData?.id }}</code>
+				</small>
 				<div>
 					<h3 class="fs-4">Tile type</h3>
 					<VueMultiselect
@@ -56,23 +59,69 @@
 							>if none are set it defaults to target count</em
 						>
 					</p>
-					<label>
-						Individual count
-						<input
-							type="checkbox"
-							toggle
-							choice
-							v-model="props.localTileData.needAny"
-						/>
-						Total count
-					</label>
+					<div>
+						<label>
+							Individual count
+							<input
+								type="checkbox"
+								toggle
+								choice
+								v-model="props.localTileData.needAny"
+							/>
+							Total count
+						</label>
+					</div>
+					<div v-if="props.localTileData.needAny">
+						<label
+							>Total count:
+							<input type="number" min="0" v-model="props.localTileData!.count"
+						/></label>
+					</div>
 					<ul class="drop-list">
-						<li v-for="drop in props.localTileData.drops">
-							{{ drop }}
+						<li
+							style="padding-block: var(--size-5)"
+							v-for="drop in props.localTileData.drops"
+						>
+							<div class="drop-row">
+								<div>
+									{{ drop.name }}
+									<small
+										v-if="(drop.min || drop.max) && props.localTileData.needAny"
+									>
+										<span v-if="drop.min">min : {{ drop.min }}</span>
+										<span v-if="drop.min && drop.max">/</span>
+										<span v-if="drop.max">max : {{ drop.max }}</span>
+									</small>
+								</div>
+								<div v-if="!props.localTileData.needAny">{{ drop.count }}</div>
+							</div>
 							<button icon outline @click="removeDropFromTile(drop)">delete</button>
 						</li>
-						<li>
-							<input type="text" v-model="newDropForTile" />
+						<li style="padding-block: var(--size-5)">
+							<div>
+								Drop:
+								<input type="text" v-model="newDropForTile.name" />
+							</div>
+							<div v-if="!props.localTileData.needAny">
+								Required count:
+								<input type="number" v-model="newDropForTile.count" />
+							</div>
+							<div v-if="props.localTileData.needAny">
+								Min count:
+								<input
+									type="number"
+									placeholder="unset"
+									v-model="newDropForTile.min"
+								/>
+							</div>
+							<div v-if="props.localTileData.needAny">
+								Max count:
+								<input
+									type="number"
+									placeholder="unset"
+									v-model="newDropForTile.max"
+								/>
+							</div>
 							<button @click="addDropToTile">Add Drop</button>
 						</li>
 					</ul>
@@ -135,72 +184,11 @@
 				>
 			</div>
 			<div>
-				<h3 class="font-size-S">Points and count</h3>
+				<h3 class="fs-4">Points</h3>
 				<p>the points the competitors will get when they complete the tile</p>
 				<label
 					>points value:
 					<input type="number" min="0" v-model="props.localTileData!.points"
-				/></label>
-				<p>
-					amount that is needed to complete the tile <br /><em
-						>a.e. 200.000.000 slayer exp or 5 unique barrows items</em
-					>
-				</p>
-				<label
-					>count: <input type="number" min="0" v-model="props.localTileData!.count"
-				/></label>
-
-				<p>
-					this is the minimum required amount for the tile<br />
-					<em
-						>a.e. if the count is 5 and you want the team to collect at least one of
-						each item, the minimum would be 1</em
-					>
-				</p>
-				<label
-					>minimum count:
-					<input
-						placeholder="unset"
-						type="number"
-						min="0"
-						v-if="props.localTileData !== null"
-						@blur="
-							() => {
-								if (!props.localTileData) return
-
-								if (props.localTileData.min == undefined) {
-									return
-								}
-								props.localTileData.min =
-									props.localTileData.min < 0 ? 0 : props.localTileData.min
-							}
-						"
-						v-model="props.localTileData.min"
-				/></label>
-				<p>
-					this is the maximum amount for the tile<br />
-					<em
-						>a.e. if the count is 5 and you want the team to collect at most two of each
-						item, the maximum would be 2</em
-					>
-				</p>
-				<label
-					>maximum count:
-					<input
-						placeholder="unset"
-						type="number"
-						min="0"
-						@blur="
-							() => {
-								if (!props.localTileData) return
-								if (props.localTileData.max == undefined) {
-									return
-								}
-								props.localTileData.max =
-									props.localTileData.max < 0 ? 0 : props.localTileData.max
-							}
-						"
-						v-model="props.localTileData!.max"
 				/></label>
 			</div>
 			<template v-if="props.localTileData?.type == 'drop'"> </template>
@@ -213,8 +201,6 @@
 				</p>
 			</div>
 		</div>
-		<button submit @click="$emit('save')">Save changes</button>
-		<button outline @click="$emit('cancel')">Cancel</button>
 	</dialog>
 </template>
 <script setup lang="ts">
@@ -232,21 +218,29 @@ const props = defineProps<{
 
 const isTitleEdit = ref(false)
 const dialog = ref<ModalElement>()
-const newDropForTile = ref<string>('')
+const newDropForTile = ref({
+	name: '',
+	count: 0,
+	min: undefined,
+	max: undefined
+})
 
 const addDropToTile = (): void => {
-	if (props.localTileData && ![undefined, ''].includes(newDropForTile.value)) {
+	if (props.localTileData && ![undefined, ''].includes(newDropForTile.value.name)) {
 		if (props.localTileData.drops) {
 			props.localTileData.drops.push({
 				id: tinyid(),
-				name: newDropForTile.value
+				...newDropForTile.value
 			}) as unknown as Tile['drops']
 		} else {
-			props.localTileData.drops = [{ id: tinyid(), name: newDropForTile.value }]
+			props.localTileData.drops = [{ id: tinyid(), ...newDropForTile.value }]
 		}
+		newDropForTile.value.count = 0
+		newDropForTile.value.min = undefined
+		newDropForTile.value.max = undefined
 	}
 }
-const removeDropFromTile = (drop: { id: string; name: string }): void => {
+const removeDropFromTile = (drop: { id: string; name: string; count: number }): void => {
 	if (
 		props.localTileData &&
 		props.localTileData.drops &&
@@ -270,7 +264,7 @@ const showModal = () => {
 
 const closeModal = () => {
 	if (dialog.value) {
-		newDropForTile.value = ''
+		newDropForTile.value.name = ''
 		dialog.value.close()
 	}
 }
@@ -288,7 +282,7 @@ const validate = (event: any) => {
 	}
 	props.localTileData!.title = event.target.innerHTML
 }
-const emits = defineEmits(['save', 'cancel'])
+const emits = defineEmits(['save', 'cancel', 'delete'])
 </script>
 <style scoped>
 dialog {
@@ -339,5 +333,12 @@ dialog img + [type='url'] {
 	list-style-type: none;
 	margin: inherit;
 	padding: inherit;
+}
+.drop-row {
+	display: flex;
+	justify-content: space-between;
+}
+.right-column {
+	width: 100%;
 }
 </style>
