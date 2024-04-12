@@ -1,96 +1,38 @@
 button,
-a.btn {
-	display: inline-block;
-	user-select: none;
+.button,
+.btn,
+[type='button'] {
+	appearance: none;
 	font-size: 1rem;
+	display: inline-block;
 	cursor: pointer;
-	--color: var(--primary-500);
-	--color-0: color-mix(in srgb, var(--color) 30%, var(--background));
-	--color-100: color-mix(in srgb, var(--color) 70%, var(--background));
-	--background-color: var(--color);
-	--border-color: var(--color);
-	background-color: var(--background-color);
-	color: var(--text);
-	padding: 1ch 2ch;
-	border: 1px solid var(--background-color);
-
-	&[big] {
-		font-size: 1.5rem;
-	}
-	&[submit] {
-		--color: var(--secondary);
-		color: var(--dark);
-	}
-	&[outline] {
-		--background-color: var(--background-900);
-		border-color: var(--color);
-		&:active {
-			background-color: var(--background-color);
-		}
-	}
-	&[dragdrop] {
-		cursor: move;
-		--color: var(--light);
-		color: var(--dark);
-	}
+	background-color: var(--color-background__inv);
+	color: var(--color-text__inv);
+	padding-inline: var(--padding-inline);
+	padding-block: var(--padding-block);
+	border: 1px solid var(--color-background__inv);
 	border-radius: var(--border-radius);
-	&:hover {
-		--background-color: var(--color-100);
-	}
-	&:active {
-		color: var(--dark);
-
-		--background-color: var(--color-0);
-	}
-	&:has(+ input, + .input, + select) {
-		border-bottom-right-radius: unset;
-		border-top-right-radius: unset;
-		padding-inline: 1.5ch;
-	}
-	&:is(input + &, .input + &, select + &) {
-		border-bottom-left-radius: unset;
-		border-top-left-radius: unset;
-		padding-inline: 1.5ch;
-	}
+	text-decoration: none;
+	line-height: 1.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-	button,
-	a {
-		--color: var(--primary);
-		--color-0: color-mix(in srgb, var(--color) 30%, var(--text));
-		--color-100: color-mix(in srgb, var(--color) 50%, var(--text));
-		--background-color: var(--color);
-		--border-color: var(--color);
-	}
+:is(button, .button, [type='button'])[reset] {
+	background-color: var(--color-background);
+	color: var(--color-text);
 }
-@media (prefers-color-scheme: light) {
-	button,
-	a {
-		--color: var(--primary);
-		--color-0: color-mix(in srgb, var(--color) 70%, var(--background));
-		--color-100: color-mix(in srgb, var(--color) 50%, var(--background));
-		--background-color: var(--color);
-		--border-color: var(--color);
-	}
+:is(button, .button, [type='button'])[disabled] {
+	background-color: var(--mid);
+	border-color: var(--mid);
+	cursor: no-drop;
 }
 [icon] {
 	font-family: 'Material Symbols Outlined';
-	line-height: 1em;
+	font-size: 1.2em;
 }
-button[icon],
-a.btn[icon] {
-	padding: 0.5ch;
-	border-radius: 10px;
-}
-a.btn[dissabled='true'] {
-	pointer-events: none;
-	cursor: not-allowed;
-	--color: grey;
-}
-a.btn[current='true'] {
-	pointer-events: none;
-	cursor: not-allowed;
-	--color: var(--accent);
-	color: var(--dark);
+.imgbtn {
+	width: 2rem;
+	border-radius: 100vw;
+	width: max-content;
+	height: fit-content;
+	display: inline-block;
 }

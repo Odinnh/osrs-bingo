@@ -1,26 +1,18 @@
 @import url(./root/theme.css);
 @import url(./modules/btn.css);
 @import url(./modules/checkbox.css);
-@import url(./modules/input.css);
 @import url(./modules/multi_select.css);
+@import url(./modules/input.css);
 * {
 	box-sizing: border-box;
 }
 body {
-	color: var(--text);
-	background-color: var(--background);
 	min-height: 100vh;
 }
 main {
 	width: 80vw;
 	margin-inline: auto;
 	max-width: 1000px;
-	display: flex;
-	flex-direction: column;
-	gap: 20px;
-	background-color: var(--background-900);
-	border-bottom-left-radius: 25px;
-	border-bottom-right-radius: 25px;
 	padding: 4ch;
 }
 code {
@@ -28,7 +20,6 @@ code {
 	font-size: 1rem;
 	padding: 5px;
 	border-radius: var(--border-radius);
-	color: var(--accent);
 }
 
 dialog {
@@ -43,12 +34,20 @@ dialog {
 }
 .tiptap {
 	padding: 1ch;
-	border-radius: var(--border-radius);
-	padding-top: 6ch;
-	& p:first-of-type {
+	& *:first-child {
 		margin-top: 0px;
 	}
+	& *:last-child {
+		margin-bottom: 0px;
+	}
+	&:focus {
+		outline: none;
+	}
 }
-:is(ul, ol) li p {
-	margin: 0px;
+.tiptap p.is-editor-empty:first-child::before {
+	color: var(--mid);
+	content: attr(data-placeholder);
+	float: left;
+	height: 0;
+	pointer-events: none;
 }

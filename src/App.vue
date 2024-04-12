@@ -6,14 +6,12 @@ const route = useRoute()
 </script>
 
 <template>
-  <main>
-    <suspense>
-      <menuBar />
-    </suspense>
-    <suspense>
-      <RouterView :key="route.fullPath" />
-    </suspense>
-  </main>
+	<suspense>
+		<menuBar />
+	</suspense>
+	<suspense>
+		<RouterView :key="route.fullPath" />
+	</suspense>
 </template>
 
 <style>

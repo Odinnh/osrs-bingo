@@ -395,46 +395,4 @@ const RemoveTileFromList = (): void => {
 }
 </script>
 
-<style scoped>
-.editable {
-	background-color: var(--background);
-	border-radius: var(--border-radius);
-}
-.board {
-	display: grid;
-	grid-template-columns: repeat(var(--width), 1fr);
-	gap: 1%;
-	& .tile {
-		display: flex;
-		padding: 10%;
-		border: 1px solid var(--primary);
-		border-radius: var(--border-radius);
-		position: relative;
-		width: 100%;
-		aspect-ratio: 1;
-		&:hover {
-			scale: 1.05;
-		}
-		.controls {
-			display: flex;
-			width: 100%;
-			justify-content: space-evenly;
-			align-self: flex-end;
-			position: relative;
-		}
-		& .tile--image {
-			position: absolute;
-			width: 80%;
-			inset: 0;
-			margin: auto;
-			transform-origin: center center;
-			aspect-ratio: 1/1;
-			object-fit: contain;
-		}
-	}
-}
-.add_tile {
-	font-size: 200%;
-	aspect-ratio: 1;
-}
-</style>
+<style scoped></style>

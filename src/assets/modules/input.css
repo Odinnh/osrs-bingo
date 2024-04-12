@@ -1,50 +1,52 @@
-input,
-.input,
-select,
-.multiselect__tags {
-  .multiselect__select input {
-    border: 0;
-    color: inherit;
-    padding: 0;
-  }
-  white-space: nowrap;
-  overflow: hidden;
-  display: inline;
-  font-size: 1rem;
-  border: 1px solid var(--primary-500);
-  border-radius: var(--border-radius);
-  padding: 1ch 2ch;
-  background: var(--background);
-  color: var(--text);
+input[type='text'],
+input[type='url'],
+input[type='number'] {
+	border: 1px solid var(--color-text);
+	padding: var(--padding-block) var(--padding-inline);
+	background-color: var(--color-background);
+	border-radius: var(--border-radius);
+}
+progress[value],
+input[type='range'] {
+	accent-color: var(--color-background__inv);
+}
+* {
+	accent-color: var(--color-background__inv);
+}
+input[type='color'] {
+	appearance: auto;
+	inline-size: 2rem;
+	block-size: 2rem;
+	cursor: default;
+	box-sizing: border-box;
+	background-color: var(--color-background);
+	color: var(--color-text);
+	border-width: 1px;
+	border-style: solid;
+	border-color: var(--color-background__inv);
+	border-radius: var(--border-radius);
+	overflow: hidden;
+	padding: 0px;
+}
 
-  &[type='number'] {
-    -moz-appearance: textfield;
-  }
-  &[type='number']::-webkit-outer-spin-button,
-  &[type='number']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-  &:is(button + &) {
-    border-bottom-left-radius: unset;
-    border-top-left-radius: unset;
-    border-inline-start-width: 0px;
-  }
-  &:has(+ button) {
-    border-bottom-right-radius: unset;
-    border-top-right-radius: unset;
-    border-inline-end-width: 0px;
-  }
-  & * {
-    display: inline;
-    white-space: nowrap;
-  }
+input[type='color']::-webkit-color-swatch-wrapper {
+	padding: 0;
 }
-.width-2 {
-  width: 6ch;
+input[type='color']::-webkit-color-swatch {
+	border: unset;
 }
-.width-10 {
-  width: 18ch;
+
+input[type='color']::-moz-color-swatch {
+	padding: 0px;
+	border: unset;
 }
-.multiselect__select {
-  width: max-content;
+input[type='radio'] {
+	width: 0.8rem;
+	height: 0.8rem;
+}
+fieldset {
+	border-color: var(--color-background__inv);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: var(--border-radius-toggle);
 }
