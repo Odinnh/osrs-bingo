@@ -7,6 +7,20 @@
 					<input required type="url" v-model="props.localTileData.image" />
 				</div>
 				<tiptapEditor class="editable" v-model="props.localTileData.description" />
+
+				<div>
+					<h3 class="fs-4">Points</h3>
+					<p>the points the competitors will get when they complete the tile</p>
+					<label
+						>points value:
+						<input type="number" min="0" v-model="props.localTileData!.points"
+					/></label>
+					<label
+						>Repeatable
+						<input toggle type="checkbox" v-model="props.localTileData.repeatable" />
+						{{ props.localTileData.repeatable }}</label
+					>
+				</div>
 			</div>
 			<div class="right-column">
 				<h2 @click="focusOn('#title')" class="fs-1 title">
@@ -51,6 +65,16 @@
 						:clear-on-select="false"
 						:allow-empty="false"
 					/>
+				</div>
+				<div v-if="['kc', 'exp'].includes(props.localTileData?.type)">
+					<h3 class="fs-4">Target amount</h3>
+					<p>the required amount of exp the competitors need to complete the tile</p>
+					<div>
+						<label
+							>Total count:
+							<input type="number" min="0" v-model="props.localTileData!.count"
+						/></label>
+					</div>
 				</div>
 				<div v-if="props.localTileData?.type == 'drop'">
 					<h3 class="fs-4">Drops</h3>
@@ -126,79 +150,74 @@
 						</li>
 					</ul>
 				</div>
-			</div>
+				<div>
+					<h3 class="fs-4">Metric</h3>
+					<p>Search and select the metric you want to associate with this tile.</p>
 
-			<div>
-				<h3 class="fs-4">Metric</h3>
-				<p>Search and select the metric you want to associate with this tile.</p>
-
-				<template v-if="props.localTileData?.type == 'drop'">
-					<VueMultiselect
-						:max="3"
-						v-model="props.localTileData!.metric"
-						:options="filteredMetrics"
-						:multiple="true"
-						:close-on-select="false"
-						:clear-on-select="false"
-						:preserve-search="true"
-						:allow-empty="true"
-						placeholder="Choose a metric to track progress"
-					/>
-				</template>
-				<template v-if="props.localTileData?.type == 'kc'">
-					<VueMultiselect
-						:max="3"
-						v-model="props.localTileData!.metric"
-						:options="filteredKC"
-						:multiple="true"
-						:close-on-select="false"
-						:clear-on-select="false"
-						:preserve-search="true"
-						:allow-empty="true"
-						placeholder="Choose a metric to track progress"
-					/>
-				</template>
-				<template v-if="props.localTileData?.type == 'exp'">
-					<VueMultiselect
-						:max="3"
-						v-model="props.localTileData!.metric"
-						:options="filteredSkills"
-						:multiple="true"
-						:close-on-select="false"
-						:clear-on-select="false"
-						:preserve-search="true"
-						:allow-empty="true"
-						placeholder="Choose a metric to track progress"
-					/>
-				</template>
-			</div>
-			<div v-if="props.localTileData">
-				<h3 class="font-size-S">Repeatable tile</h3>
-				<p>
-					Can the competitors complete the tile multiple times and gain points each time?
-				</p>
-				<label
-					>Repeatable
-					<input toggle type="checkbox" v-model="props.localTileData.repeatable" />
-					{{ props.localTileData.repeatable }}</label
+					<template v-if="props.localTileData?.type == 'drop'">
+						<VueMultiselect
+							:max="4"
+							v-model="props.localTileData!.metric"
+							:options="filteredMetrics"
+							:multiple="true"
+							:close-on-select="false"
+							:clear-on-select="false"
+							:preserve-search="true"
+							:allow-empty="true"
+							placeholder="Choose a metric to track progress"
+						/>
+					</template>
+					<template v-if="props.localTileData?.type == 'kc'">
+						<VueMultiselect
+							:max="4"
+							v-model="props.localTileData!.metric"
+							:options="filteredKC"
+							:multiple="true"
+							:close-on-select="false"
+							:clear-on-select="false"
+							:preserve-search="true"
+							:allow-empty="true"
+							placeholder="Choose a metric to track progress"
+						/>
+					</template>
+					<template v-if="props.localTileData?.type == 'exp'">
+						<VueMultiselect
+							:max="4"
+							v-model="props.localTileData!.metric"
+							:options="filteredSkills"
+							:multiple="true"
+							:close-on-select="false"
+							:clear-on-select="false"
+							:preserve-search="true"
+							:allow-empty="true"
+							placeholder="Choose a metric to track progress"
+						/>
+					</template>
+				</div>
+				<div
+					v-if="
+						['kc', 'exp'].includes(props.localTileData.type) &&
+						props.localTileData.metric
+					"
 				>
-			</div>
-			<div>
-				<h3 class="fs-4">Points</h3>
-				<p>the points the competitors will get when they complete the tile</p>
-				<label
-					>points value:
-					<input type="number" min="0" v-model="props.localTileData!.points"
-				/></label>
-			</div>
-			<template v-if="props.localTileData?.type == 'drop'"> </template>
-
-			<!-- a checkbox that toggles between AND or OR using props.localTileData>selector-->
-			<div v-if="props.localTileData && props.localTileData.needAny.toString()">
-				<h3 class="fs-4">Need Any or All?</h3>
-				<p>
-					do the competors need to achieve all of the requirements to complete the tile?
-				</p>
+					<template v-for="metric in props.localTileData.metric">
+						<h3>{{ metric.replace('_', ' ') }}</h3>
+						<div class="spread">
+							<progress
+								min="0"
+								:value="Math.random() * props.localTileData.count"
+								:max="props.localTileData.count"
+							></progress>
+							<p>
+								{{
+									formatNumberToShort(
+										Math.floor(Math.random() * props.localTileData.count)
+									)
+								}}
+							</p>
+						</div>
+					</template>
+				</div>
 			</div>
 		</div>
 	</dialog>
@@ -211,6 +230,7 @@ import VueMultiselect from 'vue-multiselect'
 
 import type { ModalElement, Tile } from '@/types'
 import { tinyid } from '@/assets/js/tinyid'
+import { formatNumberToShort } from '@/assets/js/helpers'
 
 const props = defineProps<{
 	localTileData: Tile | null
@@ -290,7 +310,7 @@ dialog {
 }
 dialog > div {
 	display: grid;
-	grid-template-columns: 33% 67%;
+	grid-template-columns: 0.3fr 0.7fr;
 	gap: var(--gap);
 }
 dialog img {
@@ -340,5 +360,18 @@ dialog img + [type='url'] {
 }
 .right-column {
 	width: 100%;
+}
+.spread {
+	width: 100%;
+	display: flex;
+	width: 100%;
+	display: flex;
+	align-content: center;
+	align-items: center;
+	gap: var(--gap);
+	& p {
+		width: 4ch;
+		display: inline-block;
+	}
 }
 </style>

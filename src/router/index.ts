@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { getCurrentUser, useDocument } from 'vuefire'
-import { doc } from 'firebase/firestore'
+import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 
 // views
@@ -66,29 +66,29 @@ router.beforeEach(async (to) => {
 
 const isUserLoggedIn = async () => {
 	const user = await getCurrentUser()
+
 	if (user) {
-		const { data: userData, promise: userDataPromise } = useDocument(doc(db, 'Users', user.uid))
-		await userDataPromise.value
-		if (userData.value?.banned && userData.value.banned) {
-			return !userData.value.banned
+		const userDataSnapshot = await getDoc(doc(db, 'Users', user.uid))
+		const userData = userDataSnapshot.data()
+
+		if (userData && userData.banned) {
+			return false
 		}
 	}
+
 	return !!user?.uid
 }
 const userIsAuthenticated = async (uid: string) => {
 	const user = await getCurrentUser()
 	if (user) {
-		const { data: userData, promise: userDataPromise } = useDocument(doc(db, 'Users', user.uid))
-		await userDataPromise.value
-		if (userData.value?.banned && userData.value.banned) {
-			return !userData.value.banned
+		const userDataSnapshot = await getDoc(doc(db, 'Users', user.uid))
+		const userData = userDataSnapshot.data()
+		if (userData && userData.banned) {
+			return false
 		}
 	}
-	const { data: boardData, promise: boardDataPromise } = useDocument(doc(db, 'Boards', uid))
-	await boardDataPromise.value
-	if (boardData.value && user) {
-		return boardData.value.ownerID == user.uid
-	}
-	return false
+	const boardDataSnapshot = await getDoc(doc(db, 'Boards', uid))
+	const boardData = boardDataSnapshot.data()
+	return boardData && boardData.ownerID === user?.uid
 }
 export default router

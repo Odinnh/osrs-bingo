@@ -52,50 +52,22 @@
 				:style="{ '--_image': `url('${tile.image}')` }"
 				v-for="tile in sortedList"
 				:key="tile.id"
-				@click.prevent="openModal(tile)"
+				@click.prevent="
+					() => {
+						selectedTile = tile
+						openModal()
+					}
+				"
 			>
 				<img class="tile--image" :src="tile.image" />
 			</div>
 		</section>
-
-		<dialog ref="asideModalEle" class="modal">
-			<template v-if="selectedTile">
-				<button class="close-modal" @click.prevent="closeModal" icon>close</button>
-				<div>
-					<img :src="selectedTile!.image" />
-				</div>
-				<div>
-					<h2>{{ selectedTile?.title }}</h2>
-					<div v-html="selectedTile.description"></div>
-				</div>
-				<div v-if="selectedTile!.type">
-					<p>type: {{ selectedTile!.type }}</p>
-				</div>
-				<div v-if="selectedTile!.metric">
-					<p>metric: {{ selectedTile!.metric }}</p>
-				</div>
-				<div v-if="selectedTile.repeatable?.toString()">
-					<p>{{ selectedTile.repeatable }}</p>
-				</div>
-				<div>
-					<p>points: {{ selectedTile!.points }}</p>
-					<p>count: {{ selectedTile!.count }}</p>
-					<p>minimum count: {{ selectedTile.min }}</p>
-					<p>maximum count: {{ selectedTile!.max }}</p>
-				</div>
-				<div v-if="selectedTile?.type == 'drop'">
-					<p>valid Drops</p>
-					<ul>
-						<li v-for="drop in selectedTile.drops">
-							{{ drop }}
-						</li>
-					</ul>
-				</div>
-				<div>
-					<p>need any:{{ selectedTile.needAny }}</p>
-				</div>
-			</template>
-		</dialog>
+		<ViewTileModal
+			ref="asideModalEle"
+			@close="closeTileModal"
+			:selectedTile="selectedTile"
+			:latestData="getLatest(boardMetricData as MetricData[])"
+		/>
 	</template>
 </template>
 <script setup lang="ts">
@@ -107,21 +79,25 @@ import { useRoute, useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import { Tile, ModalElement } from '@/types'
 
+import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
+
 const route = useRoute()
 const router = useRouter()
 const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)
 )
-await boardDataPromise.value
+const { data: boardMetricData, promise: boardMetricDataPromise } = useCollection(
+	collection(db, 'Boards', route.params.boardUUID as string, 'Metrics')
+)
 if (boardData.value?.name) {
 	title.value = boardData.value.name + ' - Bingo Bongo'
 }
-
 const { data: tilesData, promise: tilesDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
 )
-await tilesDataPromise.value
+await Promise.all([boardDataPromise.value, boardMetricDataPromise.value, tilesDataPromise.value])
+
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 
 const sortedList = computed(() => {
@@ -138,14 +114,40 @@ const sortedList = computed(() => {
 	)
 })
 
-const selectedTile = ref<Tile>()
+window.addEventListener('keydown', (e) => {
+	switch (e.key) {
+		case 'Escape':
+			if (asideModalEle.value && asideModalEle.value.closeModal) {
+				selectedTile.value = {} as Tile
+				closeTileModal()
+			}
+			break
+		default:
+			break
+	}
+})
+
+const selectedTile = ref<Tile | null>(null)
 const asideModalEle = ref<ModalElement | undefined>(undefined)
-const openModal = (tile: Tile) => {
-	selectedTile.value = tile
+const openModal = () => {
 	asideModalEle.value?.showModal()
 }
-const closeModal = () => {
-	asideModalEle.value?.close()
+const closeTileModal = () => {
+	selectedTile.value = null
+	asideModalEle.value?.closeModal()
+}
+
+type MetricData = {
+	metric: string
+	[timestamp: string]: any
+}
+
+function getLatest(data: MetricData[]): { [metric: string]: { metric: string; data: any } } {
+	const latest: { [metric: string]: { metric: string; data: any } } = {}
+	data.forEach((metric: MetricData) => {
+		latest[metric.metric] = { metric: metric.metric, data: metric[metric.timestamp] }
+	})
+	return latest
 }
 </script>
 

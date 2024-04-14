@@ -1,5 +1,6 @@
 <template>
 	<section>
+		<a icon class="btn" @click.prevent="gatherWomEXP">download</a>
 		<a
 			icon
 			class="btn"
@@ -112,7 +113,7 @@
 		</template>
 	</modal>
 
-	<TileDialog
+	<EditTileModal
 		ref="asideModalEle"
 		:selectedTile="selectedTile"
 		:localTileData="localTileData"
@@ -133,7 +134,7 @@ import { useRoute, useRouter } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
-import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
+import { collection, doc, getDocs, getDoc, updateDoc, writeBatch } from 'firebase/firestore'
 import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
@@ -141,10 +142,14 @@ import { tinyid } from '@/assets/js/tinyid'
 
 // Component imports
 import modal from '@/components/Modal.vapor.vue'
-import TileDialog from '@/components/modals/EditTileModal.vapor.vue'
+import EditTileModal from '@/components/modals/EditTileModal.vapor.vue'
+
+import { Metric, WOMClient } from '@wise-old-man/utils'
 
 // type imports
 import type { ModalElement, Tile } from '@/types'
+import type { Metric as WOMMetric } from '@wise-old-man/utils'
+import type { PartialWithFieldValue } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()
@@ -166,6 +171,10 @@ const originalWidth = ref<number>(0)
 
 const orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
+
+// WOM
+const Client = new WOMClient()
+const WOMCode = ref<number>(parseInt(route.params.boardUUID as string))
 
 //event listened
 window.addEventListener('keydown', (e) => {
@@ -278,10 +287,17 @@ const saveBoard = async (): Promise<void> => {
 		const tilesCollectionRef = collection(boardDocRef, 'Tiles')
 
 		const batch = writeBatch(db)
+		const trackingMetrics = ref<Set<string>>(new Set())
+		list.value.forEach((tile) => {
+			tile.metric?.forEach((metric) => {
+				trackingMetrics.value.add(metric)
+			})
+		})
 		// update the order of the tiles
 		batch.update(boardDocRef, {
 			orderOfList: orderOfList.value,
-			boardWidth: widthInput.value
+			boardWidth: widthInput.value,
+			trackingMetrics: [...trackingMetrics.value]
 		})
 
 		// Update the tiles in Firestore
@@ -368,6 +384,23 @@ const saveEditTile = async (): Promise<void> => {
 	)
 	await newTilesDataPromise.value
 	list.value = newTilesData.value as unknown as Tile[]
+	const trackingMetrics = ref<Set<string>>(new Set())
+	list.value.forEach((tile) => {
+		tile.metric?.forEach((metric) => {
+			trackingMetrics.value.add(metric)
+		})
+	})
+	const batch = writeBatch(db)
+	const boardDocRef = doc(db, 'Boards', route.params.boardUUID as string)
+
+	// update the order of the tiles
+	batch.update(boardDocRef, {
+		orderOfList: orderOfList.value,
+		boardWidth: widthInput.value,
+		trackingMetrics: [...trackingMetrics.value]
+	})
+
+	await batch.commit()
 	return
 }
 // cancel editing a tile and resetting values
@@ -416,7 +449,85 @@ const RemoveTileFromList = (): void => {
 	orderOfList.value = sortedList.value.map((_tile: Tile) => _tile.id)
 	modalEle.value!.closeModal()
 	asideModalEle.value!.closeModal()
+	saveBoard()
 	return
+}
+
+const gatherWomEXP = async () => {
+	const currentTime = Date.now()
+	const gatheredMetrics = {} as {
+		[key: string]: { [key: number]: { timeStamp: number; exp: number } }
+	}
+
+	if (boardData.value) {
+		boardData.value.trackingMetrics.forEach((metric: string) => {
+			gatheredMetrics[metric] = { [currentTime]: { timeStamp: currentTime, exp: 1 } }
+		})
+	}
+
+	if (boardData.value?.lastUpdate && currentTime - boardData.value.lastUpdate < 3600000) {
+		console.log('no need to update')
+		return null
+	} else {
+		const batch = writeBatch(db)
+		boardData.value!.lastUpdate = currentTime
+		batch.update(doc(db, 'Boards', route.params.boardUUID as string), {
+			lastUpdate: boardData.value!.lastUpdate
+		})
+
+		await Promise.all(
+			boardData.value!.trackingMetrics.map(async (metric: WOMMetric) => {
+				const MetricRef = doc(
+					db,
+					'Boards',
+					route.params.boardUUID as string,
+					'Metrics',
+					metric
+				)
+				await Client.competitions
+					.getCompetitionDetails(WOMCode.value, metric)
+					.then((result) => {
+						// Assuming `result` is your response object
+						const parsedData: { [key: string]: any } = parseResponse(
+							result,
+							currentTime
+						)
+						// Use parsedData to update your database
+						const timeQ = 't-' + currentTime
+						const players = parsedData[timeQ]
+						batch.set(
+							MetricRef,
+							{ [currentTime]: players, metric: metric, timestamp: currentTime },
+							{ merge: true }
+						)
+					})
+					.catch((error) => {
+						console.error('Error fetching competition details:', error)
+					})
+			})
+		)
+
+		await batch.commit()
+	}
+}
+
+const parseResponse = (response: any, Timestamp: number) => {
+	const parsedData: { [key: string]: any } = {}
+
+	const timeQ = <string>'t-' + Timestamp
+	parsedData[timeQ] = {}
+	response.participations.forEach((participation: any) => {
+		const playerName = participation.player.username
+		const gained = participation.progress.gained
+
+		parsedData[timeQ][playerName] = {
+			name: playerName,
+			gained,
+			teamName: participation.teamName
+		}
+	})
+
+	return parsedData
 }
 </script>
 
