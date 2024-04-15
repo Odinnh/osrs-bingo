@@ -247,8 +247,8 @@ const dialog = ref<ModalElement>()
 const newDropForTile = ref({
 	name: '',
 	count: 0,
-	min: undefined,
-	max: undefined
+	min: 0,
+	max: 0
 })
 
 const addDropToTile = (): void => {
@@ -262,8 +262,8 @@ const addDropToTile = (): void => {
 			props.localTileData.drops = [{ id: tinyid(), ...newDropForTile.value }]
 		}
 		newDropForTile.value.count = 0
-		newDropForTile.value.min = undefined
-		newDropForTile.value.max = undefined
+		newDropForTile.value.min = 0
+		newDropForTile.value.max = 0
 	}
 }
 const removeDropFromTile = (drop: { id: string; name: string; count: number }): void => {
