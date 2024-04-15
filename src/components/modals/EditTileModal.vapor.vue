@@ -202,6 +202,12 @@
 				>
 					<template v-for="metric in props.localTileData.metric">
 						<h3>{{ metric.replace('_', ' ') }}</h3>
+						<p>
+							<em
+								>these are example values in edit mode, in view mode it will be with
+								actual data</em
+							>
+						</p>
 						<div class="spread">
 							<progress
 								min="0"
