@@ -134,7 +134,7 @@ import { useRoute, useRouter } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
-import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
+import { collection, doc, getDocs, getDoc, writeBatch } from 'firebase/firestore'
 import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
@@ -363,44 +363,74 @@ const editBoard = (): void => {
 // ## Tile methods
 // publish tile changes to Firestore
 const saveEditTile = async (): Promise<void> => {
-	// this should save the localTile to firebase and close the modal
-	updateDoc(
-		doc(db, 'Boards', route.params.boardUUID as string, 'Tiles', localTileData.value!.id),
-		{
-			...localTileData.value
+	// Create references to the tile document and the board document
+	const tileRef = doc(
+		db,
+		'Boards',
+		route.params.boardUUID as string,
+		'Tiles',
+		localTileData.value!.id
+	)
+	const boardRef = doc(db, 'Boards', route.params.boardUUID as string)
+
+	try {
+		// Start a batch write
+		const batch = writeBatch(db)
+
+		// Check if the tile exists by trying to fetch it
+		const existingTile = (await getDoc(tileRef)).data()
+
+		// If the tile doesn't exist, create it; otherwise, update it
+		if (!existingTile) {
+			batch.set(tileRef, localTileData.value)
+		} else {
+			batch.update(tileRef, localTileData.value as Partial<Tile>)
 		}
-	)
 
-	isEditingTile.value = false
-	if (asideModalEle.value && asideModalEle.value.closeModal) {
-		asideModalEle.value!.closeModal()
-	}
-	selectedTile.value = localTileData.value
+		// Update the orderOfList
+		const boardSnapshot = await getDoc(boardRef)
+		const orderOfList = boardSnapshot.data()?.orderOfList || []
+		if (!orderOfList.includes(localTileData.value!.id)) {
+			orderOfList.push(localTileData.value!.id)
+			batch.update(boardRef, { orderOfList })
+		}
 
-	const { data: newTilesData, promise: newTilesDataPromise } = useCollection(
-		collection(db, 'Boards', route.params.boardUUID as string, 'Tiles'),
-		{ once: true }
-	)
-	await newTilesDataPromise.value
-	list.value = newTilesData.value as unknown as Tile[]
-	const trackingMetrics = ref<Set<string>>(new Set())
-	list.value.forEach((tile) => {
-		tile.metric?.forEach((metric) => {
-			trackingMetrics.value.add(metric)
+		// Commit the batch write
+		await batch.commit()
+
+		// Close the modal
+		isEditingTile.value = false
+		if (asideModalEle.value && asideModalEle.value.closeModal) {
+			asideModalEle.value!.closeModal()
+		}
+
+		// Set the selectedTile
+		selectedTile.value = localTileData.value
+
+		// Fetch updated tile data
+		const tilesRef = collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
+		const querySnapshot = await getDocs(tilesRef)
+		list.value = querySnapshot.docs.map((doc) => doc.data() as Tile)
+
+		// Update trackingMetrics
+		const trackingMetrics = new Set<string>()
+		list.value.forEach((tile) => {
+			tile.metric?.forEach((metric) => {
+				trackingMetrics.add(metric)
+			})
 		})
-	})
-	const batch = writeBatch(db)
-	const boardDocRef = doc(db, 'Boards', route.params.boardUUID as string)
 
-	// update the order of the tiles
-	batch.update(boardDocRef, {
-		orderOfList: orderOfList.value,
-		boardWidth: widthInput.value,
-		trackingMetrics: [...trackingMetrics.value]
-	})
-
-	await batch.commit()
-	return
+		// Update board document with trackingMetrics
+		const boardBatch = writeBatch(db)
+		boardBatch.update(boardRef, {
+			boardWidth: widthInput.value,
+			trackingMetrics: Array.from(trackingMetrics)
+		})
+		await boardBatch.commit()
+	} catch (error) {
+		// Handle any errors
+		console.error('Error saving tile:', error)
+	}
 }
 // cancel editing a tile and resetting values
 const cancelEditTile = (): void => {

@@ -230,7 +230,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
-import { SKILLS, METRICS, BOSSES } from '@wise-old-man/utils'
+import { SKILLS, METRICS, BOSSES, ACTIVITIES } from '@wise-old-man/utils'
 import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import VueMultiselect from 'vue-multiselect'
 
@@ -276,11 +276,11 @@ const removeDropFromTile = (drop: { id: string; name: string; count: number }): 
 	}
 }
 // metrics filtering
-const filteredKC = ref(BOSSES)
+const bannedMetrics = ref(['ehb', 'ehp', 'league_points', 'overall'])
+const filteredActivities = ref(ACTIVITIES.filter((metric) => !bannedMetrics.value.includes(metric)))
 const filteredSkills = ref(SKILLS.filter((metric) => !['overall'].includes(metric)))
-const filteredMetrics = ref(
-	METRICS.filter((metric) => !['ehb', 'ehp', 'league_points', 'overall'].includes(metric))
-)
+const filteredMetrics = ref(METRICS.filter((metric) => !bannedMetrics.value.includes(metric)))
+const filteredKC = ref([...BOSSES, ...filteredActivities.value])
 
 const showModal = () => {
 	if (dialog.value) {
