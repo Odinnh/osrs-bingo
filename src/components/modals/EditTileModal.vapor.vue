@@ -67,11 +67,14 @@
 					/>
 				</div>
 				<div v-if="['kc', 'exp'].includes(props.localTileData?.type)">
-					<h3 class="fs-4">Target amount</h3>
-					<p>the required amount of exp the competitors need to complete the tile</p>
+					<h3 class="fs-4">{{ countTitle }}</h3>
+					<p>
+						The required {{ props.localTileData.type }} per metric the competitors need
+						to complete the tile
+					</p>
 					<div>
-						<label
-							>Total count:
+						<label class="drop-list-input"
+							>{{ countText }}:
 							<input type="number" min="0" v-model="props.localTileData!.count"
 						/></label>
 					</div>
@@ -85,67 +88,85 @@
 					</p>
 					<div>
 						<label>
-							Individual count
+							Individual amount
 							<input
 								type="checkbox"
 								toggle
 								choice
 								v-model="props.localTileData.needAny"
 							/>
-							Total count
+							Total amount
 						</label>
 					</div>
-					<div v-if="props.localTileData.needAny">
-						<label
-							>Total count:
+					<div>
+						<label class="drop-list-input" v-if="props.localTileData?.needAny">
+							Required amount:
 							<input type="number" min="0" v-model="props.localTileData!.count"
 						/></label>
 					</div>
+					<hr
+						v-if="props.localTileData?.drops && props.localTileData?.drops.length > 0"
+					/>
 					<ul class="drop-list">
-						<li
-							style="padding-block: var(--size-5)"
-							v-for="drop in props.localTileData.drops"
-						>
+						<li v-for="drop in props.localTileData.drops">
 							<div class="drop-row">
-								<div>
-									{{ drop.name }}
+								<div class="drop-list-input">
+									<p
+										style="
+											margin-left: 0;
+											margin-right: auto;
+											font-weight: bold;
+										"
+									>
+										{{ drop.name }}
+									</p>
 									<small
 										v-if="(drop.min || drop.max) && props.localTileData.needAny"
 									>
-										<span v-if="drop.min">min : {{ drop.min }}</span>
-										<span v-if="drop.min && drop.max">/</span>
-										<span v-if="drop.max">max : {{ drop.max }}</span>
+										<template v-if="drop.min">min: {{ drop.min }}</template>
+										<template v-if="drop.min && drop.max"> / </template>
+										<template v-if="drop.max">max: {{ drop.max }}</template>
 									</small>
+									<div v-if="!props.localTileData.needAny">{{ drop.count }}x</div>
+									<button icon outline @click="removeDropFromTile(drop)">
+										delete
+									</button>
 								</div>
-								<div v-if="!props.localTileData.needAny">{{ drop.count }}</div>
 							</div>
-							<button icon outline @click="removeDropFromTile(drop)">delete</button>
 						</li>
-						<li style="padding-block: var(--size-5)">
-							<div>
+						<li>
+							<div class="drop-list-input">
 								Drop:
-								<input type="text" v-model="newDropForTile.name" />
-							</div>
-							<div v-if="!props.localTileData.needAny">
-								Required count:
-								<input type="number" v-model="newDropForTile.count" />
-							</div>
-							<div v-if="props.localTileData.needAny">
-								Min count:
 								<input
-									type="number"
-									placeholder="unset"
-									v-model="newDropForTile.min"
+									type="text"
+									v-model="newDropForTile.name"
+									placeholder="Bandos tassets"
 								/>
 							</div>
-							<div v-if="props.localTileData.needAny">
-								Max count:
-								<input
-									type="number"
-									placeholder="unset"
-									v-model="newDropForTile.max"
-								/>
-							</div>
+							<template v-if="!props.localTileData.needAny">
+								<div class="drop-list-input">
+									Required ammount:
+									<input type="number" v-model="newDropForTile.count" />
+								</div>
+							</template>
+							<template v-else-if="props.localTileData.needAny">
+								<div class="drop-list-input">
+									Minimum needed:
+									<input
+										type="number"
+										placeholder="unset"
+										v-model="newDropForTile.min"
+									/>
+								</div>
+								<div class="drop-list-input">
+									Maximum allowed:
+									<input
+										type="number"
+										placeholder="unset"
+										v-model="newDropForTile.max"
+									/>
+								</div>
+							</template>
 							<button @click="addDropToTile">Add Drop</button>
 						</li>
 					</ul>
@@ -229,7 +250,7 @@
 	</dialog>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { SKILLS, METRICS, BOSSES, ACTIVITIES } from '@wise-old-man/utils'
 import tiptapEditor from '@/components/tiptapEditor.vapor.vue'
 import VueMultiselect from 'vue-multiselect'
@@ -249,6 +270,19 @@ const newDropForTile = ref({
 	count: 0,
 	min: 0,
 	max: 0
+})
+
+const countText = computed((): string => {
+	if (props.localTileData?.type == 'drop') {
+		return 'Total Count'
+	}
+	return 'Required ' + props.localTileData!.type
+})
+const countTitle = computed(() => {
+	if (props.localTileData?.type == 'drop') {
+		return 'Drop Count'
+	}
+	return 'Required ' + props.localTileData!.type
 })
 
 const addDropToTile = (): void => {
@@ -359,11 +393,9 @@ dialog img + [type='url'] {
 	list-style-type: none;
 	margin: inherit;
 	padding: inherit;
+	padding-block: unset;
 }
-.drop-row {
-	display: flex;
-	justify-content: space-between;
-}
+
 .right-column {
 	width: 100%;
 }
@@ -379,5 +411,11 @@ dialog img + [type='url'] {
 		width: 4ch;
 		display: inline-block;
 	}
+}
+.drop-list-input {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: var(--gap);
 }
 </style>

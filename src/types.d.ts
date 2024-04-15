@@ -29,9 +29,10 @@ interface Tiles {
 	[key: string]: Tile
 }
 interface CollectedLogItem {
-	id: number
+	playerName: string
 	timeOfCollection: timestamp | number
 	teamName: string
+	id: string
 }
 
 interface Team {
@@ -48,4 +49,4 @@ interface ModalElement extends HTMLDialogElement {
 	//closes the Modal
 	closeModal: Function
 }
-export { Tile, Tiles, Team, Teams, Player, ModalElement }
+export { Tile, Tiles, Team, Teams, Player, ModalElement, CollectedLogItem }
