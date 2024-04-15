@@ -134,7 +134,7 @@ import { useRoute, useRouter } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
-import { collection, doc, getDocs, getDoc, updateDoc, writeBatch } from 'firebase/firestore'
+import { collection, doc, getDocs, updateDoc, writeBatch } from 'firebase/firestore'
 import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
@@ -144,12 +144,11 @@ import { tinyid } from '@/assets/js/tinyid'
 import modal from '@/components/Modal.vapor.vue'
 import EditTileModal from '@/components/modals/EditTileModal.vapor.vue'
 
-import { Metric, WOMClient } from '@wise-old-man/utils'
+import { WOMClient } from '@wise-old-man/utils'
 
 // type imports
 import type { ModalElement, Tile } from '@/types'
 import type { Metric as WOMMetric } from '@wise-old-man/utils'
-import type { PartialWithFieldValue } from 'firebase/firestore'
 
 const route = useRoute()
 const router = useRouter()

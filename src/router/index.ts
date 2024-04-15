@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
-import { getCurrentUser, useDocument } from 'vuefire'
+import { getCurrentUser } from 'vuefire'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 
