@@ -67,6 +67,7 @@
 			@close="closeTileModal"
 			:selectedTile="selectedTile"
 			:latestData="getLatest(boardMetricData as MetricData[])"
+			:teams="teams"
 		/>
 	</template>
 </template>
@@ -96,7 +97,16 @@ if (boardData.value?.name) {
 const { data: tilesData, promise: tilesDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
 )
-await Promise.all([boardDataPromise.value, boardMetricDataPromise.value, tilesDataPromise.value])
+const { data: teamsData, promise: teamsDataPromise } = useCollection(
+	collection(db, 'Boards', route.params.boardUUID as string, 'Groups')
+)
+await Promise.all([
+	boardDataPromise.value,
+	boardMetricDataPromise.value,
+	teamsDataPromise.value,
+	tilesDataPromise.value
+])
+const teams: string[] = teamsData.value.map((team) => team.teamName)
 
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 

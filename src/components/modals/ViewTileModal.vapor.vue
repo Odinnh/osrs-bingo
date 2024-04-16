@@ -5,52 +5,57 @@
 				<div class="img-container">
 					<img :src="props.selectedTile!.image" />
 				</div>
+				<button @click.prevent="$emit('close')">close</button>
 				<div v-html="props.selectedTile.description" />
-
-				<div>
-					<p>Points: {{ props.selectedTile!.points }}</p>
-					<p v-if="props.selectedTile.repeatable"><em>This tile is repeatable</em></p>
-				</div>
+				<small> tile id: {{ props.selectedTile?.id }} </small>
+				<div>Points: {{ props.selectedTile!.points }}</div>
+				<div v-if="props.selectedTile.repeatable"><em>This tile is repeatable</em></div>
 			</div>
 			<div class="right-column">
-				<h2 class="fs-1 title">
+				<h2 class="fs-1 title" style="margin-bottom: var(--size-4)">
 					{{ props.selectedTile.title }}
 				</h2>
-				<small>
-					tile id: <code>{{ props.selectedTile?.id }}</code>
-				</small>
-				<button @click.prevent="$emit('close')">close</button>
-				<h2>Get</h2>
 				<div v-if="props.selectedTile?.type == 'drop'">
-					<h3 class="fs-4">Drops</h3>
-					<ul class="drop-list">
-						<li
-							style="padding-block: var(--size-5)"
-							v-for="drop in props.selectedTile.drops"
-						>
-							<div class="drop-row">
-								<div>
-									{{ drop.name }}
-									<small
-										v-if="(drop.min || drop.max) && props.selectedTile.needAny"
-									>
-										<span v-if="drop.min">min : {{ drop.min }}</span>
-										<span v-if="drop.min && drop.max">/</span>
-										<span v-if="drop.max">max : {{ drop.max }}</span>
-									</small>
-								</div>
-								<div>
+					<h2 v-if="props.selectedTile.needAny === false" class="fs-4">
+						Get the following items:
+					</h2>
+					<h2 v-else class="fs-4">Get any of these items:</h2>
+					<div class="drop-table" :style="{ '--_width': teams.length }">
+						<div></div>
+						<div v-for="team in teams">{{ team }}</div>
+
+						<template v-for="drop in props.selectedTile!.drops">
+							<div>
+								{{ drop.name }}
+							</div>
+							<div
+								v-for="team in teams"
+								:class="{
+									completed:
+										getDropCollectedByTeam(
+											props.selectedTile.collected,
+											drop.id
+										)[team]! >= drop.count,
+									notStarted:
+										getDropCollectedByTeam(
+											props.selectedTile.collected,
+											drop.id
+										)[team] === 0
+								}"
+							>
+								<span>
 									{{
 										getDropCollectedByTeam(
-											props.selectedTile.collected as
-												| CollectedLogItem[]
-												| undefined
-										)
-									}}
-								</div>
+											props.selectedTile.collected,
+											drop.id
+										)[team]
+									}} </span
+								><template v-if="props.selectedTile?.needAny === false">
+									/ {{ drop.count }}
+								</template>
 							</div>
-						</li>
-					</ul>
+						</template>
+					</div>
 				</div>
 				<div>
 					<h3 class="fs-4" v-if="!['kc', 'exp'].includes(props.selectedTile.type)">
@@ -60,9 +65,12 @@
 				<div>
 					<template v-for="metric in props.selectedTile.metric">
 						<h3>
-							{{ metric.replace('_', ' ') }}
 							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
-								x{{ formatNumberToShort(props.selectedTile.count) }}
+								{{ formatNumberToShort(props.selectedTile.count) }}
+							</template>
+							{{ titleCase(metric.replace('_', ' ')) }}
+							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
+								{{ titleCase(props.selectedTile.type) }}
 							</template>
 						</h3>
 						<div
@@ -77,12 +85,18 @@
 									:max="props.selectedTile.count"
 								></progress>
 
-								<p class="totals">
+								<p
+									class="totals"
+									:class="{
+										completed: team.total >= props.selectedTile.count,
+										notStarted: team.total == 0
+									}"
+								>
 									{{
 										team.total >= props.selectedTile.count
 											? formatNumberToShort(props.selectedTile.count) + '+'
 											: formatNumberToShort(team.total)
-									}}{{ ' ' + props.selectedTile.type }}
+									}}{{ ' ' + titleCase(props.selectedTile.type) }}
 								</p>
 							</div>
 						</div>
@@ -118,6 +132,7 @@ import { formatNumberToShort } from '@/assets/js/helpers'
 const props = defineProps<{
 	selectedTile: Tile | null
 	latestData: Data
+	teams: string[]
 }>()
 
 const dialog = ref<ModalElement>()
@@ -204,10 +219,30 @@ const getHighestTotal = (metric: string): number => {
 	// Return the highest total
 	return measuredTotal.value
 }
-const getDropCollectedByTeam = (collected: CollectedLogItem[] | undefined) => {
-	console.log(collected)
-	return collected
+const getDropCollectedByTeam = (collected: CollectedLogItem[] | undefined, iId?: string) => {
+	const teamTotals = ref<{ [key: string]: number | undefined }>({})
+	props.teams.forEach((team) => {
+		const tempTotal = ref(
+			collected?.filter((item) => {
+				item.id === iId && item.teamName === team
+			}).length
+		)
+
+		teamTotals.value[team as string] = tempTotal.value ?? 0
+	})
+	return teamTotals.value
 }
+
+function titleCase(str: string) {
+	return str
+		.toLowerCase()
+		.split(' ')
+		.map(function (word) {
+			return word.charAt(0).toUpperCase() + word.slice(1)
+		})
+		.join(' ')
+}
+
 const showModal = () => {
 	if (dialog.value) {
 		dialog.value.showModal()
@@ -267,9 +302,20 @@ dialog img {
 	margin: inherit;
 	padding: inherit;
 }
-.drop-row {
-	display: flex;
+.drop-table {
+	display: grid;
+	grid-template-columns: max-content repeat(var(--_width), 6ch);
 	justify-content: space-between;
+}
+.drop-table__row {
+	display: grid;
+	grid-template-columns: subgrid;
+	/* justify-content: space-between; */
+}
+.drop-table__row :not(:nth-child(1)) {
+	background-color: red;
+	margin-right: auto;
+	text-align: right;
 }
 .right-column {
 	width: 100%;
@@ -277,17 +323,23 @@ dialog img {
 .spread {
 	width: 100%;
 	display: flex;
-	width: 100%;
-	display: flex;
 	align-content: center;
 	align-items: center;
 	gap: var(--gap);
+	justify-content: space-between;
 	& p {
-		width: 4ch;
-		display: inline-block;
+		width: 12ch;
+		text-align: end;
 	}
 }
 .totals {
 	margin: 0;
+}
+.completed {
+	font-weight: bold;
+}
+.notStarted {
+	font-style: italic;
+	color: var(--mid);
 }
 </style>
