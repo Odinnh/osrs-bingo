@@ -52,6 +52,8 @@ import { arrayUnion, collection, doc, getDoc, setDoc, updateDoc } from 'firebase
 import { getCurrentUser } from 'vuefire'
 import { db } from '@/firebaseSettings'
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const user = await getCurrentUser()
 const isReady = ref<boolean>(false)
 const WOMCode = ref<number>(40963)
@@ -153,31 +155,38 @@ const addBoard = async () => {
 	const newBoard = doc(db, 'Boards', WOMCode.value.toString())
 	if (user) {
 		// add the ownersID to the new board
-		await setDoc(newBoard, { ownerID: user.uid! }).then(() => {
-			const userDoc = doc(db, 'Users', user.uid)
-			//add teams for each team in the competition
-			for (let teamKey in teams.value) {
-				const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
-				const team = teams.value[teamKey]
-				setDoc(doc(db, newGroup.path), {
-					teamName: team.teamName,
-					teamId: newGroup.id,
-					players: teams.value[teamKey].players,
-					stats: null
+		await setDoc(newBoard, { ownerID: user.uid! })
+			.then(() => {
+				const userDoc = doc(db, 'Users', user.uid)
+				//add teams for each team in the competition
+				for (let teamKey in teams.value) {
+					const newGroup = doc(collection(db, 'Boards', newBoard.id, 'Groups'))
+					const team = teams.value[teamKey]
+					setDoc(doc(db, newGroup.path), {
+						teamName: team.teamName,
+						teamId: newGroup.id,
+						players: teams.value[teamKey].players,
+						stats: null
+					})
+				}
+				//set name of newBoard to title of competition
+				updateDoc(newBoard, {
+					name: boardDetails.value.name,
+					start: boardDetails.value.start,
+					end: boardDetails.value.end
 				})
-			}
-			//set name of newBoard to title of competition
-			updateDoc(newBoard, {
-				name: boardDetails.value.name,
-				start: boardDetails.value.start,
-				end: boardDetails.value.end
+				//add board to user's list of boards
+				//update user's list of boards in firestore
+				updateDoc(userDoc, {
+					boards: arrayUnion(newBoard.id)
+				})
 			})
-			//add board to user's list of boards
-			//update user's list of boards in firestore
-			updateDoc(userDoc, {
-				boards: arrayUnion(newBoard.id)
+			.then(() => {
+				router.push({ name: 'editBoard', params: { boardUUID: newBoard.id } })
 			})
-		})
+			.catch((error) => {
+				ErrorMessage.value = error.message
+			})
 	}
 	isReady.value = false
 }
