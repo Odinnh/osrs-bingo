@@ -32,13 +32,12 @@
 	<div></div>
 </template>
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
 import { useTitle } from '@vueuse/core'
 
 const title = useTitle()
 title.value = 'Bingo Bongo - an osrs bingo app'
 
-const router = useRouter()
+
 const secondaryIndices = new Set()
 const getRandomColor = (index: number) => {
 	while (secondaryIndices.size < 3) {

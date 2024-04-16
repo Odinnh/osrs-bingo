@@ -70,7 +70,8 @@
 							class="metric-list"
 							@click.prevent="
 								(el) => {
-									console.log(el.target?.classList.toggle('open-list'))
+									const htmlELE = <HTMLElement>el.target
+									console.log(htmlELE.classList.toggle('open-list'))
 								}
 							"
 						>
@@ -168,7 +169,6 @@ interface Data {
 	[metricName: string]: Metric
 }
 
-const openMetrics = ref<Boolean>(true)
 const calculateTotals = (metricData: {
 	[playerName: string]: PlayerData
 }): { team: string; total: number }[] => {

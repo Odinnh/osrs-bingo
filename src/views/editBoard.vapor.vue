@@ -123,7 +123,6 @@ import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
-import { useCurrentUser } from 'vuefire'
 // Component imports
 import modal from '@/components/Modal.vapor.vue'
 import EditTileModal from '@/components/modals/EditTileModal.vapor.vue'
@@ -134,7 +133,7 @@ import { WOMClient } from '@wise-old-man/utils'
 import type { ModalElement, Tile } from '@/types'
 import type { Metric as WOMMetric } from '@wise-old-man/utils'
 
-const user = ref(useCurrentUser())
+
 const route = useRoute()
 //DOM elements
 const modalEle = ref<ModalElement>()
