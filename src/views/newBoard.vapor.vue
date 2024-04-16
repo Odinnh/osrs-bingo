@@ -1,6 +1,6 @@
 <template>
 	<div v-if="user">
-		<h1>Hello World</h1>
+		<h1>Create new Bingo</h1>
 		<p v-if="ErrorMessage">{{ ErrorMessage }}</p>
 		<input
 			type="number"
@@ -70,6 +70,7 @@ interface boardDetails {
 	name?: string
 	start?: Date
 	end?: Date
+	published?: boolean
 }
 const boardDetails = ref<boardDetails>({})
 const createBingo = async (): Promise<void> => {
@@ -109,7 +110,8 @@ const createBingo = async (): Promise<void> => {
 			boardDetails.value = {
 				name: result.title,
 				start: result.startsAt,
-				end: result.endsAt
+				end: result.endsAt,
+				published: false
 			}
 			teams.value = formatTeams(result)
 			isReady.value = true
@@ -180,16 +182,4 @@ const addBoard = async () => {
 	isReady.value = false
 }
 </script>
-<style scoped>
-h1 {
-	color: rgb(163, 43, 43);
-}
-input[type='number'] {
-	-moz-appearance: textfield;
-	appearance: textfield;
-	&::-webkit-inner-spin-button,
-	&::-webkit-outerspin-button {
-		-webkit-appearance: textfield;
-	}
-}
-</style>
+<style scoped></style>

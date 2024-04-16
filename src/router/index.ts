@@ -62,9 +62,12 @@ router.beforeEach(async (to) => {
 	if (to.name == 'createNewBingo' && !(await isUserLoggedIn())) {
 		return { name: 'loginScreen' }
 	}
+	if (to.name == 'viewBoard' && !(await boardIsPublished(to.params.boardUUID as string))) {
+		return { name: 'loginScreen' }
+	}
 })
 
-const isUserLoggedIn = async () => {
+const isUserLoggedIn = async (): Promise<boolean> => {
 	const user = await getCurrentUser()
 
 	if (user) {
@@ -90,5 +93,18 @@ const userIsAuthenticated = async (uid: string) => {
 	const boardDataSnapshot = await getDoc(doc(db, 'Boards', uid))
 	const boardData = boardDataSnapshot.data()
 	return boardData && boardData.ownerID === user?.uid
+}
+const boardIsPublished = async (uid: string) => {
+	const user = await getCurrentUser()
+	if (user) {
+		const userDataSnapshot = await getDoc(doc(db, 'Users', user.uid))
+		const userData = userDataSnapshot.data()
+		if (userData && userData.banned) {
+			return false
+		}
+	}
+	const boardDataSnapshot = await getDoc(doc(db, 'Boards', uid))
+	const boardData = boardDataSnapshot.data()
+	return (boardData && boardData.ownerID === user?.uid) || (boardData && boardData.published)
 }
 export default router

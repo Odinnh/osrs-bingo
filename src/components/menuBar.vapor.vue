@@ -1,7 +1,7 @@
 <template>
 	<header>
 		<nav>
-			<a
+			<!-- <a
 				class="btn"
 				:current="route.name == 'Home'"
 				icon
@@ -20,15 +20,31 @@
 				:current="route.name == 'loginScreen'"
 				@click.prevent="router.push({ name: 'loginScreen' })"
 			>
-				<img class="bobble" v-if="user.photoURL" :src="user.photoURL" />
-			</a>
+				
+			</a> -->
+			<router-link :to="{ name: 'Home' }" class="btn" icon :current="route.name == 'Home'">
+				home
+			</router-link>
+			<router-link
+				:to="{ name: 'loginScreen' }"
+				:current="route.name == 'loginScreen'"
+				class="btn"
+			>
+				account
+			</router-link>
+			<router-link
+				:to="{ name: 'loginScreen' }"
+				:current="route.name == 'loginScreen'"
+				class="imgbtn"
+			>
+				<img class="bobble" v-if="user?.photoURL" :src="user?.photoURL" />
+			</router-link>
 		</nav>
 	</header>
 </template>
 <script setup lang="ts">
 import { getCurrentUser } from 'vuefire'
-import { useRouter, useRoute } from 'vue-router'
-const router = useRouter()
+import { useRoute } from 'vue-router'
 const route = useRoute()
 const user = await getCurrentUser()
 </script>

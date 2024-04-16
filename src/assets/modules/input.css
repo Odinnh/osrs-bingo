@@ -60,3 +60,12 @@ progress {
 	height: 2rem;
 	max-width: 100%;
 }
+
+input[type='number'] {
+	-moz-appearance: textfield;
+	appearance: textfield;
+	&::-webkit-inner-spin-button,
+	&::-webkit-outerspin-button {
+		-webkit-appearance: textfield;
+	}
+}

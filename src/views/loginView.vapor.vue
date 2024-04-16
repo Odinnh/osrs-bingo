@@ -13,25 +13,7 @@
 			<h2>Boards</h2>
 			<ul>
 				<li v-for="board in userBoards">
-					<label :key="board">
-						{{ board }}
-						<a
-							icon
-							class="btn"
-							@click.prevent="
-								router.push({ name: 'editBoard', params: { boardUUID: board } })
-							"
-							>edit</a
-						>
-					</label>
-					<a
-						icon
-						class="btn"
-						@click.prevent="
-							router.push({ name: 'viewBoard', params: { boardUUID: board } })
-						"
-						>visibility</a
-					>
+					<userBoardListItems :boardID="board" :key="board" />
 				</li>
 			</ul>
 		</div>
@@ -45,6 +27,8 @@ import { useTitle } from '@vueuse/core'
 import { ref } from 'vue'
 import { doc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
+
+import userBoardListItems from '@/components/userBoardListItems.vapor.vue'
 
 const router = useRouter()
 const provider = new GoogleAuthProvider()
