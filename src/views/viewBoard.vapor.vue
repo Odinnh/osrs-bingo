@@ -1,44 +1,29 @@
 <template>
 	<template v-if="boardData">
 		<section>
-			<a
+			<router-link
+				v-if="user?.uid == boardData?.ownerID"
 				icon
 				class="btn"
-				@click.prevent="
-					router.push({
-						name: 'editBoard',
-						params: {
-							boardUUID: route.params.boardUUID
-						}
-					})
-				"
-				>edit</a
+				:to="{
+					name: 'editBoard',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				}"
+				>edit</router-link
 			>
-			<a
+			<router-link
+				v-if="user?.uid == boardData?.ownerID"
 				icon
 				class="btn"
-				@click.prevent="
-					router.push({
-						name: 'viewBoard',
-						params: {
-							boardUUID: route.params.boardUUID
-						}
-					})
-				"
-				>visibility</a
-			>
-			<a
-				icon
-				class="btn"
-				@click.prevent="
-					router.push({
-						name: 'teamViewer',
-						params: {
-							boardUUID: route.params.boardUUID
-						}
-					})
-				"
-				>group</a
+				:to="{
+					name: 'teamViewer',
+					params: {
+						boardUUID: route.params.boardUUID
+					}
+				}"
+				>group</router-link
 			>
 		</section>
 		<h1 class="fs-2">{{ boardData.name }}</h1>
@@ -74,16 +59,15 @@
 <script setup lang="ts">
 import { useTitle } from '@vueuse/core'
 import { db } from '../firebaseSettings'
-import { useDocument, useCollection } from 'vuefire'
+import { useDocument, useCollection, getCurrentUser } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
 import { Tile, ModalElement } from '@/types'
 
 import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
-
+const user = await getCurrentUser()
 const route = useRoute()
-const router = useRouter()
 const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)

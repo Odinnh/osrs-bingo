@@ -1,27 +1,6 @@
 <template>
 	<header>
 		<nav>
-			<!-- <a
-				class="btn"
-				:current="route.name == 'Home'"
-				icon
-				@click.prevent="router.push({ name: 'Home' })"
-				>home</a
-			>
-			<a
-				class="btn"
-				:current="route.name == 'loginScreen'"
-				@click.prevent="router.push({ name: 'loginScreen' })"
-				>account</a
-			>
-			<a
-				v-if="user"
-				class="imgbtn"
-				:current="route.name == 'loginScreen'"
-				@click.prevent="router.push({ name: 'loginScreen' })"
-			>
-				
-			</a> -->
 			<router-link :to="{ name: 'Home' }" class="btn" icon :current="route.name == 'Home'">
 				home
 			</router-link>

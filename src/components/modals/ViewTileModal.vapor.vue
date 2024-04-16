@@ -19,7 +19,9 @@
 					<h2 v-if="props.selectedTile.needAny === false" class="fs-4">
 						Get the following items:
 					</h2>
-					<h2 v-else class="fs-4">Get any of these items:</h2>
+					<h2 v-else class="fs-4">
+						Get a total of {{ props.selectedTile?.count }} items:
+					</h2>
 					<div class="drop-table" :style="{ '--_width': teams.length }">
 						<div></div>
 						<div v-for="team in teams">{{ team }}</div>
@@ -64,57 +66,70 @@
 				</div>
 				<div>
 					<template v-for="metric in props.selectedTile.metric">
-						<h3>
+						<h3
+							class="metric-list"
+							@click.prevent="
+								(el) => {
+									console.log(el.target?.classList.toggle('open-list'))
+								}
+							"
+						>
 							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
 								{{ formatNumberToShort(props.selectedTile.count) }}
 							</template>
-							{{ titleCase(metric.replace('_', ' ')) }}
+							{{ titleCase(metric.replaceAll('_', ' ')) }}
 							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
 								{{ titleCase(props.selectedTile.type) }}
 							</template>
 						</h3>
 						<div
 							v-if="['kc', 'exp'].includes(props.selectedTile.type)"
-							v-for="team in getMetricWithTotals(metric)?.totals"
+							class="metric-item"
 						>
-							{{ team.team }}
-							<div class="spread">
-								<progress
-									min="0"
-									:value="team.total"
-									:max="props.selectedTile.count"
-								></progress>
-
-								<p
-									class="totals"
-									:class="{
-										completed: team.total >= props.selectedTile.count,
-										notStarted: team.total == 0
-									}"
-								>
-									{{
-										team.total >= props.selectedTile.count
-											? formatNumberToShort(props.selectedTile.count) + '+'
-											: formatNumberToShort(team.total)
-									}}{{ ' ' + titleCase(props.selectedTile.type) }}
-								</p>
+							<div v-for="team in getMetricWithTotals(metric)?.totals">
+								{{ team.team }}
+								<div class="spread">
+									<progress
+										min="0"
+										:value="team.total"
+										:max="props.selectedTile.count"
+									></progress>
+									<p
+										class="totals"
+										:class="{
+											completed: team.total >= props.selectedTile.count,
+											notStarted: team.total == 0
+										}"
+									>
+										{{
+											team.total >= props.selectedTile.count
+												? formatNumberToShort(props.selectedTile.count) +
+												  '+'
+												: formatNumberToShort(team.total)
+										}}{{ ' ' + titleCase(props.selectedTile.type) }}
+									</p>
+								</div>
 							</div>
 						</div>
-						<div v-else v-for="team in getMetricWithTotals(metric)?.totals">
-							{{ team.team }}
-							<div class="spread">
-								<progress
-									min="0"
-									:value="
-										team.total != 0
-											? team.total + getHighestTotal(metric) * 0.05
-											: 0
-									"
-									:max="getHighestTotal(metric) + getHighestTotal(metric) * 0.1"
-								></progress>
-								<p class="totals">
-									{{ formatNumberToShort(team.total) }}
-								</p>
+						<div v-else class="metric-item">
+							<div v-for="team in getMetricWithTotals(metric)?.totals">
+								{{ team.team }}
+								<div class="spread">
+									<progress
+										min="0"
+										:value="
+											team.total != 0
+												? team.total + getHighestTotal(metric) * 0.05
+												: 0
+										"
+										:max="
+											getHighestTotal(metric) + getHighestTotal(metric) * 0.1
+										"
+									></progress>
+									<p class="totals">
+										{{ formatNumberToShort(team.total) }}
+									</p>
+								</div>
 							</div>
 						</div>
 					</template>
@@ -153,6 +168,7 @@ interface Data {
 	[metricName: string]: Metric
 }
 
+const openMetrics = ref<Boolean>(true)
 const calculateTotals = (metricData: {
 	[playerName: string]: PlayerData
 }): { team: string; total: number }[] => {
@@ -263,6 +279,8 @@ defineEmits(['close'])
 <style scoped>
 dialog {
 	width: 800px;
+	border: 1px solid var(--color-background__inv);
+	outline: none;
 }
 dialog > div {
 	display: grid;
@@ -341,5 +359,11 @@ dialog img {
 .notStarted {
 	font-style: italic;
 	color: var(--mid);
+}
+.metric-list {
+	cursor: pointer;
+}
+.open-list + .metric-item {
+	display: none;
 }
 </style>

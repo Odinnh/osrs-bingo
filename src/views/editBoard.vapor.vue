@@ -1,44 +1,28 @@
 <template>
 	<section>
-		<a icon class="btn" @click.prevent="gatherWomEXP">download</a>
-		<a
+		<a class="btn" @click.prevent="gatherWomEXP"> Update all metrics<span icon>sync</span></a>
+
+		<router-link
 			icon
 			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'editBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>edit</a
+			:to="{
+				name: 'viewBoard',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+			>visibility</router-link
 		>
-		<a
+		<router-link
 			icon
 			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'viewBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>visibility</a
-		>
-		<a
-			icon
-			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'teamViewer',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>group</a
+			:to="{
+				name: 'teamViewer',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+			>group</router-link
 		>
 	</section>
 	<section id="board-info">
@@ -130,7 +114,7 @@ const title = useTitle()
 title.value = 'Edit board - Bingo Bongo'
 // base imports
 import { computed, nextTick, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
@@ -139,7 +123,7 @@ import { useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
-
+import { useCurrentUser } from 'vuefire'
 // Component imports
 import modal from '@/components/Modal.vapor.vue'
 import EditTileModal from '@/components/modals/EditTileModal.vapor.vue'
@@ -150,8 +134,8 @@ import { WOMClient } from '@wise-old-man/utils'
 import type { ModalElement, Tile } from '@/types'
 import type { Metric as WOMMetric } from '@wise-old-man/utils'
 
+const user = ref(useCurrentUser())
 const route = useRoute()
-const router = useRouter()
 //DOM elements
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()

@@ -24,9 +24,9 @@
 				back on that front. It's like having a reliable sidekick for our clan events, making
 				everything run smoothly and keeping the stress levels down.
 			</p>
-			<a class="btn" big submit @click="router.push({ name: 'createNewBingo' })"
-				>Start a new event!</a
-			>
+			<router-link class="btn" big submit :to="{ name: 'createNewBingo' }">
+				Start a new event!
+			</router-link>
 		</div>
 	</div>
 	<div></div>

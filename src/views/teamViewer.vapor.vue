@@ -1,43 +1,27 @@
 <template>
 	<section>
-		<a
+		<router-link
+			v-if="user?.uid == boardData?.ownerID"
 			icon
 			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'editBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>edit</a
+			:to="{
+				name: 'editBoard',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+			>edit</router-link
 		>
-		<a
+		<router-link
 			icon
 			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'viewBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>visibility</a
-		>
-		<a
-			icon
-			class="btn"
-			@click.prevent="
-				router.push({
-					name: 'teamViewer',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				})
-			"
-			>group</a
+			:to="{
+				name: 'viewBoard',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+			>visibility</router-link
 		>
 	</section>
 	<div>
@@ -61,9 +45,9 @@
 	</div>
 </template>
 <script setup lang="ts">
-import { useCollection } from 'vuefire'
+import { useCollection, useDocument, getCurrentUser } from 'vuefire'
 
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 import { ref } from 'vue'
 
@@ -72,9 +56,13 @@ import type { Teams, Player } from '@/types'
 import type { CompetitionDetails, ParticipationWithPlayerAndProgress } from '@wise-old-man/utils'
 import { collection, doc, writeBatch } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
-
 const route = useRoute()
-const router = useRouter()
+
+const user = await getCurrentUser()
+
+const { data: boardData, promise: boardDataPromise } = useDocument(
+	doc(db, 'Boards', route.params.boardUUID as string)
+)
 const { data: teamsData, promise: teamsDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Groups')
 )
@@ -82,7 +70,7 @@ const formatPlayerBadge = (playerType: string): string => {
 	const f_PlayerType = playerType.charAt(0).toUpperCase() + playerType.slice(1)
 	return 'https://oldschool.runescape.wiki/images/' + f_PlayerType + '_chat_badge.png'
 }
-await Promise.all([teamsDataPromise.value])
+await Promise.all([teamsDataPromise.value, boardDataPromise.value])
 const client = new WOMClient()
 const synchTeams = async () => {
 	const batch = writeBatch(db)
