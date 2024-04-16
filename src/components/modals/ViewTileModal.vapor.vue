@@ -203,7 +203,7 @@ const getHighestTotal = (metric: string): number => {
 	// Return the highest total
 	return measuredTotal.value
 }
-const getDropCollectedByTeam = (collected: CollectedLogItem[] | undefined, dropId?: string) => {
+const getDropCollectedByTeam = (collected: CollectedLogItem[] | undefined) => {
 	console.log(collected)
 	return collected
 }
