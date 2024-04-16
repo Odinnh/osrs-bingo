@@ -30,7 +30,32 @@
 			{{ boardData.name }}
 		</h1>
 		Board ID: <code> {{ route.params.boardUUID }}</code>
+		<template v-if="boardData?.start">
+			<p>
+				Starts:
+				{{
+					new Date(boardData.start.seconds * 1000).toLocaleDateString(
+						undefined,
+						dateOptions
+					)
+				}}
+			</p>
+			<code>&lt;t:{{ boardData.start.seconds }}:F&gt;</code>
+		</template>
+		<template v-if="boardData?.end">
+			<p>
+				Ends:
+				{{
+					new Date(boardData.end.seconds * 1000).toLocaleDateString(
+						undefined,
+						dateOptions
+					)
+				}}
+			</p>
+			<code>&lt;t:{{ boardData.end.seconds }}:F&gt;</code>
+		</template>
 	</section>
+
 	<section id="controlls-are-editing" v-if="isEditingBoard">
 		<button @click="updateWidth('remove')">-</button>
 		<input
@@ -133,8 +158,16 @@ import { WOMClient } from '@wise-old-man/utils'
 import type { ModalElement, Tile } from '@/types'
 import type { Metric as WOMMetric } from '@wise-old-man/utils'
 
-
 const route = useRoute()
+
+const dateOptions = ref<{}>({
+	weekday: 'short',
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	hour: 'numeric',
+	minute: 'numeric'
+})
 //DOM elements
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
