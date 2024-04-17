@@ -24,20 +24,30 @@
 				back on that front. It's like having a reliable sidekick for our clan events, making
 				everything run smoothly and keeping the stress levels down.
 			</p>
-			<router-link class="btn" big submit :to="{ name: 'createNewBingo' }">
+			<!-- <router-link class="btn" big submit :to="{ name: 'createNewBingo' }">
 				Start a new event!
+			</router-link> -->
+			<input type="text" v-model="WOMCODE" />
+			<router-link
+				class="btn"
+				big
+				submit
+				:to="{ name: 'viewBoard', params: { boardUUID: WOMCODE } }"
+			>
+				Go to the event!
 			</router-link>
 		</div>
 	</div>
 	<div></div>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useTitle } from '@vueuse/core'
 
 const title = useTitle()
 title.value = 'Bingo Bongo - an osrs bingo app'
 
-
+const WOMCODE = ref<number>(40963)
 const secondaryIndices = new Set()
 const getRandomColor = (index: number) => {
 	while (secondaryIndices.size < 3) {
