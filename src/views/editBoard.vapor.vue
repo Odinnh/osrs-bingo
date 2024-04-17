@@ -17,6 +17,18 @@
 			icon
 			class="btn"
 			:to="{
+				name: 'moderateBoard',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+		>
+			library_add_check
+		</router-link>
+		<router-link
+			icon
+			class="btn"
+			:to="{
 				name: 'teamViewer',
 				params: {
 					boardUUID: route.params.boardUUID
@@ -505,6 +517,11 @@ const gatherWomEXP = async () => {
 	}
 
 	if (boardData.value) {
+		boardData.value.trackingMetrics = ref([
+			...boardData.value.trackingMetrics,
+			'overall',
+			'hitpoints'
+		])
 		boardData.value.trackingMetrics.forEach((metric: string) => {
 			gatheredMetrics[metric] = { [currentTime]: { timeStamp: currentTime, exp: 1 } }
 		})
@@ -519,7 +536,8 @@ const gatherWomEXP = async () => {
 		batch.update(doc(db, 'Boards', route.params.boardUUID as string), {
 			lastUpdate: boardData.value!.lastUpdate
 		})
-
+		boardData.value!.trackingMetrics.push('overall')
+		boardData.value!.trackingMetrics.push('hitpoints')
 		await Promise.all(
 			boardData.value!.trackingMetrics.map(async (metric: WOMMetric) => {
 				const MetricRef = doc(
