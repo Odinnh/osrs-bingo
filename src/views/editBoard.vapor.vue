@@ -200,7 +200,7 @@ const orderOfList = ref<string[]>([])
 let localOrderOfList = <string[]>[]
 
 // WOM
-const Client = new WOMClient()
+const Client = new WOMClient({ apiKey: import.meta.env['VITE_WOM_ID'], userAgent: '_Odinh' })
 const WOMCode = ref<number>(parseInt(route.params.boardUUID as string))
 
 //event listened

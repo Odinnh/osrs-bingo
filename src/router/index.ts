@@ -10,7 +10,8 @@ import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
 import viewBoard from '@/views/viewBoard.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
-import TeamViewer from '@/views/teamViewer.vapor.vue'
+import teamViewer from '@/views/teamViewer.vapor.vue'
+import moderateBoard from '@/views/moderateBoard.vapor.vue'
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -36,9 +37,14 @@ const router = createRouter({
 			component: editBoard
 		},
 		{
+			path: '/verify/:boardUUID',
+			name: 'moderateBoard',
+			component: moderateBoard
+		},
+		{
 			path: '/teams/:boardUUID',
 			name: 'teamViewer',
-			component: TeamViewer
+			component: teamViewer
 		},
 		{
 			path: '/color/',
@@ -54,7 +60,7 @@ const router = createRouter({
 })
 router.beforeEach(async (to) => {
 	if (
-		['editBoard', 'teamViewer'].includes(to.name as string) &&
+		['editBoard', 'teamViewer', 'moderateBoard'].includes(to.name as string) &&
 		!(await userIsAuthenticated(to.params.boardUUID as string))
 	) {
 		return { name: 'loginScreen' }

@@ -18,14 +18,13 @@
 				icon
 				class="btn"
 				:to="{
-					name: 'moderateBoard',
+					name: 'viewBoard',
 					params: {
 						boardUUID: route.params.boardUUID
 					}
 				}"
+				>visibility</router-link
 			>
-				library_add_check
-			</router-link>
 			<router-link
 				v-if="user?.uid == boardData?.ownerID"
 				icon
@@ -60,12 +59,12 @@
 				<img class="tile--image" :src="tile.image" />
 			</div>
 		</section>
-		<ViewTileModal
+		<VerifyTileModalVapor
 			ref="asideModalEle"
 			@close="closeTileModal"
 			:selectedTile="selectedTile"
 			:latestData="getLatest(boardMetricData as MetricData[])"
-			:teams="teams"
+			:teams="teamsData as Team[]"
 		/>
 	</template>
 </template>
@@ -76,9 +75,9 @@ import { useDocument, useCollection, getCurrentUser } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
 import { useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
-import { Tile, ModalElement } from '@/types'
+import { Tile, ModalElement, Team } from '@/types'
+import VerifyTileModalVapor from '@/components/modals/verifyTileModal.vapor.vue'
 
-import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
 const user = await getCurrentUser()
 const route = useRoute()
 const title = useTitle()
@@ -103,7 +102,6 @@ await Promise.all([
 	teamsDataPromise.value,
 	tilesDataPromise.value
 ])
-const teams: string[] = teamsData.value.map((team) => team.teamName)
 
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 

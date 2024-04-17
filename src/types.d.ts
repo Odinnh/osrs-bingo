@@ -23,20 +23,25 @@ interface Tile extends DocumentData {
 		}
 	]
 	collected?: collectionLogItem[]
-	status?: 'DELETEME' | null
+	verified?: [
+		{
+			teamName: string
+			timestamp: timestamp | number
+		}
+	]
 }
 interface Tiles {
 	[key: string]: Tile
 }
-interface CollectedLogItem {
+interface collectionLogItem {
 	playerName: string
-	timeOfCollection: timestamp | number
+	timestamp: timestamp | number
 	teamName: string
 	id: string
 }
 
 interface Team {
-	teamName: string | null
+	teamName: string
 	stats: null
 	players: Prisma_Base_Player[]
 }
@@ -49,4 +54,4 @@ interface ModalElement extends HTMLDialogElement {
 	//closes the Modal
 	closeModal: Function
 }
-export { Tile, Tiles, Team, Teams, Player, ModalElement, CollectedLogItem }
+export { Tile, Tiles, Team, Teams, Player, ModalElement, collectionLogItem }

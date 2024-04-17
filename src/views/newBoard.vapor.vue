@@ -58,7 +58,7 @@ const user = await getCurrentUser()
 const isReady = ref<boolean>(false)
 const WOMCode = ref<number>(40963)
 const ErrorMessage = ref<string>()
-const client = new WOMClient()
+const client = new WOMClient({ apiKey: import.meta.env['VITE_WOM_ID'], userAgent: '_Odinh' })
 const teams = ref<Teams>({})
 const dateOptions = ref<{}>({
 	weekday: 'short',

@@ -30,12 +30,18 @@ button,
 
 :is(button, .button, .btn):hover {
 	color: var(--color-text);
+	background-color: var(--mid);
+	&[icon] {
+		font-weight: bold;
+	}
+}
+:is(button, .button, .btn):active {
+	color: var(--color-text);
 	background-color: var(--color-background);
 	&[icon] {
 		font-weight: bold;
 	}
 }
-
 .linked-start {
 	border-top-right-radius: unset !important;
 	border-bottom-right-radius: unset !important;

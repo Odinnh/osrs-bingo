@@ -13,6 +13,19 @@
 			>edit</router-link
 		>
 		<router-link
+			v-if="user?.uid == boardData?.ownerID"
+			icon
+			class="btn"
+			:to="{
+				name: 'moderateBoard',
+				params: {
+					boardUUID: route.params.boardUUID
+				}
+			}"
+		>
+			library_add_check
+		</router-link>
+		<router-link
 			icon
 			class="btn"
 			:to="{
@@ -71,7 +84,7 @@ const formatPlayerBadge = (playerType: string): string => {
 	return 'https://oldschool.runescape.wiki/images/' + f_PlayerType + '_chat_badge.png'
 }
 await Promise.all([teamsDataPromise.value, boardDataPromise.value])
-const client = new WOMClient()
+const client = new WOMClient({ apiKey: import.meta.env['VITE_WOM_ID'], userAgent: '_Odinh' })
 const synchTeams = async () => {
 	const batch = writeBatch(db)
 

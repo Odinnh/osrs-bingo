@@ -24,33 +24,40 @@
 					</h2>
 					<div class="drop-table" :style="{ '--_width': teams.length }">
 						<div></div>
-						<div v-for="team in teams">{{ team }}</div>
+						<div v-for="team in teams">{{ team.teamName }}</div>
 
 						<template v-for="drop in props.selectedTile!.drops">
 							<div>
-								{{ drop.name }}
+								<button
+									icon
+									@click.prevent="
+										() => {
+											mini?.showModal()
+											selectedDrop = drop
+										}
+									"
+								>
+									playlist_add</button
+								>{{ drop.name }}
 							</div>
 							<div
 								v-for="team in teams"
 								:class="{
 									completed:
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team]! >= drop.count,
+										teamsCollected[team.teamName].collected.filter((_drop) => {
+											return _drop.id == drop.id
+										}).length >= drop.count,
 									notStarted:
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team] === 0
+										teamsCollected[team.teamName].collected.filter((_drop) => {
+											return _drop.id == drop.id
+										}).length === 0
 								}"
 							>
 								<span>
 									{{
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team]
+										teamsCollected[team.teamName].collected.filter((_drop) => {
+											return _drop.id == drop.id
+										}).length
 									}} </span
 								><template v-if="props.selectedTile?.needAny === false">
 									/ {{ drop.count }}
@@ -59,7 +66,7 @@
 						</template>
 					</div>
 				</div>
-				<div>
+				<!-- <div>
 					<h3 class="fs-4" v-if="!['kc', 'exp'].includes(props.selectedTile.type)">
 						Metric
 					</h3>
@@ -134,30 +141,171 @@
 							</div>
 						</div>
 					</template>
-				</div>
+				</div> -->
 			</div>
 		</div>
 	</dialog>
+	<dialog ref="mini">
+		<template v-if="selectedDrop">
+			<h2 class="fs-2">{{ selectedDrop.name }}:</h2>
+			<div class="controls">
+				<button @click.prevent="micro?.showModal()">Add drop</button>
+				<button @click="mini?.close()">Close</button>
+			</div>
+			<div class="mini__team-list" v-for="team in teams">
+				<div class="mini__team-header">
+					<div class="mini__team-icon">{{ team.teamName }}</div>
+					<div class="mini__team-total">
+						{{
+							teamsCollected[team.teamName]?.collected.filter((_drop) => {
+								return selectedDrop.id == _drop.id
+							}).length
+						}}
+						<template v-if="!props.selectedTile?.needAny"
+							>/ {{ selectedDrop.count }}</template
+						>
+					</div>
+				</div>
+				<div
+					class="mini__team-player-entry"
+					v-for="entry in teamsCollected[team.teamName]?.collected"
+				>
+					{{ entry.playerName }}:
+					{{
+						new Date(entry.timestamp.seconds * 1000).toLocaleDateString(
+							undefined,
+							dateOptions
+						)
+					}}
+					<div icon class="mini__team-player-remove" @click.prevent="mini?.close()">
+						delete
+					</div>
+				</div>
+			</div>
+		</template>
+	</dialog>
+	<dialog ref="micro" class="micro">
+		<h2>Add a drop:</h2>
+		<VueMultiselect
+			v-model="singleSelectTeam"
+			:options="
+				teams.map((team) => {
+					return team
+				})
+			"
+			:multiple="false"
+			:close-on-select="true"
+			:clear-on-select="false"
+			:preserve-search="true"
+			:allow-empty="true"
+			:label="'teamName'"
+			placeholder="Choose a team"
+		/>
+		<VueMultiselect
+			v-model="singleSelectPlayer"
+			:options="computedAvailablePlayers"
+			:multiple="false"
+			:close-on-select="true"
+			:clear-on-select="false"
+			:preserve-search="true"
+			:allow-empty="true"
+			placeholder="Choose a team"
+		/>
+		<button @click="micro?.close()">close</button>
+		<button
+			@click="
+				() => {
+					addToDrop()
+					micro?.close()
+				}
+			"
+		>
+			add
+		</button>
+	</dialog>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import type { ModalElement, Tile, collectionLogItem } from '@/types'
-import { formatNumberToShort } from '@/assets/js/helpers'
-
+import VueMultiselect from 'vue-multiselect'
+import type { Team } from '@/types'
+import { useDocument } from 'vuefire'
+import { doc, updateDoc } from 'firebase/firestore'
+import { db } from '@/firebaseSettings'
+import { useRoute } from 'vue-router'
 const props = defineProps<{
 	selectedTile: Tile | null
 	latestData: Data
-	teams: string[]
+	teams: Team[]
 }>()
-
+const route = useRoute()
 const dialog = ref<ModalElement>()
+const dateOptions = ref<{}>({
+	weekday: 'short',
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+	hour: 'numeric',
+	minute: 'numeric'
+})
+const mini = ref<ModalElement>()
+const micro = ref<ModalElement>()
+const singleSelectTeam = ref()
+const singleSelectPlayer = ref()
+const computedAvailablePlayers = computed(() => {
+	if (!singleSelectTeam.value) return []
+	return singleSelectTeam.value.players.map(
+		(player: { [key: string]: any }) => player.displayName
+	)
+})
+const addToDrop = async () => {
+	const newData = {
+		playerName: singleSelectPlayer.value,
+		timestamp: new Date(),
+		teamName: singleSelectTeam.value.teamName,
+		id: selectedDrop.value.id
+	}
+	const { data: tileData, promise: tileDataPromise } = useDocument(
+		doc(
+			db,
+			'Boards',
+			route.params.boardUUID as string,
+			'Tiles',
+			props.selectedTile?.id as string
+		)
+	)
+	await tileDataPromise.value
+	if (!tileData.value?.collected) {
+		await updateDoc(
+			doc(
+				db,
+				'Boards',
+				route.params.boardUUID as string,
+				'Tiles',
+				props.selectedTile?.id as string
+			),
+			{ ...tileData.value, collected: [newData] }
+		)
+	} else {
+		await updateDoc(
+			doc(
+				db,
+				'Boards',
+				route.params.boardUUID as string,
+				'Tiles',
+				props.selectedTile?.id as string
+			),
+			{ ...tileData.value, collected: [...tileData.value!.collected, newData] }
+		)
+	}
+}
 interface PlayerData {
 	name: string
 	teamName: string
 	gained: number
 }
-
+const selectedDrop = ref()
 interface Metric {
 	metric: string
 	data: { [playerName: string]: PlayerData }
@@ -215,6 +363,21 @@ const getMetricWithTotals = (metricName: string): Metric | null => {
 		totals: totalsArray
 	}
 }
+const teamsCollected = computed(() => {
+	const teamsWithTotals: { [key: string]: { teamName: string; collected: collectionLogItem[] } } =
+		{}
+
+	props.teams.forEach((team) => {
+		teamsWithTotals[team.teamName as string] = {
+			teamName: team.teamName as string,
+			collected:
+				props.selectedTile?.collected?.filter((item) => item.teamName === team.teamName) ||
+				[]
+		}
+	})
+
+	return teamsWithTotals
+})
 
 const getHighestTotal = (metric: string): number => {
 	const measuredTotal = ref<number>(0) // Initialize ref with default value 0
@@ -233,19 +396,6 @@ const getHighestTotal = (metric: string): number => {
 
 	// Return the highest total
 	return measuredTotal.value
-}
-const getDropCollectedByTeam = (collected: collectionLogItem[] | undefined, iId?: string) => {
-	const teamTotals = ref<{ [key: string]: number | undefined }>({})
-	props.teams.forEach((team) => {
-		const tempTotal = ref(
-			collected?.filter((item) => {
-				item.id === iId && item.teamName === team
-			}).length
-		)
-
-		teamTotals.value[team as string] = tempTotal.value ?? 0
-	})
-	return teamTotals.value
 }
 
 function titleCase(str: string) {
@@ -280,11 +430,15 @@ dialog {
 	width: 800px;
 	border: 1px solid var(--color-background__inv);
 	outline: none;
+	min-height: 400px;
 }
-dialog > div {
+dialog:not(.micro) > div {
 	display: grid;
 	grid-template-columns: 0.3fr 0.7fr;
 	gap: var(--gap);
+}
+.micro > div {
+	grid-template-columns: 1;
 }
 dialog img {
 	width: 100%;

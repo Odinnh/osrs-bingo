@@ -5,7 +5,7 @@
 	--_color-background: var(--color-background);
 	--_color-border: var(--color-background__inv);
 	--_color-placeholder: var(--color-text);
-	--_color-disabled: var(--mid);
+	--_color-disabled: var(--mid-text);
 	--_color-disabled-text: var(--color-text__inv);
 	--_color-hover: var(--color-background);
 	--_color-focus: var(--color-background);

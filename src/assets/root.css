@@ -59,7 +59,7 @@ dialog {
 	}
 }
 .tiptap p.is-editor-empty:first-child::before {
-	color: var(--mid);
+	color: var(--mid-text);
 	content: attr(data-placeholder);
 	float: left;
 	height: 0;
