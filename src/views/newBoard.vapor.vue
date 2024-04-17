@@ -130,7 +130,7 @@ const formatTeams = (competitions: CompetitionDetails): Teams => {
 	participants.value = competitions.participations
 	participants.value?.map((participant) => {
 		teams.value[participant.teamName as keyof Teams] = {
-			teamName: participant.teamName,
+			teamName: participant.teamName as string,
 			players: [],
 			stats: null
 		}

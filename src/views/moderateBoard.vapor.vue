@@ -83,9 +83,7 @@ const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)
 )
-const { data: boardMetricData, promise: boardMetricDataPromise } = useCollection(
-	collection(db, 'Boards', route.params.boardUUID as string, 'Metrics')
-)
+
 if (boardData.value?.name) {
 	title.value = boardData.value.name + ' - Bingo Bongo'
 }
@@ -97,7 +95,6 @@ const { data: teamsData, promise: teamsDataPromise } = useCollection(
 )
 await Promise.all([
 	boardDataPromise.value,
-	boardMetricDataPromise.value,
 	teamsDataPromise.value,
 	tilesDataPromise.value
 ])

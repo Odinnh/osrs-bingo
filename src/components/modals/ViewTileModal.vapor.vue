@@ -6,6 +6,10 @@
 					<img :src="props.selectedTile!.image" />
 				</div>
 				<button @click.prevent="$emit('close')">close</button>
+				<div v-for="team in teams" :key="team">
+					<span icon v-if="verifiedTeams && verifiedTeams.includes(team)"> check </span>
+					{{ team }}
+				</div>
 				<div v-html="props.selectedTile.description" />
 				<small> tile id: {{ props.selectedTile?.id }} </small>
 				<div>Points: {{ props.selectedTile!.points }}</div>
@@ -140,7 +144,7 @@
 	</dialog>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 import type { ModalElement, Tile, collectionLogItem } from '@/types'
 import { formatNumberToShort } from '@/assets/js/helpers'
@@ -157,7 +161,9 @@ interface PlayerData {
 	teamName: string
 	gained: number
 }
-
+const verifiedTeams = computed(
+	() => props.selectedTile?.verified?.map((entry) => entry.teamName) || []
+)
 interface Metric {
 	metric: string
 	data: { [playerName: string]: PlayerData }
