@@ -145,7 +145,7 @@
 			</div>
 		</div>
 	</dialog>
-	<dialog ref="mini">
+	<dialog ref="mini" class="mini">
 		<template v-if="selectedDrop">
 			<h2 class="fs-2">{{ selectedDrop.name }}:</h2>
 			<div class="controls">
@@ -169,6 +169,7 @@
 				<div
 					class="mini__team-player-entry"
 					v-for="entry in teamsCollected[team.teamName]?.collected"
+					:key="entry.timestamp"
 				>
 					{{ entry.playerName }}:
 					{{
@@ -177,7 +178,18 @@
 							dateOptions
 						)
 					}}
-					<div icon class="mini__team-player-remove" @click.prevent="mini?.close()">
+					<div
+						icon
+						class="mini__team-player-remove"
+						@click="
+							() => {
+								removeEntry(entry)
+								mini?.close()
+								micro?.close()
+								dialog?.close()
+							}
+						"
+					>
 						delete
 					</div>
 				</div>
@@ -211,7 +223,6 @@
 			:allow-empty="true"
 			placeholder="Choose a team"
 		/>
-		<button @click="micro?.close()">close</button>
 		<button
 			@click="
 				() => {
@@ -222,6 +233,7 @@
 		>
 			add
 		</button>
+		<button @click="micro?.close()">close</button>
 	</dialog>
 </template>
 <script setup lang="ts">
@@ -230,13 +242,11 @@ import { ref, computed } from 'vue'
 import type { ModalElement, Tile, collectionLogItem } from '@/types'
 import VueMultiselect from 'vue-multiselect'
 import type { Team } from '@/types'
-import { useDocument } from 'vuefire'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import { useRoute } from 'vue-router'
 const props = defineProps<{
 	selectedTile: Tile | null
-	latestData: Data
 	teams: Team[]
 }>()
 const route = useRoute()
@@ -266,17 +276,8 @@ const addToDrop = async () => {
 		teamName: singleSelectTeam.value.teamName,
 		id: selectedDrop.value.id
 	}
-	const { data: tileData, promise: tileDataPromise } = useDocument(
-		doc(
-			db,
-			'Boards',
-			route.params.boardUUID as string,
-			'Tiles',
-			props.selectedTile?.id as string
-		)
-	)
-	await tileDataPromise.value
-	if (!tileData.value?.collected) {
+
+	if (!props.selectedTile?.collected) {
 		await updateDoc(
 			doc(
 				db,
@@ -285,7 +286,7 @@ const addToDrop = async () => {
 				'Tiles',
 				props.selectedTile?.id as string
 			),
-			{ ...tileData.value, collected: [newData] }
+			{ ...props.selectedTile, collected: [newData] }
 		)
 	} else {
 		await updateDoc(
@@ -296,10 +297,31 @@ const addToDrop = async () => {
 				'Tiles',
 				props.selectedTile?.id as string
 			),
-			{ ...tileData.value, collected: [...tileData.value!.collected, newData] }
+			{ ...props.selectedTile, collected: [...props.selectedTile!.collected, newData] }
 		)
 	}
+	singleSelectTeam.value = undefined
+	singleSelectPlayer.value = undefined
 }
+const removeEntry = async (entry: collectionLogItem) => {
+	await updateDoc(
+		doc(
+			db,
+			'Boards',
+			route.params.boardUUID as string,
+			'Tiles',
+			props.selectedTile?.id as string
+		),
+		{
+			...props.selectedTile,
+			collected: props.selectedTile?.collected?.splice(
+				props.selectedTile?.collected?.indexOf(entry),
+				1
+			)
+		}
+	)
+}
+
 interface PlayerData {
 	name: string
 	teamName: string
@@ -343,26 +365,26 @@ const calculateTotals = (metricData: {
 	return totalsArray
 }
 
-const getMetricWithTotals = (metricName: string): Metric | null => {
-	const metric = ref(props.latestData[metricName])
+// const getMetricWithTotals = (metricName: string): Metric | null => {
+// 	const metric = ref(props.latestData[metricName])
 
-	if (!metric) {
-		console.error(`Metric ${metricName} not found`)
-		return null
-	}
+// 	if (!metric) {
+// 		console.error(`Metric ${metricName} not found`)
+// 		return null
+// 	}
 
-	const metricData = metric.value.data
-	if (metricData == undefined) return null
-	const totalsArray = calculateTotals(metricData).toSorted((a, b) => {
-		if (a.team < b.team) return -1
-		if (a.team > b.team) return 1
-		return 0
-	})
-	return {
-		...metric.value,
-		totals: totalsArray
-	}
-}
+// 	const metricData = metric.value.data
+// 	if (metricData == undefined) return null
+// 	const totalsArray = calculateTotals(metricData).toSorted((a, b) => {
+// 		if (a.team < b.team) return -1
+// 		if (a.team > b.team) return 1
+// 		return 0
+// 	})
+// 	return {
+// 		...metric.value,
+// 		totals: totalsArray
+// 	}
+// }
 const teamsCollected = computed(() => {
 	const teamsWithTotals: { [key: string]: { teamName: string; collected: collectionLogItem[] } } =
 		{}
@@ -379,24 +401,24 @@ const teamsCollected = computed(() => {
 	return teamsWithTotals
 })
 
-const getHighestTotal = (metric: string): number => {
-	const measuredTotal = ref<number>(0) // Initialize ref with default value 0
+// const getHighestTotal = (metric: string): number => {
+// 	const measuredTotal = ref<number>(0) // Initialize ref with default value 0
 
-	const metricData = getMetricWithTotals(metric)
+// 	const metricData = getMetricWithTotals(metric)
 
-	if (!metricData || !metricData.totals || metricData.totals.length === 0) {
-		return measuredTotal.value // Return the default value from the ref
-	}
+// 	if (!metricData || !metricData.totals || metricData.totals.length === 0) {
+// 		return measuredTotal.value // Return the default value from the ref
+// 	}
 
-	// Sort totals array in descending order based on total value
-	const sortedTotals = metricData.totals.sort((a, b) => b.total - a.total)
+// 	// Sort totals array in descending order based on total value
+// 	const sortedTotals = metricData.totals.sort((a, b) => b.total - a.total)
 
-	// Update ref with the highest total
-	measuredTotal.value = sortedTotals[0].total
+// 	// Update ref with the highest total
+// 	measuredTotal.value = sortedTotals[0].total
 
-	// Return the highest total
-	return measuredTotal.value
-}
+// 	// Return the highest total
+// 	return measuredTotal.value
+// }
 
 function titleCase(str: string) {
 	return str
@@ -423,7 +445,7 @@ defineExpose({
 	showModal,
 	closeModal
 })
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 </script>
 <style scoped>
 dialog {
@@ -432,14 +454,12 @@ dialog {
 	outline: none;
 	min-height: 400px;
 }
-dialog:not(.micro) > div {
+dialog:not(.micro, .mini) > div {
 	display: grid;
 	grid-template-columns: 0.3fr 0.7fr;
 	gap: var(--gap);
 }
-.micro > div {
-	grid-template-columns: 1;
-}
+
 dialog img {
 	width: 100%;
 	aspect-ratio: 1/1;

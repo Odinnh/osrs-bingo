@@ -63,8 +63,7 @@
 			ref="asideModalEle"
 			@close="closeTileModal"
 			:selectedTile="selectedTile"
-			:latestData="getLatest(boardMetricData as MetricData[])"
-			:teams="teamsData as Team[]"
+			:teams="<Team[]>teamsData"
 		/>
 	</template>
 </template>
@@ -74,7 +73,7 @@ import { db } from '../firebaseSettings'
 import { useDocument, useCollection, getCurrentUser } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
 import { useRoute } from 'vue-router'
-import { ref, computed } from 'vue'
+import { ref, computed, watchEffect } from 'vue'
 import { Tile, ModalElement, Team } from '@/types'
 import VerifyTileModalVapor from '@/components/modals/verifyTileModal.vapor.vue'
 
@@ -112,27 +111,23 @@ const sortedList = computed(() => {
 		return list.value.map((tile) => tile)
 	}
 
-	const orderOfList = boardData.value.orderOfList
+	const orderOfList = ref(boardData.value.orderOfList)
 
 	return list.value.toSorted(
-		(a: Tile, b: Tile) => orderOfList.indexOf(a.id) - orderOfList.indexOf(b.id)
+		(a: Tile, b: Tile) => orderOfList.value.indexOf(a.id) - orderOfList.value.indexOf(b.id)
 	)
 })
 
-window.addEventListener('keydown', (e) => {
-	switch (e.key) {
-		case 'Escape':
-			if (asideModalEle.value && asideModalEle.value.closeModal) {
-				selectedTile.value = {} as Tile
-				closeTileModal()
-			}
-			break
-		default:
-			break
+const selectedTile = ref<Tile | null>(null)
+// Watch for changes in the tiles collection and update selectedTile accordingly
+watchEffect(() => {
+	const selectedTileId = selectedTile.value?.id
+	const updatedTile = list.value.find((tile) => tile.id === selectedTileId)
+	if (updatedTile) {
+		selectedTile.value = updatedTile
 	}
 })
 
-const selectedTile = ref<Tile | null>(null)
 const asideModalEle = ref<ModalElement | undefined>(undefined)
 const openModal = () => {
 	asideModalEle.value?.showModal()
@@ -140,19 +135,6 @@ const openModal = () => {
 const closeTileModal = () => {
 	selectedTile.value = null
 	asideModalEle.value?.closeModal()
-}
-
-type MetricData = {
-	metric: string
-	[timestamp: string]: any
-}
-
-function getLatest(data: MetricData[]): { [metric: string]: { metric: string; data: any } } {
-	const latest: { [metric: string]: { metric: string; data: any } } = {}
-	data.forEach((metric: MetricData) => {
-		latest[metric.metric] = { metric: metric.metric, data: metric[metric.timestamp] }
-	})
-	return latest
 }
 </script>
 
