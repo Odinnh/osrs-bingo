@@ -30,7 +30,25 @@
 						<div></div>
 						<div v-for="team in teams">{{ team }}</div>
 						<template v-for="drop in props.selectedTile.drops">
-							<div>{{ drop.name }}</div>
+							<div>
+								{{ drop.name }}
+								<small v-if="drop.min !== drop.max">
+									<template
+										v-if="props.selectedTile.needAny && drop.min && drop.min"
+										>min: {{ drop.min }}</template
+									>
+									<template
+										v-if="
+											props.selectedTile.needAny && drop.max && drop.max > 0
+										"
+									>
+										max: {{ drop.max }}</template
+									>
+								</small>
+								<small v-if="drop.min == drop.max && drop.min != 0">
+									exactly: {{ drop.min }}</small
+								>
+							</div>
 							<div v-for="team in teams" :class="getDropClass(team, drop)">
 								<span>{{ getDropCount(team, drop) }}</span>
 								<template v-if="props.selectedTile.needAny === false"
@@ -228,7 +246,7 @@ const teamsCollected = computed(() => {
 const getDropCount = (team: string, drop: any) => {
 	const count = teamsCollected.value[team]?.filter((item) => item.id === drop.id)?.length || 0
 
-	return `${count}`
+	return `${count} `
 }
 const getDropClass = (team: string, drop: any) => {
 	const count = teamsCollected.value[team]?.filter((item) => item.id === drop.id)?.length || 0
