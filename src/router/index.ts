@@ -9,6 +9,7 @@ import newBoard from '@/views/newBoard.vapor.vue'
 import loginView from '@/views/loginView.vapor.vue'
 import editBoard from '@/views/editBoard.vapor.vue'
 import viewBoard from '@/views/viewBoard.vapor.vue'
+import viewBoardList from '@/views/viewBoardList.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
 import teamViewer from '@/views/teamViewer.vapor.vue'
 import moderateBoard from '@/views/moderateBoard.vapor.vue'
@@ -36,6 +37,11 @@ const router = createRouter({
 			path: '/view/:boardUUID',
 			name: 'viewBoard',
 			component: viewBoard
+		},
+		{
+			path: '/list/:boardUUID',
+			name: 'viewBoardList',
+			component: viewBoardList
 		},
 		{
 			path: '/edit/:boardUUID',

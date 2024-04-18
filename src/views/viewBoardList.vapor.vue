@@ -40,33 +40,23 @@
 			>
 		</section>
 		<h1 class="fs-2">{{ boardData.name }}</h1>
-		<section
-			ref="el"
-			class="board"
-			:style="{ '--width': boardData.boardWidth, position: 'relative' }"
-		>
+		<section ref="el">
 			<div
-				class="tile"
 				:style="{ '--_image': `url('${tile.image}')` }"
 				v-for="tile in sortedList"
 				:key="tile.id"
-				@click.prevent="
-					() => {
-						selectedTile = tile
-						openModal()
-					}
-				"
 			>
-				<img class="tile--image" :src="tile.image" />
+				<h2>{{ tile.title }}</h2>
+				<h3>Description:</h3>
+				<div v-html="tile.description"></div>
+				<h3>Drops:</h3>
+				<div v-for="drop in tile.drops">
+					{{ drop.name }}
+				</div>
+				<h3>Metrics:</h3>
+				<div v-for="metric in tile.metric">{{ metric }}</div>
 			</div>
 		</section>
-		<ViewTileModal
-			ref="asideModalEle"
-			@close="closeTileModal"
-			:selectedTile="selectedTile"
-			:latestData="getLatest(boardMetricData as MetricData[])"
-			:teams="<Team[]>teamsData"
-		/>
 	</template>
 </template>
 <script setup lang="ts">
@@ -76,33 +66,38 @@ import { useDocument, useCollection, getCurrentUser } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
 import { useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
-import type { Tile, ModalElement, Team } from '@/types'
+import type {
+	Tile,
+	ModalElement
+	// Team
+} from '@/types'
 
-import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
+// import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
 const user = await getCurrentUser()
 const route = useRoute()
 const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)
 )
-const { data: boardMetricData, promise: boardMetricDataPromise } = useCollection(
-	collection(db, 'Boards', route.params.boardUUID as string, 'Metrics')
-)
+// const { data: boardMetricData, promise: boardMetricDataPromise } = useCollection(
+// 	collection(db, 'Boards', route.params.boardUUID as string, 'Metrics')
+// )
 if (boardData.value?.name) {
 	title.value = boardData.value.name + ' - Bingo Bongo'
 }
 const { data: tilesData, promise: tilesDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Tiles')
 )
-const { data: teamsData, promise: teamsDataPromise } = useCollection(
-	collection(db, 'Boards', route.params.boardUUID as string, 'Groups')
-)
+// const { data: teamsData, promise: teamsDataPromise } = useCollection(
+// 	collection(db, 'Boards', route.params.boardUUID as string, 'Groups')
+// )
 await Promise.all([
 	boardDataPromise.value,
-	boardMetricDataPromise.value,
-	teamsDataPromise.value,
+	// boardMetricDataPromise.value,
+	// teamsDataPromise.value,
 	tilesDataPromise.value
 ])
+// const teams: string[] = teamsData.value.map((team) => team.teamName)
 
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
 
@@ -135,26 +130,26 @@ window.addEventListener('keydown', (e) => {
 
 const selectedTile = ref<Tile | null>(null)
 const asideModalEle = ref<ModalElement | undefined>(undefined)
-const openModal = () => {
-	asideModalEle.value?.showModal()
-}
+// const openModal = () => {
+// 	asideModalEle.value?.showModal()
+// }
 const closeTileModal = () => {
 	selectedTile.value = null
 	asideModalEle.value?.closeModal()
 }
 
-type MetricData = {
-	metric: string
-	[timestamp: string]: any
-}
+// type MetricData = {
+// 	metric: string
+// 	[timestamp: string]: any
+// }
 
-function getLatest(data: MetricData[]): { [metric: string]: { metric: string; data: any } } {
-	const latest: { [metric: string]: { metric: string; data: any } } = {}
-	data.forEach((metric: MetricData) => {
-		latest[metric.metric] = { metric: metric.metric, data: metric[metric.timestamp] }
-	})
-	return latest
-}
+// function getLatest(data: MetricData[]): { [metric: string]: { metric: string; data: any } } {
+// 	const latest: { [metric: string]: { metric: string; data: any } } = {}
+// 	data.forEach((metric: MetricData) => {
+// 		latest[metric.metric] = { metric: metric.metric, data: metric[metric.timestamp] }
+// 	})
+// 	return latest
+// }
 </script>
 
 <style scoped>
