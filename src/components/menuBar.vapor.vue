@@ -5,6 +5,14 @@
 				home
 			</router-link>
 			<router-link
+				:to="{ name: 'Boards' }"
+				class="btn"
+				icon
+				:current="route.name == 'Boards'"
+			>
+				apps
+			</router-link>
+			<router-link
 				:to="{ name: 'loginScreen' }"
 				:current="route.name == 'loginScreen'"
 				class="btn"

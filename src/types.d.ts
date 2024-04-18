@@ -44,6 +44,7 @@ interface Team {
 	teamName: string
 	stats: null
 	players: Prisma_Base_Player[]
+	icon?: string
 }
 type Player = Omit<Prisma_Base_Player, 'ehb' | 'ehp' | 'exp'>
 

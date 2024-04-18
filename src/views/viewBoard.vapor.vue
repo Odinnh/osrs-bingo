@@ -65,7 +65,7 @@
 			@close="closeTileModal"
 			:selectedTile="selectedTile"
 			:latestData="getLatest(boardMetricData as MetricData[])"
-			:teams="teams"
+			:teams="<Team[]>teamsData"
 		/>
 	</template>
 </template>
@@ -76,7 +76,7 @@ import { useDocument, useCollection, getCurrentUser } from 'vuefire'
 import { doc, collection } from 'firebase/firestore'
 import { useRoute } from 'vue-router'
 import { ref, computed } from 'vue'
-import { Tile, ModalElement } from '@/types'
+import type { Tile, ModalElement, Team } from '@/types'
 
 import ViewTileModal from '@/components/modals/ViewTileModal.vapor.vue'
 const user = await getCurrentUser()

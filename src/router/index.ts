@@ -12,6 +12,7 @@ import viewBoard from '@/views/viewBoard.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
 import teamViewer from '@/views/teamViewer.vapor.vue'
 import moderateBoard from '@/views/moderateBoard.vapor.vue'
+import allPublishedBoards from '@/views/allPublishedBoards.vapor.vue'
 
 const router = createRouter({
 	history: createWebHashHistory(),
@@ -20,6 +21,11 @@ const router = createRouter({
 			path: '/new',
 			name: 'createNewBingo',
 			component: newBoard
+		},
+		{
+			path: '/boards',
+			name: 'Boards',
+			component: allPublishedBoards
 		},
 		{
 			path: '/login',
@@ -61,7 +67,7 @@ const router = createRouter({
 router.beforeEach(async (to) => {
 	if (
 		['editBoard', 'teamViewer', 'moderateBoard'].includes(to.name as string) &&
-		!(await userIsAuthenticated(to.params.boardUUID as string))
+		!((await userIsAuthenticated(to.params.boardUUID as string)) || isUserAdmin())
 	) {
 		return { name: 'loginScreen' }
 	}
@@ -72,6 +78,18 @@ router.beforeEach(async (to) => {
 		return { name: 'loginScreen' }
 	}
 })
+const isUserAdmin = async (): Promise<boolean> => {
+	const user = await getCurrentUser()
+	if (user) {
+		const userDataSnapshot = await getDoc(doc(db, 'Users', user.uid))
+		const userData = userDataSnapshot.data()
+
+		if (userData && userData.type == 'Admin') {
+			return true
+		}
+	}
+	return false
+}
 
 const isUserLoggedIn = async (): Promise<boolean> => {
 	const user = await getCurrentUser()

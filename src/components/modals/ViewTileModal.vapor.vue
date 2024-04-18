@@ -6,9 +6,14 @@
 					<img :src="props.selectedTile!.image" />
 				</div>
 				<button @click.prevent="$emit('close')">close</button>
-				<div v-for="team in teams" :key="team">
-					<span icon v-if="verifiedTeams && verifiedTeams.includes(team)"> check </span>
-					{{ team }}
+				<div v-for="team in teams" :key="team.teamName">
+					<span icon v-if="verifiedTeams && verifiedTeams.includes(team.teamName)">
+						check
+					</span>
+					<template v-if="team?.icon">
+						<font-awesome-icon :icon="['fas', team.icon]" />
+					</template>
+					{{ team.teamName }}
 				</div>
 				<div v-html="props.selectedTile.description" />
 				<small> tile id: {{ props.selectedTile?.id }} </small>
@@ -28,7 +33,12 @@
 					</h2>
 					<div class="drop-table" :style="{ '--_width': teams.length }">
 						<div></div>
-						<div v-for="team in teams">{{ team }}</div>
+						<div v-for="team in teams">
+							<template v-if="team?.icon">
+								<font-awesome-icon :icon="['fas', team.icon]" />
+							</template>
+							<template>{{ team.teamName }}</template>
+						</div>
 						<template v-for="drop in props.selectedTile.drops">
 							<div>
 								{{ drop.name }}
@@ -49,8 +59,8 @@
 									exactly: {{ drop.min }}</small
 								>
 							</div>
-							<div v-for="team in teams" :class="getDropClass(team, drop)">
-								<span>{{ getDropCount(team, drop) }}</span>
+							<div v-for="team in teams" :class="getDropClass(team.teamName, drop)">
+								<span>{{ getDropCount(team.teamName, drop) }}</span>
 								<template v-if="props.selectedTile.needAny === false"
 									>/ {{ drop.count }}</template
 								>
@@ -87,8 +97,16 @@
 							class="metric-item"
 						>
 							<div v-for="team in getMetricWithTotals(metric)?.totals">
-								{{ team.team }}
 								<div class="spread">
+									<template v-if="team?.icon">
+										<font-awesome-icon
+											:icon="['fas', team.icon]"
+											:title="team.teamName"
+										/>
+									</template>
+									<template v-else>
+										{{ team.teamName }}
+									</template>
 									<progress
 										min="0"
 										:value="team.total"
@@ -113,8 +131,16 @@
 						</div>
 						<div v-else class="metric-item">
 							<div v-for="team in getMetricWithTotals(metric)?.totals">
-								{{ team.team }}
 								<div class="spread">
+									<template v-if="team?.icon">
+										<font-awesome-icon
+											:icon="['fas', team.icon]"
+											:title="team.teamName"
+										/>
+									</template>
+									<template v-else>
+										{{ team.teamName }}
+									</template>
 									<progress
 										min="0"
 										:value="
@@ -141,13 +167,13 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 
-import type { ModalElement, Tile, collectionLogItem } from '@/types'
+import type { ModalElement, Tile, collectionLogItem, Team } from '@/types'
 import { formatNumberToShort } from '@/assets/js/helpers'
 
 const props = defineProps<{
 	selectedTile: Tile | null
 	latestData: Data
-	teams: string[]
+	teams: Team[]
 }>()
 
 const dialog = ref<ModalElement>()
@@ -162,7 +188,7 @@ const verifiedTeams = computed(
 interface Metric {
 	metric: string
 	data: { [playerName: string]: PlayerData }
-	totals?: { team: string; total: number }[]
+	totals?: { teamName: string; total: number; icon?: string | undefined }[]
 }
 
 interface Data {
@@ -171,7 +197,7 @@ interface Data {
 
 const calculateTotals = (metricData: {
 	[playerName: string]: PlayerData
-}): { team: string; total: number }[] => {
+}): { teamName: string; total: number; icon?: string | undefined }[] => {
 	const totals: { [teamName: string]: number } = {}
 
 	// Iterate through each player data in the metric
@@ -190,7 +216,8 @@ const calculateTotals = (metricData: {
 
 	// Convert totals object to array of objects
 	const totalsArray = Object.keys(totals).map((teamName) => ({
-		team: teamName,
+		teamName: teamName,
+		icon: props.teams.filter((team) => team.teamName == teamName)[0]?.icon,
 		total: totals[teamName]
 	}))
 	return totalsArray
@@ -207,8 +234,8 @@ const getMetricWithTotals = (metricName: string): Metric | null => {
 	const metricData = metric.value.data
 	if (metricData == undefined) return null
 	const totalsArray = calculateTotals(metricData).toSorted((a, b) => {
-		if (a.team < b.team) return -1
-		if (a.team > b.team) return 1
+		if (a.teamName < b.teamName) return -1
+		if (a.teamName > b.teamName) return 1
 		return 0
 	})
 	return {
@@ -238,8 +265,8 @@ const getHighestTotal = (metric: string): number => {
 const teamsCollected = computed(() => {
 	const teamsWithCollected: Record<string, collectionLogItem[]> = {}
 	props.teams.forEach((team) => {
-		teamsWithCollected[team] =
-			props.selectedTile?.collected?.filter((item) => item.teamName === team) || []
+		teamsWithCollected[team.teamName] =
+			props.selectedTile?.collected?.filter((item) => item.teamName === team.teamName) || []
 	})
 	return teamsWithCollected
 })
