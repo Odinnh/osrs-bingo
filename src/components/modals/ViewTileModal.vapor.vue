@@ -237,19 +237,6 @@ const getDropClass = (team: string, drop: any) => {
 		notStarted: count === 0
 	}
 }
-const getDropCollectedByTeam = (collected: collectionLogItem[] | undefined, iId?: string) => {
-	const teamTotals = ref<{ [key: string]: number | undefined }>({})
-	props.teams.forEach((team) => {
-		const tempTotal = ref(
-			collected?.filter((item) => {
-				item.id === iId && item.teamName === team
-			}).length
-		)
-
-		teamTotals.value[team as string] = tempTotal.value ?? 0
-	})
-	return teamTotals.value
-}
 
 function titleCase(str: string) {
 	return str
