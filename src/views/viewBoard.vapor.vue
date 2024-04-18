@@ -40,6 +40,15 @@
 			>
 		</section>
 		<h1 class="fs-2">{{ boardData.name }}</h1>
+		<div style="display: flex; flex-direction: row; gap: var(--gap); font-size: var(--fs-4)">
+			<div v-for="team in teamsData">
+				<template v-if="team?.icon">
+					<font-awesome-icon :icon="['fas', team.icon]" :title="team.teamName" />
+				</template>
+				<template v-else> {{ team.teamName }} </template>:
+				{{ getTeamsTotalVerified[team.teamName] }}
+			</div>
+		</div>
 		<section
 			ref="el"
 			class="board"
@@ -105,7 +114,32 @@ await Promise.all([
 ])
 
 const list = ref<Tile[]>(tilesData.value as unknown as Tile[])
+const getTeamsTotalVerified = computed(() => {
+	const teamsTotalVerified = <{ [key: string]: any }>{}
 
+	if (teamsData.value && tilesData.value) {
+		// Initialize teamsTotalVerified object with team names
+		teamsData.value.forEach((team) => {
+			teamsTotalVerified[team.teamName] = 0
+		})
+
+		// Loop through each entry in tilesData.value.verified
+		tilesData.value.forEach((tile) => {
+			if (tile.verified) {
+				// Loop through each verified entry for the current tile
+				tile.verified.forEach((verification: { [key: string]: any }) => {
+					// Check if the teamName matches with any team in teamsData.value
+					if (teamsData.value.some((team) => team.teamName === verification.teamName)) {
+						// Increment total verified count for the corresponding team
+						teamsTotalVerified[verification.teamName] += tile.points
+					}
+				})
+			}
+		})
+	}
+
+	return teamsTotalVerified
+})
 const sortedList = computed(() => {
 	if (list.value === undefined) return []
 
