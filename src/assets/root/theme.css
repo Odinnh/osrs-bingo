@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css?family=Poppins:700|Roboto%20Flex:400');
+:root {
+	--light: #f5f5f5;
+	--dark: #1d1b1f;
+	--mid: #d9d9d9;
+	--mid-text: #8b8b8b;
+
+	--color-background: var(--light);
+	--color-background__inv: var(--dark);
+	--color-background__error: red;
+	--color-background__warn: orange;
+	--color-background__success: green;
+
+	--color-text: var(--dark);
+	--color-text__inv: var(--light);
+	--color-text__error: var(--color-text);
+	--color-text__warn: var(--color-text);
+	--color-text__success: var(--color-text__inv);
+
+	--size-000: -5px;
+	--size-00: -2.5px;
+	--size-1: 2.5px;
+	--size-2: 5px;
+	--size-3: 10px;
+	--size-4: 12.5px;
+	--size-5: 15px;
+	--size-6: 17.5px;
+	--size-7: 20px;
+	--size-8: 30px;
+	--size-9: 40px;
+	--size-10: 50px;
+	--size-11: 75px;
+	--size-12: 100px;
+	--size-13: 150px;
+	--size-14: 200px;
+	--size-15: 300px;
+
+	--border-radius-toggle: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999)));
+	--border-radius: var(--size-3);
+
+	--padding-inline: var(--size-4);
+	--padding-block: var(--size-3);
+
+	--fs-3: clamp(1.25rem, 1vw, 1.563rem);
+	--fs-3: clamp(1.563rem, 1.5vw, 1.954rem);
+	--fs-2: clamp(1.954rem, 2vw, 2.442rem);
+	--fs-1: clamp(2.442rem, 3vw, 3rem);
+	--fs-0: clamp(3rem, 4vw, 4em);
+
+	--gap: var(--size-3);
+}
+.fs-4 {
+	font-size: var(--fs-3);
+}
+.fs-3 {
+	font-size: var(--fs-2);
+}
+
+.fs-2 {
+	font-size: var(--fs-1);
+}
+.fs-1 {
+	font-size: var(--fs-0);
+}
+::selection {
+	background-color: var(--mid);
+}
+::-moz-selection {
+	background-color: var(--mid);
+}
+body {
+	color: var(--color-text);
+	font-family: 'Roboto Flex';
+	font-weight: 400;
+	font-size: 16px;
+	line-height: var(--size-8);
+	padding-block: 0;
+	margin-block: 0;
+	background-color: var(--color-background);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+	font-family: 'Poppins';
+	font-weight: 700;
+	line-height: 1em;
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+html {
+	font-size: 100%;
+}
+
+small {
+	font-size: 0.8rem;
+}
+
+a[target='_blank']::after {
+	content: '';
+	display: inline-block;
+	background-color: currentColor;
+	width: 1rem;
+	height: 1rem;
+	-webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='blue' d='M220-153q-27.637 0-47.319-19.681Q153-192.363 153-220v-520q0-27.638 19.681-47.319Q192.363-807 220-807h257v67H220v520h520v-257h67v257q0 27.637-19.681 47.319Q767.638-153 740-153H220Zm168.5-188L341-388.5 692.5-740H568v-67h239v239h-67v-124.5L388.5-341Z'/%3E%3C/svg%3E");
+	mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath fill='blue' d='M220-153q-27.637 0-47.319-19.681Q153-192.363 153-220v-520q0-27.638 19.681-47.319Q192.363-807 220-807h257v67H220v520h520v-257h67v257q0 27.637-19.681 47.319Q767.638-153 740-153H220Zm168.5-188L341-388.5 692.5-740H568v-67h239v239h-67v-124.5L388.5-341Z'/%3E%3C/svg%3E");
+}
+a {
+	color: var(--color-text);
+	text-underline-offset: var(--size-1);
+}
+hr {
+	border: 1px solid var(--color-text);
+}
+mark,
+code {
+	background-color: var(--color-background__inv);
+	color: var(--color-text__inv) !important;
+}
+/* 
+@media (prefers-color-scheme: dark) {
+	:root {
+		--color-background: var(--dark);
+		--color-background__inv: var(--light);
+		--color-background__error: red;
+		--color-background__warn: orange;
+		--color-background__success: green;
+
+		--color-text: var(--light);
+		--color-text__inv: var(--dark);
+		--color-text__error: var(--color-text);
+		--color-text__warn: var(--color-text);
+		--color-text__success: var(--color-text__inv);
+
+		--size-000: -5px;
+		--size-00: -2.5px;
+		--size-1: 2.5px;
+		--size-2: 5px;
+		--size-3: 10px;
+		--size-4: 12.5px;
+		--size-5: 15px;
+		--size-6: 17.5px;
+		--size-7: 20px;
+		--size-8: 30px;
+		--size-9: 40px;
+		--size-10: 50px;
+		--size-11: 75px;
+		--size-12: 100px;
+		--size-13: 150px;
+		--size-14: 200px;
+		--size-15: 300px;
+
+		--border-radius-toggle: max(0px, min(8px, calc((100vw - 4px - 100%) * 9999)));
+		--border-radius: var(--size-3);
+
+		--padding-inline: var(--size-4);
+		--padding-block: var(--size-3);
+
+		--fs-3: clamp(1.25rem, 1vw, 1.563rem);
+		--fs-3: clamp(1.563rem, 1.5vw, 1.954rem);
+		--fs-2: clamp(1.954rem, 2vw, 2.442rem);
+		--fs-1: clamp(2.442rem, 3vw, 3rem);
+		--fs-0: clamp(3rem, 4vw, 4em);
+
+		--gap: var(--size-3);
+	}
+} */

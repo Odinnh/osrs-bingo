@@ -1,24 +1,20 @@
-<script setup>
+<script setup lang="ts">
+import menuBar from '@/components/menuBar.vapor.vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
 </script>
 
 <template>
-  <div class="container">
-    <suspense>
-      <RouterView :key="route.fullPath" />
-    </suspense>
-  </div>
+	<suspense>
+		<menuBar />
+	</suspense>
+	<suspense>
+		<RouterView :key="route.fullPath" />
+	</suspense>
 </template>
 
-<style scoped>
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: auto;
-  background-color: var(--color-secondairy);
-  padding: 15px;
-  min-height: 100vh;
-}
+<style>
+@import url('./assets/root.css');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 </style>

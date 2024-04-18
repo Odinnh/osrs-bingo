@@ -1,41 +1,47 @@
-input[type='checkbox'] {
-  cursor: pointer;
-  --_scale: 24px;
-  --_spacing: calc(var(--_scale) / 10);
-  -webkit-appearance: none;
-  appearance: none;
-  border-radius: 0;
-  border: none;
-  padding: 0;
-  position: relative;
-  outline: none;
-  width: calc(var(--_scale) / 3 * 5);
-  height: var(--_scale);
-  background-color: var(--color-error);
-  border-radius: calc(var(--_scale) / 3 * 5);
-  margin-block-end: 0;
+input[type='checkbox'][toggle] {
+	display: inline-block;
+	cursor: pointer;
+	--_scale: 1rem;
+	--_spacing: calc(var(--_scale) / 10);
+	--_border-width: 1px;
+	-webkit-appearance: none;
+	appearance: none;
+	border-radius: 0;
+	border: none;
+	padding: 0;
+	position: relative;
+	outline: none;
+	width: calc(var(--_scale) / 3 * 5);
+	height: var(--_scale);
+	background-color: var(--color-background__inv);
+	border-radius: calc(var(--_scale) / 3 * 5);
+	margin-block-end: 0;
+	border: var(--_border-width) var(--color-background__inv) solid;
+	transition: all 200ms;
 }
 
-input[type='checkbox']::after {
-  content: '';
-  position: absolute;
-  top: var(--_spacing);
-  left: var(--_spacing);
-  width: calc(var(--_scale) - (var(--_spacing) * 2));
-  height: calc(var(--_scale) - (var(--_spacing) * 2));
-  background-color: var(--color-tertiary);
-  border-radius: 50%;
-  transition: 100ms;
+input[type='checkbox'][toggle]::after {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	left: 0;
+	width: calc(var(--_scale) - (var(--_border-width) * 2.5));
+	height: calc(var(--_scale) - (var(--_border-width) * 2.5));
+	background-color: var(--color-background);
+	border-radius: 50%;
+	transition: all 200ms;
 }
 
-input[type='checkbox']:checked {
-  background-color: var(--color-correct);
+input[type='checkbox'][toggle]:not([choice]):checked {
+	background-color: var(--color-background);
 }
-
-input[type='checkbox']:hover::after {
-  top: 1px;
+input[type='checkbox'][toggle]:checked::after {
+	left: calc(var(--_scale) - (var(--_border-width) * 2) - (var(--_spacing) * 2));
 }
-
-input[type='checkbox']:checked::after {
-  left: calc(var(--_scale) - (var(--_spacing) * 2));
+input[type='checkbox'][toggle]:not([choice]):checked::after {
+	background-color: var(--color-background__inv);
+}
+input[type='checkbox']:not([toggle]) {
+	width: 0.8rem;
+	height: 0.8rem;
 }

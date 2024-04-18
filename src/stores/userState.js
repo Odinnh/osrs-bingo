@@ -5,7 +5,7 @@ export const useUserStateStore = defineStore('userStateStore', () => {
   const user = ref({
     loggedIn: false,
     data: {
-      uid: 0
+      uuid: 0
     }
   })
 
