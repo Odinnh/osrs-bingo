@@ -252,7 +252,8 @@ const getDropClass = (team: Team, drop: any) => {
 const getDropCount = (team: Team, drop: any) => {
 	const count =
 		teamsCollected.value[team.teamName]?.filter((item) => item.id === drop.id)?.length || 0
-	return `${count} / ${drop.count}`
+
+	return `${count}`
 }
 
 const getTeamDropCount = (team: Team) => {

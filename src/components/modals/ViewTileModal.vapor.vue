@@ -24,41 +24,18 @@
 						Get the following items:
 					</h2>
 					<h2 v-else class="fs-4">
-						Get a total of {{ props.selectedTile?.count }} items:
+						Get a total of {{ props.selectedTile.count }} items:
 					</h2>
 					<div class="drop-table" :style="{ '--_width': teams.length }">
 						<div></div>
 						<div v-for="team in teams">{{ team }}</div>
-
-						<template v-for="drop in props.selectedTile!.drops">
-							<div>
-								{{ drop.name }}
-							</div>
-							<div
-								v-for="team in teams"
-								:class="{
-									completed:
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team]! >= drop.count,
-									notStarted:
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team] === 0
-								}"
-							>
-								<span>
-									{{
-										getDropCollectedByTeam(
-											props.selectedTile.collected,
-											drop.id
-										)[team]
-									}} </span
-								><template v-if="props.selectedTile?.needAny === false">
-									/ {{ drop.count }}
-								</template>
+						<template v-for="drop in props.selectedTile.drops">
+							<div>{{ drop.name }}</div>
+							<div v-for="team in teams" :class="getDropClass(team, drop)">
+								<span>{{ getDropCount(team, drop) }}</span>
+								<template v-if="props.selectedTile.needAny === false"
+									>/ {{ drop.count }}</template
+								>
 							</div>
 						</template>
 					</div>
@@ -239,6 +216,26 @@ const getHighestTotal = (metric: string): number => {
 
 	// Return the highest total
 	return measuredTotal.value
+}
+const teamsCollected = computed(() => {
+	const teamsWithCollected: Record<string, collectionLogItem[]> = {}
+	props.teams.forEach((team) => {
+		teamsWithCollected[team] =
+			props.selectedTile?.collected?.filter((item) => item.teamName === team) || []
+	})
+	return teamsWithCollected
+})
+const getDropCount = (team: string, drop: any) => {
+	const count = teamsCollected.value[team]?.filter((item) => item.id === drop.id)?.length || 0
+
+	return `${count}`
+}
+const getDropClass = (team: string, drop: any) => {
+	const count = teamsCollected.value[team]?.filter((item) => item.id === drop.id)?.length || 0
+	return {
+		completed: count >= drop.count,
+		notStarted: count === 0
+	}
 }
 const getDropCollectedByTeam = (collected: collectionLogItem[] | undefined, iId?: string) => {
 	const teamTotals = ref<{ [key: string]: number | undefined }>({})
