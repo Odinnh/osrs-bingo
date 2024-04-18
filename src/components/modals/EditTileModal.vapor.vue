@@ -258,6 +258,7 @@ import VueMultiselect from 'vue-multiselect'
 import type { ModalElement, Tile } from '@/types'
 import { tinyid } from '@/assets/js/tinyid'
 import { formatNumberToShort } from '@/assets/js/helpers'
+import { modalClose } from '@/assets/js/modalClose'
 
 const props = defineProps<{
 	localTileData: Tile | null
@@ -265,6 +266,10 @@ const props = defineProps<{
 
 const isTitleEdit = ref(false)
 const dialog = ref<ModalElement>()
+
+modalClose(dialog, () => {
+	closeModal()
+})
 const newDropForTile = ref({
 	name: '',
 	count: 0,

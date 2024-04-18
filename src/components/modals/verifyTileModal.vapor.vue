@@ -108,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import { modalClose } from '@/assets/js/modalClose'
 import { ref, computed } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import { doc, updateDoc } from 'firebase/firestore'
@@ -122,8 +123,17 @@ const props = defineProps<{
 
 const route = useRoute()
 const dialog = ref<ModalElement>()
+modalClose(dialog, () => {
+	dialog.value!.close()
+})
 const mini = ref<ModalElement>()
+modalClose(mini, () => {
+	closeMiniModal()
+})
 const micro = ref<ModalElement>()
+modalClose(micro, () => {
+	closeMicroModal()
+})
 
 const singleSelectTeam = ref<Team | null>(null)
 const singleSelectPlayer = ref<string | null>(null)

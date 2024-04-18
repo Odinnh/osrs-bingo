@@ -169,6 +169,7 @@ import { ref, computed } from 'vue'
 
 import type { ModalElement, Tile, collectionLogItem, Team } from '@/types'
 import { formatNumberToShort } from '@/assets/js/helpers'
+import { modalClose } from '@/assets/js/modalClose'
 
 const props = defineProps<{
 	selectedTile: Tile | null
@@ -177,6 +178,10 @@ const props = defineProps<{
 }>()
 
 const dialog = ref<ModalElement>()
+
+modalClose(dialog, () => {
+	closeModal()
+})
 interface PlayerData {
 	name: string
 	teamName: string
