@@ -102,6 +102,7 @@
 			:allow-empty="true"
 			placeholder="Choose a team"
 		/>
+		<input type="datetime-local" ref="dateTime" />
 		<button @click="addToDrop()">add</button>
 		<button @click="closeMicroModal()">close</button>
 	</dialog>
@@ -120,7 +121,7 @@ const props = defineProps<{
 	selectedTile: Tile | null
 	teams: Team[]
 }>()
-
+const dateTime = ref<HTMLInputElement>()
 const route = useRoute()
 const dialog = ref<ModalElement>()
 modalClose(dialog, () => {
@@ -160,8 +161,15 @@ const computedAvailablePlayers = computed(() => {
 	if (!singleSelectTeam.value) return []
 	return singleSelectTeam.value.players.map((player) => player.displayName)
 })
-
+const currentTime = computed(() => {
+	return Date.now()
+})
 const addToDrop = async () => {
+	const timestamp = ref<Date | undefined>(new Date())
+	if (dateTime.value?.value) {
+		timestamp.value = new Date(dateTime.value.value)
+	}
+
 	if (
 		!props.selectedTile ||
 		!singleSelectTeam.value ||
@@ -171,7 +179,7 @@ const addToDrop = async () => {
 		return
 	const newData = {
 		playerName: singleSelectPlayer.value,
-		timestamp: new Date(),
+		timestamp: timestamp.value,
 		teamName: singleSelectTeam.value.teamName,
 		id: selectedDrop.value.id
 	}
