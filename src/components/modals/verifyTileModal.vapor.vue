@@ -161,9 +161,7 @@ const computedAvailablePlayers = computed(() => {
 	if (!singleSelectTeam.value) return []
 	return singleSelectTeam.value.players.map((player) => player.displayName)
 })
-const currentTime = computed(() => {
-	return Date.now()
-})
+
 const addToDrop = async () => {
 	const timestamp = ref<Date | undefined>(new Date())
 	if (dateTime.value?.value) {
