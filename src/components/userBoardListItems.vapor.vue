@@ -15,7 +15,6 @@
 	<input type="checkbox" @click="publishBoard" toggle v-model="boardData!.published" />
 </template>
 <script setup lang="ts">
-import { defineProps } from 'vue'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '@/firebaseSettings'
 import { useDocument } from 'vuefire'

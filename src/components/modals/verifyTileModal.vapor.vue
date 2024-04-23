@@ -7,11 +7,27 @@
 				</div>
 				<div class="verifyTile">
 					<div v-for="team in teams" :key="team.teamName">
-						<span icon v-if="verifiedTeams && verifiedTeams.includes(team.teamName)">
-							check
-						</span>
-						{{ team.teamName }}
-						<button @click="verifyTeam({ teamName: team.teamName })">verify</button>
+						<template v-if="team?.icon">
+							<font-awesome-icon
+								:titie="team.teamName"
+								class="verify-icon"
+								:class="{
+									verified: verifiedTeams && verifiedTeams.includes(team.teamName)
+								}"
+								:icon="['fas', team.icon]"
+								@click="verifyTeam({ teamName: team.teamName })"
+							/>
+						</template>
+						<template v-else>
+							<span
+								icon
+								v-if="verifiedTeams && verifiedTeams.includes(team.teamName)"
+							>
+								check
+							</span>
+							{{ team.teamName }}
+							<button @click="verifyTeam({ teamName: team.teamName })">verify</button>
+						</template>
 					</div>
 				</div>
 				<button @click.prevent="$emit('close')">close</button>
@@ -380,5 +396,19 @@ dialog img {
 }
 .open-list + .metric-item {
 	display: none;
+}
+.verify-icon {
+	color: var(--mid);
+	&.verified {
+		color: var(--color-text);
+	}
+}
+.verifyTile:has(.verify-icon) {
+	border-radius: var(--border-radius);
+	border: 1px solid var(--color-background__inv);
+	padding: 5px 10px;
+	display: flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
 }
 </style>

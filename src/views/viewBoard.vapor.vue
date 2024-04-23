@@ -56,7 +56,6 @@
 		>
 			<div
 				class="tile"
-				:style="{ '--_image': `url('${tile.image}')` }"
 				v-for="tile in sortedList"
 				:key="tile.id"
 				@click.prevent="
@@ -67,6 +66,22 @@
 				"
 			>
 				<img class="tile--image" :src="tile.image" />
+				<div class="verifyTile">
+					<div v-for="team in <Team[]>teamsData" :key="team.teamName">
+						<template v-if="team?.icon">
+							<font-awesome-icon
+								:titie="team.teamName"
+								class="verify-icon"
+								:class="{
+									verified:
+										verifiedTeams(tile) &&
+										verifiedTeams(tile).includes(team.teamName)
+								}"
+								:icon="['fas', team.icon]"
+							/>
+						</template>
+					</div>
+				</div>
 			</div>
 		</section>
 		<ViewTileModal
@@ -94,6 +109,8 @@ const title = useTitle()
 const { data: boardData, promise: boardDataPromise } = useDocument(
 	doc(db, 'Boards', route.params.boardUUID as string)
 )
+const verifiedTeams = (tile: Tile) => tile.verified?.map((entry) => entry.teamName) || []
+
 const { data: boardMetricData, promise: boardMetricDataPromise } = useCollection(
 	collection(db, 'Boards', route.params.boardUUID as string, 'Metrics')
 )
@@ -220,5 +237,26 @@ function getLatest(data: MetricData[]): { [metric: string]: { metric: string; da
 			position: relative;
 		}
 	}
+}
+
+.verify-icon {
+	color: var(--mid);
+	&.verified {
+		color: var(--color-text);
+	}
+}
+.verifyTile:has(.verify-icon) {
+	background-color: color-mix(in srgb, var(--color-background) 80%, transparent);
+
+	backdrop-filter: blur(3px);
+	border-radius: var(--border-radius);
+	/* border: 1px solid var(--color-background__inv); */
+	padding: 5px 10px;
+	display: flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+	position: absolute;
+	bottom: 0;
+	inset-inline: 0;
 }
 </style>

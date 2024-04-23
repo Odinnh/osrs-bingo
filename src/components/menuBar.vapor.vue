@@ -12,6 +12,14 @@
 			>
 				apps
 			</router-link>
+			<a
+				icon
+				@click.prevent="switchColorSceme"
+				:current="route.name == 'loginScreen'"
+				class="btn"
+				:class="darkModeIcon"
+				v-html="darkModeIcon"
+			></a>
 			<router-link
 				:to="{ name: 'loginScreen' }"
 				:current="route.name == 'loginScreen'"
@@ -30,10 +38,16 @@
 	</header>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
 import { getCurrentUser } from 'vuefire'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useWebsitePreferenceStore } from '@/stores/websitePreferences'
 const route = useRoute()
 const user = await getCurrentUser()
+const websitePreferences = storeToRefs(useWebsitePreferenceStore())
+const darkModeIcon = ref(websitePreferences.colorScheme)
+const switchColorSceme = () => useWebsitePreferenceStore().switchColorSceme()
 </script>
 <style scoped>
 nav {

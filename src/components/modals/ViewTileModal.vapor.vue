@@ -6,14 +6,28 @@
 					<img :src="props.selectedTile!.image" />
 				</div>
 				<button @click.prevent="$emit('close')">close</button>
-				<div v-for="team in teams" :key="team.teamName">
-					<span icon v-if="verifiedTeams && verifiedTeams.includes(team.teamName)">
-						check
-					</span>
-					<template v-if="team?.icon">
-						<font-awesome-icon :icon="['fas', team.icon]" />
-					</template>
-					{{ team.teamName }}
+				<div class="verifyTile">
+					<div v-for="team in teams" :key="team.teamName">
+						<template v-if="team?.icon">
+							<font-awesome-icon
+								:title="team.teamName"
+								class="verify-icon"
+								:class="{
+									verified: verifiedTeams && verifiedTeams.includes(team.teamName)
+								}"
+								:icon="['fas', team.icon]"
+							/>
+						</template>
+						<template v-else>
+							<span
+								icon
+								v-if="verifiedTeams && verifiedTeams.includes(team.teamName)"
+							>
+								check
+							</span>
+							{{ team.teamName }}
+						</template>
+					</div>
 				</div>
 				<div v-html="props.selectedTile.description" />
 				<small> tile id: {{ props.selectedTile?.id }} </small>
@@ -404,5 +418,19 @@ dialog img {
 }
 .open-list + .metric-item {
 	display: none;
+}
+.verify-icon {
+	color: var(--mid-text);
+	&.verified {
+		color: var(--color-text);
+	}
+}
+.verifyTile:has(.verify-icon) {
+	border-radius: var(--border-radius);
+	border: 1px solid var(--color-background__inv);
+	padding: 5px 10px;
+	display: flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
 }
 </style>
