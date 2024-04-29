@@ -1,6 +1,9 @@
 <template>
 	<section>
 		<a class="btn" @click.prevent="gatherWomEXP"> Update all metrics<span icon>sync</span></a>
+		<a class="btn" @click.prevent="showPermsModal()">
+			Edit permissions<span icon>manage_accounts</span>
+		</a>
 
 		<router-link
 			icon
@@ -142,6 +145,28 @@
 		@cancel="cancelEditTile"
 		@delete="primeForRemoval"
 	/>
+	<dialog ref="permisionsModalEle">
+		<h2>Permissions</h2>
+		{{ user?.uid }}
+		<ul>
+			<li>
+				Owner: <code>{{ boardData?.ownerID }}</code>
+			</li>
+			<template v-if="boardData && boardData.moderators">
+				<li v-for="user in boardData.moderators">
+					{{ user }}<button icon @click.prevent="removeMod(user)">delete</button>
+				</li>
+			</template>
+			<li>
+				new moderator: <input type="text" v-model="newModID" /><button
+					@click.prevent="newMod"
+				>
+					add
+				</button>
+			</li>
+		</ul>
+		<button @click="closePermsModal()">close</button>
+	</dialog>
 </template>
 
 <script setup lang="ts">
@@ -155,8 +180,16 @@ import { useRoute } from 'vue-router'
 // database imports
 import { db } from '@/firebaseSettings'
 import { moveArrayElement, useSortable } from '@vueuse/integrations/useSortable'
-import { collection, doc, getDocs, getDoc, writeBatch } from 'firebase/firestore'
-import { useCollection, useDocument } from 'vuefire'
+import {
+	collection,
+	doc,
+	getDocs,
+	getDoc,
+	writeBatch,
+	arrayUnion,
+	updateDoc
+} from 'firebase/firestore'
+import { getCurrentUser, useCollection, useDocument } from 'vuefire'
 //misc imports
 import { generateName } from '@/assets/js/tileNameGenerator'
 import { tinyid } from '@/assets/js/tinyid'
@@ -169,7 +202,7 @@ import { WOMClient } from '@wise-old-man/utils'
 // type imports
 import type { ModalElement, Tile } from '@/types'
 import type { Metric as WOMMetric } from '@wise-old-man/utils'
-
+const user = await getCurrentUser()
 const route = useRoute()
 
 const dateOptions = ref<{}>({
@@ -183,8 +216,13 @@ const dateOptions = ref<{}>({
 //DOM elements
 const modalEle = ref<ModalElement>()
 const asideModalEle = ref<ModalElement>()
+const permisionsModalEle = ref<ModalElement>()
 const el = ref<HTMLElement | null>(null)
 const widthInputForm = ref<HTMLInputElement>()
+
+const showPermsModal = () => permisionsModalEle.value?.showModal()
+const closePermsModal = () => permisionsModalEle.value?.close()
+const newModID = ref<string | null>('')
 
 //state
 const isEditingBoard = ref<boolean>(false)
@@ -215,6 +253,7 @@ window.addEventListener('keydown', (e) => {
 			) {
 				modalEle.value.closeModal()
 				asideModalEle.value!.closeModal()
+				closePermsModal()
 				selectedTile.value = null
 				localTileData.value = null
 				isEditingTile.value = false
@@ -591,6 +630,18 @@ const parseResponse = (response: any, Timestamp: number) => {
 	})
 
 	return parsedData
+}
+const newMod = (): void => {
+	updateDoc(doc(db, 'Boards', route.params.boardUUID as string), {
+		moderators: arrayUnion(newModID.value)
+	})
+}
+
+const removeMod = (mid: string): void => {
+	boardData?.value?.moderators.splice(boardData.value.moderators.indexOf(mid), 1)
+	updateDoc(doc(db, 'Boards', route.params.boardUUID as string), {
+		moderators: boardData?.value?.moderators
+	})
 }
 </script>
 

@@ -7,6 +7,9 @@
 	<template v-else>
 		<div>
 			<h1>User details</h1>
+			<p>
+				uid: <code>{{ user.uid }}</code>
+			</p>
 			<button class="btn" @click.prevent="signOutFromApp">Log out</button>
 		</div>
 		<div>

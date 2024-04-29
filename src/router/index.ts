@@ -122,7 +122,10 @@ const userIsAuthenticated = async (uid: string) => {
 	}
 	const boardDataSnapshot = await getDoc(doc(db, 'Boards', uid))
 	const boardData = boardDataSnapshot.data()
-	return boardData && boardData.ownerID === user?.uid
+	return (
+		(boardData && boardData.ownerID === user?.uid) ||
+		(boardData && boardData.moderators?.includes(user?.uid))
+	)
 }
 const boardIsPublished = async (uid: string) => {
 	const user = await getCurrentUser()
