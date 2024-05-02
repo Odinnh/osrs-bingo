@@ -57,7 +57,7 @@
 								>{{ drop.name }}
 							</div>
 							<div v-for="team in teams" :class="getDropClass(team, drop)">
-								<span>{{ getDropCount(team, drop) }}</span>
+								<span>{{ getDropCount(team, drop.id) }}</span>
 								<template v-if="props.selectedTile.needAny === false"
 									>/ {{ drop.count }}</template
 								>
@@ -79,13 +79,16 @@
 				<div class="mini__team-header">
 					<div class="mini__team-icon">{{ team.teamName }}</div>
 					<div class="mini__team-total">
-						{{ getTeamDropCount(team) }}
+						{{ getDropCount(team, selectedDrop.id) }}
 						<template v-if="!props.selectedTile?.needAny"
 							>/ {{ selectedDrop.count }}</template
 						>
 					</div>
 				</div>
-				<div class="mini__team-player-entry" v-for="entry in getTeamEntries(team)">
+				<div
+					class="mini__team-player-entry"
+					v-for="entry in getTeamEntries(team, selectedDrop.id)"
+				>
 					{{ entry.playerName }}:
 					{{ formatDate(entry.timestamp.seconds) }}
 					<div icon class="mini__team-player-remove" @click="removeEntry(entry)">
@@ -116,7 +119,7 @@
 			:clear-on-select="false"
 			:preserve-search="true"
 			:allow-empty="true"
-			placeholder="Choose a team"
+			placeholder="Choose a player"
 		/>
 		<input type="datetime-local" ref="dateTime" />
 		<button @click="addToDrop()">add</button>
@@ -281,19 +284,14 @@ const getDropClass = (team: Team, drop: any) => {
 	}
 }
 
-const getDropCount = (team: Team, drop: any) => {
+const getDropCount = (team: Team, dropId: any) => {
 	const count =
-		teamsCollected.value[team.teamName]?.filter((item) => item.id === drop.id)?.length || 0
-
+		teamsCollected.value[team.teamName]?.filter((item) => item.id === dropId)?.length || 0
 	return `${count}`
 }
 
-const getTeamDropCount = (team: Team) => {
-	return teamsCollected.value[team.teamName]?.length || 0
-}
-
-const getTeamEntries = (team: Team) => {
-	return teamsCollected.value[team.teamName] || []
+const getTeamEntries = (team: Team, dropId: string) => {
+	return teamsCollected.value[team.teamName]?.filter((entry) => entry.id === dropId) || []
 }
 
 const selectedDrop = ref<any>(null)
@@ -410,5 +408,8 @@ dialog img {
 	display: flex;
 	justify-content: space-evenly;
 	flex-wrap: wrap;
+}
+.mini__team-player-remove {
+	display: inline;
 }
 </style>
