@@ -250,7 +250,7 @@ const getMetricWithTotals = (metricName: string): Metric | null => {
 		return null
 	}
 
-	const metricData = metric.value.data
+	const metricData = metric.value?.data
 	if (metricData == undefined) return null
 	const totalsArray = calculateTotals(metricData).toSorted((a, b) => {
 		if (a.teamName < b.teamName) return -1
