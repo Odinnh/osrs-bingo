@@ -579,15 +579,6 @@ const gatherWomEXP = async () => {
 		boardData.value!.trackingMetrics.push('hitpoints')
 		await Promise.all(
 			boardData.value!.trackingMetrics.map(async (metric: WOMMetric) => {
-				const MetricTimestampRef = doc(
-					db,
-					'Boards',
-					route.params.boardUUID as string,
-					'Metrics',
-					metric,
-					'Timestamps',
-					currentTime.toString() // Use the current timestamp as the document ID
-				)
 				const MetricRef = doc(
 					db,
 					'Boards',
@@ -604,15 +595,11 @@ const gatherWomEXP = async () => {
 							currentTime
 						)
 						// Use parsedData to update your database
-						const players = parsedData['t-' + currentTime]
-						batch.set(
-							MetricTimestampRef,
-							{ players: players, metric: metric, timestamp: currentTime },
-							{ merge: true }
-						)
+						const timeQ = 't-' + currentTime
+						const players = parsedData[timeQ]
 						batch.set(
 							MetricRef,
-							{ latestUpdate: { players: players, timestamp: currentTime } },
+							{ [currentTime]: players, metric: metric, timestamp: currentTime },
 							{ merge: true }
 						)
 					})
