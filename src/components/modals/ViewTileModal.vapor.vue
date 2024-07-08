@@ -29,7 +29,87 @@
 						</template>
 					</div>
 				</div>
-				<div v-html="props.selectedTile.description" />
+				<div
+					v-if="props.selectedTile.type !== 'drop'"
+					v-html="props.selectedTile.description"
+				/>
+				<template v-if="props.selectedTile.type === 'drop'">
+					<div>
+						<h3 class="fs-4" v-if="!['kc', 'exp'].includes(props.selectedTile.type)">
+							Metric
+						</h3>
+					</div>
+					<div>
+						<template v-for="metric in props.selectedTile.metric">
+							<h3
+								class="metric-list open-list"
+								@click.prevent="
+								(el) => {
+									const htmlELE = <HTMLElement>el.target
+									console.log(htmlELE.classList.toggle('open-list'))
+								}
+							"
+							>
+								<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
+									{{ formatNumberToShort(props.selectedTile.count) }}
+								</template>
+								{{ titleCase(metric.replaceAll('_', ' ')) }} +
+								<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
+									{{ titleCase(props.selectedTile.type) }} +
+								</template>
+							</h3>
+							<div
+								v-if="['kc', 'exp'].includes(props.selectedTile.type)"
+								class="metric-item"
+							>
+								<div v-for="team in getMetricWithTotals(metric)?.totals">
+									<div class="spread">
+										<template v-if="team?.icon">
+											<font-awesome-icon
+												:icon="['fas', team.icon]"
+												:title="team.teamName"
+											/>
+										</template>
+										<template v-else>
+											{{ team.teamName }}
+										</template>
+										<p
+											class="totals"
+											:class="{
+												completed: team.total >= props.selectedTile.count,
+												notStarted: team.total == 0
+											}"
+										>
+											{{
+												team.total >= props.selectedTile.count
+													? formatNumberToShort(
+															props.selectedTile.count
+													  ) + 'x +'
+													: formatNumberToShort(team.total)
+											}}{{ ' ' + titleCase(props.selectedTile.type) }}
+										</p>
+									</div>
+								</div>
+							</div>
+							<div v-else class="metric-item">
+								<div v-for="team in getMetricWithTotals(metric)?.totals">
+									<div class="spread">
+										<template v-if="team?.icon">
+											<font-awesome-icon
+												:icon="['fas', team.icon]"
+												:title="team.teamName"
+											/>
+										</template>
+										<template v-else>
+											{{ team.teamName }}
+										</template>
+										<p class="totals">{{ formatNumberToShort(team.total) }}x</p>
+									</div>
+								</div>
+							</div>
+						</template>
+					</div>
+				</template>
 				<small> tile id: {{ props.selectedTile?.id }} </small>
 				<div>Points: {{ props.selectedTile!.points }}</div>
 				<div v-if="props.selectedTile.repeatable"><em>This tile is repeatable</em></div>
@@ -82,98 +162,106 @@
 						</template>
 					</div>
 				</div>
-				<div>
-					<h3 class="fs-4" v-if="!['kc', 'exp'].includes(props.selectedTile.type)">
-						Metric
-					</h3>
+				<div v-if="props.selectedTile.type === 'drop'">
+					<h2>Description</h2>
+					<div v-html="props.selectedTile.description" />
 				</div>
-				<div>
-					<template v-for="metric in props.selectedTile.metric">
-						<h3
-							class="metric-list"
-							@click.prevent="
+				<template v-if="props.selectedTile.type !== 'drop'">
+					<div>
+						<h3 class="fs-4" v-if="!['kc', 'exp'].includes(props.selectedTile.type)">
+							Metric
+						</h3>
+					</div>
+					<div>
+						<template v-for="metric in props.selectedTile.metric">
+							<h3
+								class="metric-list"
+								@click.prevent="
 								(el) => {
 									const htmlELE = <HTMLElement>el.target
 									console.log(htmlELE.classList.toggle('open-list'))
 								}
 							"
-						>
-							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
-								{{ formatNumberToShort(props.selectedTile.count) }}
-							</template>
-							{{ titleCase(metric.replaceAll('_', ' ')) }}
-							<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
-								{{ titleCase(props.selectedTile.type) }}
-							</template>
-						</h3>
-						<div
-							v-if="['kc', 'exp'].includes(props.selectedTile.type)"
-							class="metric-item"
-						>
-							<div v-for="team in getMetricWithTotals(metric)?.totals">
-								<div class="spread">
-									<template v-if="team?.icon">
-										<font-awesome-icon
-											:icon="['fas', team.icon]"
-											:title="team.teamName"
-										/>
-									</template>
-									<template v-else>
-										{{ team.teamName }}
-									</template>
-									<progress
-										min="0"
-										:value="team.total"
-										:max="props.selectedTile.count"
-									></progress>
-									<p
-										class="totals"
-										:class="{
-											completed: team.total >= props.selectedTile.count,
-											notStarted: team.total == 0
-										}"
-									>
-										{{
-											team.total >= props.selectedTile.count
-												? formatNumberToShort(props.selectedTile.count) +
-												  '+'
-												: formatNumberToShort(team.total)
-										}}{{ ' ' + titleCase(props.selectedTile.type) }}
-									</p>
+							>
+								<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
+									{{ formatNumberToShort(props.selectedTile.count) }}
+								</template>
+								{{ titleCase(metric.replaceAll('_', ' ')) }} +
+								<template v-if="['kc', 'exp'].includes(props.selectedTile.type)">
+									{{ titleCase(props.selectedTile.type) }} +
+								</template>
+							</h3>
+							<div
+								v-if="['kc', 'exp'].includes(props.selectedTile.type)"
+								class="metric-item"
+							>
+								<div v-for="team in getMetricWithTotals(metric)?.totals">
+									<div class="spread">
+										<template v-if="team?.icon">
+											<font-awesome-icon
+												:icon="['fas', team.icon]"
+												:title="team.teamName"
+											/>
+										</template>
+										<template v-else>
+											{{ team.teamName }}
+										</template>
+										<progress
+											min="0"
+											:value="team.total"
+											:max="props.selectedTile.count"
+										></progress>
+										<p
+											class="totals"
+											:class="{
+												completed: team.total >= props.selectedTile.count,
+												notStarted: team.total == 0
+											}"
+										>
+											{{
+												team.total >= props.selectedTile.count
+													? formatNumberToShort(
+															props.selectedTile.count
+													  ) + '+'
+													: formatNumberToShort(team.total)
+											}}{{ ' ' + titleCase(props.selectedTile.type) }}
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div v-else class="metric-item">
-							<div v-for="team in getMetricWithTotals(metric)?.totals">
-								<div class="spread">
-									<template v-if="team?.icon">
-										<font-awesome-icon
-											:icon="['fas', team.icon]"
-											:title="team.teamName"
-										/>
-									</template>
-									<template v-else>
-										{{ team.teamName }}
-									</template>
-									<progress
-										min="0"
-										:value="
-											team.total != 0
-												? team.total + getHighestTotal(metric) * 0.05
-												: 0
-										"
-										:max="
-											getHighestTotal(metric) + getHighestTotal(metric) * 0.1
-										"
-									></progress>
-									<p class="totals">
-										{{ formatNumberToShort(team.total) }}
-									</p>
+							<div v-else class="metric-item">
+								<div v-for="team in getMetricWithTotals(metric)?.totals">
+									<div class="spread">
+										<template v-if="team?.icon">
+											<font-awesome-icon
+												:icon="['fas', team.icon]"
+												:title="team.teamName"
+											/>
+										</template>
+										<template v-else>
+											{{ team.teamName }}
+										</template>
+										<progress
+											min="0"
+											:value="
+												team.total != 0
+													? team.total + getHighestTotal(metric) * 0.05
+													: 0
+											"
+											:max="
+												getHighestTotal(metric) +
+												getHighestTotal(metric) * 0.1
+											"
+										></progress>
+										<p class="totals">
+											{{ formatNumberToShort(team.total) }}
+										</p>
+									</div>
 								</div>
 							</div>
-						</div>
-					</template>
-				</div>
+						</template>
+					</div>
+				</template>
 			</div>
 		</div>
 	</dialog>
