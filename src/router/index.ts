@@ -5,24 +5,15 @@ import { db } from '@/firebaseSettings'
 
 // views
 import home from '@/views/home.vapor.vue'
-import newBoard from '@/views/newBoard.vapor.vue'
 import loginView from '@/views/loginView.vapor.vue'
-import editBoard from '@/views/editBoard.vapor.vue'
 import viewBoard from '@/views/viewBoard.vapor.vue'
 import viewBoardList from '@/views/viewBoardList.vapor.vue'
 import colorPallete from '@/views/colorPallete.vapor.vue'
-import teamViewer from '@/views/teamViewer.vapor.vue'
-import moderateBoard from '@/views/moderateBoard.vapor.vue'
 import allPublishedBoards from '@/views/allPublishedBoards.vapor.vue'
 
 const router = createRouter({
 	history: createWebHashHistory(),
 	routes: [
-		{
-			path: '/new',
-			name: 'createNewBingo',
-			component: newBoard
-		},
 		{
 			path: '/boards',
 			name: 'Boards',
@@ -42,21 +33,6 @@ const router = createRouter({
 			path: '/list/:boardUUID',
 			name: 'viewBoardList',
 			component: viewBoardList
-		},
-		{
-			path: '/edit/:boardUUID',
-			name: 'editBoard',
-			component: editBoard
-		},
-		{
-			path: '/verify/:boardUUID',
-			name: 'moderateBoard',
-			component: moderateBoard
-		},
-		{
-			path: '/teams/:boardUUID',
-			name: 'teamViewer',
-			component: teamViewer
 		},
 		{
 			path: '/color/',

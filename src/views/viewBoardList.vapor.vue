@@ -1,44 +1,6 @@
 <template>
 	<template v-if="boardData">
-		<section>
-			<router-link
-				v-if="user?.uid == boardData?.ownerID"
-				icon
-				class="btn"
-				:to="{
-					name: 'editBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				}"
-				>edit</router-link
-			>
-			<router-link
-				v-if="user?.uid == boardData?.ownerID"
-				icon
-				class="btn"
-				:to="{
-					name: 'moderateBoard',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				}"
-			>
-				library_add_check
-			</router-link>
-			<router-link
-				v-if="user?.uid == boardData?.ownerID"
-				icon
-				class="btn"
-				:to="{
-					name: 'teamViewer',
-					params: {
-						boardUUID: route.params.boardUUID
-					}
-				}"
-				>group</router-link
-			>
-		</section>
+
 		<h1 class="fs-2">{{ boardData.name }}</h1>
 		<section ref="el">
 			<div
